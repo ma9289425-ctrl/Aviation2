@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>15.11 – Turbine Engine Fuel Systems | Aviation Revision</title>
+  <style>
+    /* ═══════════════════════════════════════════════
+       ROOT & THEME
+    ═══════════════════════════════════════════════ */
+    :root {
+      --bg-base:       #0f1117;
+      --bg-surface:    #161b27;
+      --bg-card:       #1c2333;
+      --bg-card-hover: #202840;
+      --bg-sidebar:    #13182200;
+      --border:        #2a3352;
+      --border-light:  #2f3b5a;
+      --accent:        #3b82f6;
+      --accent-soft:   #1d3461;
+      --accent-glow:   rgba(59,130,246,0.15);
+      --text-primary:  #e2e8f0;
+      --text-secondary:#9aa5be;
+      --text-muted:    #5a6680;
+      --green:         #22c55e;
+      --green-soft:    #14532d55;
+      --amber:         #f59e0b;
+      --amber-soft:    #78350f44;
+      --red:           #ef4444;
+      --red-soft:      #7f1d1d44;
+      --purple:        #a78bfa;
+      --purple-soft:   #2e1065aa;
+      --teal:          #2dd4bf;
+      --teal-soft:     #0f403d55;
+      --radius:        12px;
+      --radius-sm:     8px;
+      --sidebar-w:     260px;
+      --transition:    0.22s ease;
+    }
+
+    /* Focus Mode overrides */
+    body.focus-mode .focus-hide { display: none !important; }
+    body.focus-mode .focus-show { display: block !important; }
+
+    /* Exam Mode overrides */
+    body.exam-mode .exam-hide   { display: none !important; }
+    body.exam-mode .exam-show   { display: block !important; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════════
+       PROGRESS BAR
+    ═══════════════════════════════════════════════ */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--teal));
+      z-index: 9999;
+      transition: width 0.1s linear;
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TOP HEADER
+    ═══════════════════════════════════════════════ */
+    #top-header {
+      position: sticky;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: rgba(15,17,23,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-badge {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .header-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .ctrl-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    .ctrl-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); border-color: var(--border-light); }
+    .ctrl-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .ctrl-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+    #menu-toggle {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 1.1rem;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    #menu-toggle:hover { color: var(--text-primary); border-color: var(--border-light); }
+
+    /* ═══════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════ */
+    #layout {
+      display: flex;
+      min-height: calc(100vh - 58px);
+    }
+
+    /* ═══════════════════════════════════════════════
+       SIDEBAR
+    ═══════════════════════════════════════════════ */
+    #sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      position: sticky;
+      top: 58px;
+      height: calc(100vh - 58px);
+      overflow-y: auto;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 0.75rem 2rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      transition: transform var(--transition);
+    }
+
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-track { background: transparent; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .sidebar-heading {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 0.5rem;
+      margin-bottom: 0.6rem;
+      margin-top: 1rem;
+    }
+    .sidebar-heading:first-child { margin-top: 0; }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all var(--transition);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+    .sidebar-link:hover { background: var(--bg-card); color: var(--text-primary); }
+    .sidebar-link.active { background: var(--accent-soft); color: var(--accent); }
+    .sidebar-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .sidebar-link .s-icon { font-size: 0.85rem; flex-shrink: 0; }
+
+    /* ═══════════════════════════════════════════════
+       MAIN CONTENT
+    ═══════════════════════════════════════════════ */
+    #main-content {
+      flex: 1;
+      min-width: 0;
+      padding: 2rem 2.5rem 4rem;
+      max-width: 900px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════ */
+    .hero {
+      background: linear-gradient(135deg, #1a2340 0%, #0f1825 60%, #0f1117 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 2.25rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.25;
+      margin-bottom: 0.6rem;
+    }
+
+    .hero p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      max-width: 580px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    .hero-stat .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .hero-stat .dot.g { background: var(--green); }
+    .hero-stat .dot.a { background: var(--amber); }
+    .hero-stat .dot.p { background: var(--purple); }
+
+    /* ═══════════════════════════════════════════════
+       CHECKLIST BAR
+    ═══════════════════════════════════════════════ */
+    #checklist-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .checklist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .checklist-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .checklist-progress-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .checklist-track {
+      height: 5px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 0.85rem;
+    }
+
+    .checklist-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--teal));
+      border-radius: 10px;
+      transition: width 0.4s ease;
+    }
+
+    .checklist-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      user-select: none;
+    }
+    .check-item:hover { border-color: var(--border-light); color: var(--text-primary); }
+    .check-item.checked { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+    .check-item input[type=checkbox] { display: none; }
+    .check-dot {
+      width: 14px; height: 14px;
+      border: 2px solid var(--border-light);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.6rem;
+      transition: all var(--transition);
+    }
+    .check-item.checked .check-dot {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SECTION WRAPPER
+    ═══════════════════════════════════════════════ */
+    .section {
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      transition: background var(--transition);
+      border-bottom: 1px solid transparent;
+      user-select: none;
+      gap: 0.75rem;
+    }
+    .section-header:hover { background: var(--bg-card-hover); }
+    .section-header:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+    .section.open .section-header { border-bottom-color: var(--border); }
+
+    .section-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .section-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .section-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      display: block;
+      margin-top: 1px;
+    }
+
+    .section-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid;
+      flex-shrink: 0;
+    }
+    .badge-blue  { color: var(--accent);  border-color: var(--accent);  background: var(--accent-soft); }
+    .badge-green { color: var(--green);   border-color: var(--green);   background: var(--green-soft); }
+    .badge-amber { color: var(--amber);   border-color: var(--amber);   background: var(--amber-soft); }
+    .badge-purple{ color: var(--purple);  border-color: var(--purple);  background: var(--purple-soft); }
+    .badge-teal  { color: var(--teal);    border-color: var(--teal);    background: var(--teal-soft); }
+
+    .chevron {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+    .section.open .chevron { transform: rotate(180deg); }
+
+    .section-body {
+      display: none;
+      padding: 1.25rem;
+    }
+    .section.open .section-body { display: block; }
+
+    /* ═══════════════════════════════════════════════
+       TYPOGRAPHY INSIDE SECTIONS
+    ═══════════════════════════════════════════════ */
+    .lead {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.1rem;
+      line-height: 1.7;
+    }
+
+    h3 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 1.25rem 0 0.6rem;
+    }
+    h3:first-child { margin-top: 0; }
+
+    /* ═══════════════════════════════════════════════
+       CARDS GRID
+    ═══════════════════════════════════════════════ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1rem;
+      transition: border-color var(--transition), background var(--transition);
+    }
+    .info-card:hover { border-color: var(--border-light); background: var(--bg-card-hover); }
+
+    .info-card .card-icon { font-size: 1.2rem; margin-bottom: 0.4rem; }
+    .info-card .card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+    }
+    .info-card .card-body {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ═══════════════════════════════════════════════
+       BULLET LISTS
+    ═══════════════════════════════════════════════ */
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .bullet-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.55rem;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .bullet-list li::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      margin-top: 0.45em;
+    }
+
+    .bullet-list.check li::before {
+      content: '✓';
+      background: none;
+      color: var(--green);
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 0;
+      width: auto; height: auto;
+    }
+
+    .bullet-list .term {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════════════
+       ALERT BOXES
+    ═══════════════════════════════════════════════ */
+    .alert {
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      margin: 0.85rem 0;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      display: flex;
+      gap: 0.6rem;
+      border-left: 3px solid;
+    }
+    .alert-icon { font-size: 1rem; flex-shrink: 0; line-height: 1.6; }
+    .alert-content { flex: 1; }
+    .alert-label {
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .alert p { color: inherit; opacity: 0.9; }
+
+    .alert-warning {
+      background: var(--amber-soft);
+      border-color: var(--amber);
+      color: #fcd34d;
+    }
+    .alert-danger {
+      background: var(--red-soft);
+      border-color: var(--red);
+      color: #fca5a5;
+    }
+    .alert-info {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: #93c5fd;
+    }
+    .alert-success {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: #86efac;
+    }
+    .alert-purple {
+      background: var(--purple-soft);
+      border-color: var(--purple);
+      color: #c4b5fd;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TABLES
+    ═══════════════════════════════════════════════ */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    thead tr { background: var(--bg-surface); }
+    thead th {
+      padding: 0.65rem 1rem;
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg-surface); }
+
+    tbody td {
+      padding: 0.6rem 1rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    tbody td:first-child { color: var(--text-primary); font-weight: 600; }
+
+    /* ═══════════════════════════════════════════════
+       HIGHLIGHT PILL
+    ═══════════════════════════════════════════════ */
+    .pill {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    /* ═══════════════════════════════════════════════
+       QUICK RECAP
+    ═══════════════════════════════════════════════ */
+    .recap-box {
+      background: linear-gradient(135deg, #1a2340, #131b2e);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.1rem;
+      margin: 0.85rem 0;
+    }
+
+    .recap-box .recap-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .recap-box ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .recap-box ul li {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .recap-box ul li::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════════
+       MEMORY AID
+    ═══════════════════════════════════════════════ */
+    .memory-aid {
+      background: var(--purple-soft);
+      border: 1px solid var(--purple);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      margin: 0.85rem 0;
+    }
+
+    .memory-aid .ma-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--purple);
+      margin-bottom: 0.5rem;
+    }
+
+    .memory-aid .ma-body {
+      font-size: 0.8rem;
+      color: #c4b5fd;
+      line-height: 1.6;
+    }
+
+    .memory-aid .ma-acronym {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--purple);
+      letter-spacing: 0.15em;
+      display: block;
+      margin: 0.3rem 0;
+    }
+
+    /* ═══════════════════════════════════════════════
+       KEY CONCEPT
+    ═══════════════════════════════════════════════ */
+    .key-concept {
+      background: var(--teal-soft);
+      border: 1px solid var(--teal);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      margin: 0.85rem 0;
+    }
+
+    .key-concept .kc-title {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--teal);
+      margin-bottom: 0.4rem;
+    }
+
+    .key-concept .kc-body {
+      font-size: 0.82rem;
+      color: #5eead4;
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TWO COLUMN COMPARE
+    ═══════════════════════════════════════════════ */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 0.75rem 0;
+    }
+
+    .compare-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+    }
+
+    .compare-card .cc-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .compare-card.danger .cc-title { color: var(--red); }
+    .compare-card.success .cc-title { color: var(--green); }
+    .compare-card.warning .cc-title { color: var(--amber); }
+    .compare-card.info .cc-title { color: var(--accent); }
+
+    .compare-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .compare-card ul li {
+      font-size: 0.77rem;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 0.45rem;
+      align-items: flex-start;
+    }
+    .compare-card.danger  ul li::before { content: '✕'; color: var(--red); flex-shrink: 0; font-size: 0.7rem; }
+    .compare-card.success ul li::before { content: '✓'; color: var(--green); flex-shrink: 0; font-size: 0.7rem; }
+    .compare-card.warning ul li::before { content: '⚠'; color: var(--amber); flex-shrink: 0; font-size: 0.7rem; }
+    .compare-card.info    ul li::before { content: '→'; color: var(--accent); flex-shrink: 0; font-size: 0.7rem; }
+
+    /* ═══════════════════════════════════════════════
+       FLASHCARDS
+    ═══════════════════════════════════════════════ */
+    .flashcard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .flashcard {
+      height: 130px;
+      perspective: 800px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+    .flashcard-front,
+    .flashcard-back {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-sm);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .flashcard-front {
+      background: var(--bg-surface);
+      justify-content: space-between;
+    }
+
+    .flashcard-back {
+      background: linear-gradient(135deg, #1a2c45, #0f1e30);
+      border-color: var(--accent);
+      transform: rotateY(180deg);
+      justify-content: center;
+    }
+
+    .flashcard-front .fc-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .flashcard-front .fc-q {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.5;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .flashcard-front .fc-hint {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .flashcard-back .fc-a {
+      font-size: 0.8rem;
+      color: #93c5fd;
+      line-height: 1.55;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════════
+       QUIZ
+    ═══════════════════════════════════════════════ */
+    .quiz-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .quiz-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.1rem;
+      transition: border-color var(--transition);
+    }
+
+    .quiz-item.answered { border-color: var(--border-light); }
+
+    .quiz-question {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .q-num {
+      color: var(--accent);
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      text-align: left;
+      width: 100%;
+      line-height: 1.45;
+    }
+    .quiz-option:hover:not(:disabled) { border-color: var(--border-light); color: var(--text-primary); background: var(--bg-card-hover); }
+    .quiz-option:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    .quiz-option.correct {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: #86efac;
+      cursor: default;
+    }
+    .quiz-option.incorrect {
+      background: var(--red-soft);
+      border-color: var(--red);
+      color: #fca5a5;
+      cursor: default;
+    }
+    .quiz-option.reveal-correct {
+      background: var(--green-soft);
+      border-color: var(--green);
+      color: #86efac;
+      cursor: default;
+    }
+
+    .quiz-option:disabled { cursor: default; }
+
+    .opt-letter {
+      font-weight: 800;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      min-width: 14px;
+    }
+
+    .quiz-feedback {
+      font-size: 0.75rem;
+      margin-top: 0.6rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      display: none;
+      line-height: 1.5;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.ok { background: var(--green-soft); color: #86efac; border: 1px solid var(--green); }
+    .quiz-feedback.bad { background: var(--red-soft); color: #fca5a5; border: 1px solid var(--red); }
+
+    .quiz-reset-btn {
+      margin-top: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 7px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .quiz-reset-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); border-color: var(--border-light); }
+    .quiz-reset-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .quiz-score {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .quiz-score.show { display: block; }
+
+    /* ═══════════════════════════════════════════════
+       NOZZLE COMPARE
+    ═══════════════════════════════════════════════ */
+    .nozzle-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin: 0.75rem 0;
+    }
+
+    .nozzle-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem 1rem;
+      transition: border-color var(--transition);
+    }
+    .nozzle-card:hover { border-color: var(--border-light); }
+
+    .nozzle-card .nc-icon { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .nozzle-card .nc-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    .nozzle-card .nc-tag {
+      font-size: 0.62rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 12px;
+      border: 1px solid;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+    .nozzle-card .nc-body {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SIDEBAR OVERLAY (MOBILE)
+    ═══════════════════════════════════════════════ */
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 150;
+      backdrop-filter: blur(3px);
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      #main-content { padding: 1.5rem 1.25rem 4rem; }
+      .nozzle-cards { grid-template-columns: 1fr 1fr; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      #sidebar {
+        position: fixed;
+        top: 58px; left: 0; bottom: 0;
+        z-index: 160;
+        transform: translateX(-100%);
+        width: min(var(--sidebar-w), 85vw);
+      }
+      #sidebar.open { transform: translateX(0); }
+      #sidebar-overlay.open { display: block; }
+      #menu-toggle { display: flex; }
+      .ctrl-btn.hide-mobile { display: none; }
+      #main-content { padding: 1.25rem 1rem 4rem; max-width: 100%; }
+      .hero h1 { font-size: 1.35rem; }
+      .hero-stats { gap: 0.75rem; }
+      .nozzle-cards { grid-template-columns: 1fr; }
+      .cards-grid { grid-template-columns: 1fr 1fr; }
+      .flashcard-grid { grid-template-columns: 1fr; }
+      .header-title { max-width: 120px; }
+    }
+
+    @media (max-width: 420px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .header-right .ctrl-btn:not(#menu-toggle) { display: none; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       FOCUS MODE
+    ═══════════════════════════════════════════════ */
+    body.focus-mode { background: #0c0e14; }
+    body.focus-mode .section { border-color: #1e2535; }
+    body.focus-mode .hero { background: linear-gradient(135deg,#141822,#0c0e14); }
+
+    /* ═══════════════════════════════════════════════
+       EXAM MODE
+    ═══════════════════════════════════════════════ */
+    body.exam-mode .section-body .lead,
+    body.exam-mode .section-body .cards-grid,
+    body.exam-mode .section-body .two-col,
+    body.exam-mode .section-body .nozzle-cards,
+    body.exam-mode .section-body .table-wrap,
+    body.exam-mode .section-body .key-concept,
+    body.exam-mode .section-body .memory-aid,
+    body.exam-mode .section-body h3,
+    body.exam-mode .section-body .bullet-list.focus-hide,
+    body.exam-mode .hero,
+    body.exam-mode #checklist-bar { display: none !important; }
+
+    body.exam-mode .section { margin-bottom: 1rem; }
+
+    /* ═══════════════════════════════════════════════
+       UTILITY
+    ═══════════════════════════════════════════════ */
+    .mt-sm { margin-top: 0.5rem; }
+    .mt-md { margin-top: 0.9rem; }
+    .mb-sm { margin-bottom: 0.5rem; }
+    .mb-md { margin-bottom: 0.9rem; }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1rem 0;
+    }
+    .text-accent  { color: var(--accent); }
+    .text-green   { color: var(--green); }
+    .text-amber   { color: var(--amber); }
+    .text-red     { color: var(--red); }
+    .text-purple  { color: var(--purple); }
+    .text-teal    { color: var(--teal); }
+    .text-primary { color: var(--text-primary); }
+    .fw-700 { font-weight: 700; }
+
+    .scroll-anchor { scroll-margin-top: 70px; }
+
+    /* Smooth transitions for all sections */
+    .section-body { animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div id="progress-bar" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- TOP HEADER -->
+<header id="top-header" role="banner">
+  <div class="header-left">
+    <button id="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+    <span class="header-badge">EASA Part-66</span>
+    <span class="header-title">15.11 – Turbine Fuel Systems</span>
+  </div>
+  <div class="header-right">
+    <button class="ctrl-btn hide-mobile" id="expand-all-btn" title="Expand all sections">Expand All</button>
+    <button class="ctrl-btn hide-mobile" id="collapse-all-btn" title="Collapse all sections">Collapse All</button>
+    <button class="ctrl-btn" id="focus-btn" title="Show only key points" aria-pressed="false">⚡ Focus</button>
+    <button class="ctrl-btn" id="exam-btn"  title="Exam mode: recaps, questions, flashcards only" aria-pressed="false">📝 Exam Mode</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar" aria-label="Page navigation">
+    <p class="sidebar-heading">Overview</p>
+    <a class="sidebar-link" href="#sec-intro" data-section="sec-intro">
+      <span class="s-icon">🔰</span> Introduction
+    </a>
+    <a class="sidebar-link" href="#sec-requirements" data-section="sec-requirements">
+      <span class="s-icon">📋</span> Requirements
+    </a>
+    <a class="sidebar-link" href="#sec-ratio" data-section="sec-ratio">
+      <span class="s-icon">⚖️</span> Fuel/Air Ratio
+    </a>
+    <a class="sidebar-link" href="#sec-acceleration" data-section="sec-acceleration">
+      <span class="s-icon">⚡</span> Acceleration Control
+    </a>
+    <a class="sidebar-link" href="#sec-atomization" data-section="sec-atomization">
+      <span class="s-icon">💧</span> Atomization
+    </a>
+    <a class="sidebar-link" href="#sec-start" data-section="sec-start">
+      <span class="s-icon">🔑</span> Engine Starting
+    </a>
+
+    <p class="sidebar-heading">FADEC</p>
+    <a class="sidebar-link" href="#sec-fadec" data-section="sec-fadec">
+      <span class="s-icon">💻</span> FADEC Overview
+    </a>
+    <a class="sidebar-link" href="#sec-eec" data-section="sec-eec">
+      <span class="s-icon">🖥️</span> EEC &amp; Components
+    </a>
+    <a class="sidebar-link" href="#sec-dual" data-section="sec-dual">
+      <span class="s-icon">🔁</span> Dual-Channel Design
+    </a>
+
+    <p class="sidebar-heading">Systems &amp; Nozzles</p>
+    <a class="sidebar-link" href="#sec-heater" data-section="sec-heater">
+      <span class="s-icon">🌡️</span> Fuel Heaters
+    </a>
+    <a class="sidebar-link" href="#sec-nozzles" data-section="sec-nozzles">
+      <span class="s-icon">🔩</span> Fuel Nozzle Types
+    </a>
+    <a class="sidebar-link" href="#sec-install" data-section="sec-install">
+      <span class="s-icon">🔧</span> Nozzle Installation
+    </a>
+
+    <p class="sidebar-heading">Revision Tools</p>
+    <a class="sidebar-link" href="#sec-flashcards" data-section="sec-flashcards">
+      <span class="s-icon">🃏</span> Flashcards
+    </a>
+    <a class="sidebar-link" href="#sec-quiz" data-section="sec-quiz">
+      <span class="s-icon">🧪</span> Self-Check Quiz
+    </a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main id="main-content" role="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">Module 15.11</div>
+      <h1>Turbine Engine Fuel Systems</h1>
+      <p>Comprehensive revision guide covering fuel control fundamentals, FADEC architecture, fuel heaters, and nozzle types — aligned to EASA Part-66 standards.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="dot"></span> 11 Sections</div>
+        <div class="hero-stat"><span class="dot g"></span> 10 Flashcards</div>
+        <div class="hero-stat"><span class="dot a"></span> 10 Quiz Questions</div>
+        <div class="hero-stat"><span class="dot p"></span> EASA Part-66</div>
+      </div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div id="checklist-bar" aria-label="Study progress checklist">
+      <div class="checklist-header">
+        <span class="checklist-title">📌 Study Checklist</span>
+        <span class="checklist-progress-text" id="checklist-count">0 / 8 completed</span>
+      </div>
+      <div class="checklist-track">
+        <div class="checklist-fill" id="checklist-fill" style="width:0%"></div>
+      </div>
+      <div class="checklist-items" role="group" aria-label="Topics to review">
+        <label class="check-item" data-idx="0"><span class="check-dot">✓</span> Fuel/Air Ratio</label>
+        <label class="check-item" data-idx="1"><span class="check-dot">✓</span> Rich Blowout</label>
+        <label class="check-item" data-idx="2"><span class="check-dot">✓</span> Lean Flameout</label>
+        <label class="check-item" data-idx="3"><span class="check-dot">✓</span> Acceleration Control</label>
+        <label class="check-item" data-idx="4"><span class="check-dot">✓</span> FADEC &amp; EEC</label>
+        <label class="check-item" data-idx="5"><span class="check-dot">✓</span> Dual-Channel EEC</label>
+        <label class="check-item" data-idx="6"><span class="check-dot">✓</span> Fuel Heaters</label>
+        <label class="check-item" data-idx="7"><span class="check-dot">✓</span> Nozzle Types</label>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 1: INTRODUCTION
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-intro" data-section-id="sec-intro">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-intro">
+        <div class="section-title-group">
+          <span class="section-icon">🔰</span>
+          <div>
+            <div class="section-title">Introduction to Turbine Fuel Systems</div>
+            <span class="section-subtitle">Purpose, power control, and operating conditions</span>
+          </div>
+        </div>
+        <span class="section-badge badge-blue">CORE</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-intro">
+        <p class="lead">The fuel system is one of the most important and complex systems in a gas turbine engine. Its primary role is to supply the right amount of fuel at the right pressure to ensure efficient combustion under all conditions.</p>
+
+        <div class="cards-grid">
+          <div class="info-card">
+            <div class="card-icon">⛽</div>
+            <div class="card-title">Correct Quantity</div>
+            <div class="card-body">Fuel must be delivered in precise amounts for each phase of flight and engine operation.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🔀</div>
+            <div class="card-title">Correct Pressure</div>
+            <div class="card-body">Fuel must be supplied at the correct pressure to ensure proper nozzle atomization and combustion.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🔥</div>
+            <div class="card-title">Efficient Combustion</div>
+            <div class="card-body">The system must maintain efficient combustion through all operating conditions.</div>
+          </div>
+        </div>
+
+        <h3>Power Control</h3>
+        <div class="key-concept">
+          <div class="kc-title">💡 Key Concept — Engine Power</div>
+          <div class="kc-body">In turbine engines, <strong>engine power is controlled primarily by varying fuel flow</strong> to the combustion chamber. In turboprop engines, thrust also depends on <strong>propeller blade angle</strong> in addition to fuel flow.</div>
+        </div>
+
+        <h3>Operating Conditions</h3>
+        <ul class="bullet-list check">
+          <li>Engine start</li>
+          <li>Acceleration</li>
+          <li>Cruise</li>
+          <li>Deceleration</li>
+          <li>High altitude flight</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 2: REQUIREMENTS
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-requirements" data-section-id="sec-requirements">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-req">
+        <div class="section-title-group">
+          <span class="section-icon">📋</span>
+          <div>
+            <div class="section-title">Fuel System Requirements</div>
+            <span class="section-subtitle">What the fuel system must achieve at all times</span>
+          </div>
+        </div>
+        <span class="section-badge badge-blue">CORE</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-req">
+        <p class="lead">The fuel system must meet multiple performance requirements to ensure safe and reliable engine operation across all flight phases.</p>
+
+        <div class="cards-grid">
+          <div class="info-card">
+            <div class="card-icon">📊</div>
+            <div class="card-title">Correct Quantity &amp; Atomization</div>
+            <div class="card-body">Deliver exact fuel quantity and ensure fine spray for efficient ignition and combustion.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🔄</div>
+            <div class="card-title">Stable Transitions</div>
+            <div class="card-body">Support smooth acceleration and deceleration without combustion instability.</div>
+          </div>
+          <div class="info-card">
+            <div class="card-icon">🎯</div>
+            <div class="card-title">Automatic Adjustment</div>
+            <div class="card-body">Automatically compensate for changes in ambient temperature, pressure, and air density.</div>
+          </div>
+        </div>
+
+        <div class="recap-box">
+          <div class="recap-title">⚡ Quick Recap — Automatic Compensation</div>
+          <ul>
+            <li>Ambient temperature changes</li>
+            <li>Pressure changes</li>
+            <li>Air density changes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 3: FUEL/AIR RATIO
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-ratio" data-section-id="sec-ratio">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-ratio">
+        <div class="section-title-group">
+          <span class="section-icon">⚖️</span>
+          <div>
+            <div class="section-title">Fuel/Air Ratio Problems</div>
+            <span class="section-subtitle">Rich blowout and lean flameout — critical failure modes</span>
+          </div>
+        </div>
+        <span class="section-badge badge-amber">SAFETY</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-ratio">
+        <p class="lead">The fuel-air mixture must remain within safe operating limits at all times. Both over-rich and over-lean conditions lead to dangerous combustion failures.</p>
+
+        <div class="two-col">
+          <div class="compare-card danger">
+            <div class="cc-title">🔴 Rich Blowout</div>
+            <ul>
+              <li>Too much fuel supplied</li>
+              <li>Insufficient oxygen available</li>
+              <li>Combustion temperature falls</li>
+              <li>Engine instability / flame failure</li>
+            </ul>
+          </div>
+          <div class="compare-card warning">
+            <div class="cc-title">🟡 Lean Flameout</div>
+            <ul>
+              <li>Too little fuel supplied</li>
+              <li>Fuel quantity too low for combustion</li>
+              <li>Flame is extinguished</li>
+              <li>Engine flame-out results</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="alert alert-danger">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <span class="alert-label">Danger — Rich Blowout Effects</span>
+            <p>A rich mixture can cause: <strong>compressor stall</strong>, <strong>turbine overheating</strong>, and <strong>flame instability</strong>.</p>
+          </div>
+        </div>
+
+        <div class="key-concept mt-md">
+          <div class="kc-title">💡 Key Concept</div>
+          <div class="kc-body">Proper combustion requires a <strong>correct fuel-to-air ratio</strong>. Both extremes — too rich or too lean — cause combustion failure and potential engine damage.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 4: ACCELERATION CONTROL
+    ═══════════════════════════════════════════ -->
+    <div class="section scroll-anchor" id="sec-acceleration" data-section-id="sec-acceleration">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-accel">
+        <div class="section-title-group">
+          <span class="section-icon">⚡</span>
+          <div>
+            <div class="section-title">Acceleration Control</div>
+            <span class="section-subtitle">Why fuel must increase gradually during acceleration</span>
+          </div>
+        </div>
+        <span class="section-badge badge-amber">SAFETY</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-accel">
+        <p class="lead">During acceleration, the engine needs extra fuel to increase turbine energy. However, the rate of fuel increase must be carefully controlled.</p>
+
+        <div class="two-col">
+          <div class="compare-card success">
+            <div class="cc-title">✅ Gradual Increase</div>
+            <ul>
+              <li>Fuel-air ratio stays balanced</li>
+              <li>Smooth combustion maintained</li>
+              <li>Compressor remains stable</li>
+              <li>Engine accelerates safely</li>
+            </ul>
+          </div>
+          <div class="compare-card danger">
+            <div class="cc-title">❌ Rapid Increase</div>
+            <ul>
+              <li>Over-rich mixture forms</li>
+              <li>Compressor stall may occur</li>
+              <li>Rich blowout is possible</li>
+              <li>Engine instability results</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚡</span>
+          <div class="alert-content">
+            <span class="alert-label">Exam Tip</span>
+            <p><strong>Rapid fuel increase during acceleration</strong> can cause <strong>compressor stall</strong> or <strong>rich blowout</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 5: ATOMIZATION
+    ═══════════════════════════════════════════ -->
+    <div class="section scroll-anchor" id="sec-atomization" data-section-id="sec-atomization">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-atom">
+        <div class="section-title-group">
+          <span class="section-icon">💧</span>
+          <div>
+            <div class="section-title">Fuel Atomization</div>
+            <span class="section-subtitle">Why fine spray matters for combustion efficiency</span>
+          </div>
+        </div>
+        <span class="section-badge badge-blue">CORE</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-atom">
+        <p class="lead">The fuel system must deliver fuel as a finely atomized spray. The quality of atomization directly affects combustion efficiency, ignition reliability, and overall engine performance.</p>
+
+        <h3>Why Atomization Matters</h3>
+        <ul class="bullet-list check">
+          <li>Improves combustion quality</li>
+          <li>Improves fuel-air mixing</li>
+          <li>Aids reliable ignition</li>
+          <li>Increases combustion efficiency</li>
+        </ul>
+
+        <div class="key-concept mt-md">
+          <div class="kc-title">💡 Fuel Nozzle Role</div>
+          <div class="kc-body">Fuel nozzles spray fuel into the combustion chamber and produce the required spray pattern. Their design is critical to efficient and stable combustion.</div>
+        </div>
+
+        <div class="alert alert-info mt-md">
+          <span class="alert-icon">🔑</span>
+          <div class="alert-content">
+            <span class="alert-label">Engine Start Requirement</span>
+            <p>During engine start, fuel must enter the combustion chamber in a <strong>combustible condition</strong> to allow reliable ignition and stable flame establishment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 6: ENGINE STARTING
+    ═══════════════════════════════════════════ -->
+    <div class="section scroll-anchor" id="sec-start" data-section-id="sec-start">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-start">
+        <div class="section-title-group">
+          <span class="section-icon">🔑</span>
+          <div>
+            <div class="section-title">Engine Starting Requirements</div>
+            <span class="section-subtitle">Conditions needed for reliable ignition and stable combustion</span>
+          </div>
+        </div>
+        <span class="section-badge badge-blue">CORE</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-start">
+        <p class="lead">Engine start places specific demands on the fuel system. Fuel must be delivered in a form that allows immediate ignition and sustained combustion.</p>
+
+        <ul class="bullet-list">
+          <li><span class="term">Combustible condition:</span> Fuel must enter the combustion chamber ready to ignite.</li>
+          <li><span class="term">Easy ignition:</span> Atomization must be sufficient for reliable spark ignition.</li>
+          <li><span class="term">Stable combustion:</span> Flame must be sustained after ignition without instability.</li>
+        </ul>
+
+        <div class="recap-box mt-md">
+          <div class="recap-title">⚡ Quick Recap</div>
+          <ul>
+            <li>Correct atomization is essential during start</li>
+            <li>Fuel quantity at start must be carefully controlled</li>
+            <li>Too little → lean flameout; Too much → rich blowout</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 7: FADEC OVERVIEW
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-fadec" data-section-id="sec-fadec">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-fadec">
+        <div class="section-title-group">
+          <span class="section-icon">💻</span>
+          <div>
+            <div class="section-title">FADEC Fuel Control System</div>
+            <span class="section-subtitle">Full Authority Digital Electronic Control — architecture and role</span>
+          </div>
+        </div>
+        <span class="section-badge badge-purple">FADEC</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-fadec">
+        <p class="lead">FADEC (Full Authority Digital Electronic Control) is a fully electronic fuel control system that manages fuel flow and engine operation with no hydromechanical backup.</p>
+
+        <div class="memory-aid">
+          <div class="ma-title">🧠 Memory Aid</div>
+          <span class="ma-acronym">FADEC</span>
+          <div class="ma-body">
+            <strong>F</strong>ull &nbsp;<strong>A</strong>uthority &nbsp;<strong>D</strong>igital &nbsp;<strong>E</strong>lectronic &nbsp;<strong>C</strong>ontrol
+          </div>
+        </div>
+
+        <h3>FADEC Controls</h3>
+        <ul class="bullet-list check">
+          <li>Fuel flow to combustion chamber</li>
+          <li>Overall engine operation</li>
+          <li>Engine performance parameters</li>
+        </ul>
+
+        <div class="alert alert-danger mt-md">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <span class="alert-label">Critical Distinction</span>
+            <p>A <strong>true FADEC system has NO hydromechanical backup</strong> fuel control. The system is fully authority — it has complete control over engine fuel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 8: EEC & COMPONENTS
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-eec" data-section-id="sec-eec">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-eec">
+        <div class="section-title-group">
+          <span class="section-icon">🖥️</span>
+          <div>
+            <div class="section-title">EEC &amp; FADEC Components</div>
+            <span class="section-subtitle">Electronic Engine Control, metering valve, sensors, and power supply</span>
+          </div>
+        </div>
+        <span class="section-badge badge-purple">FADEC</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-eec">
+        <p class="lead">The EEC (Electronic Engine Control) acts as the engine's computer, processing sensor data and commanding the fuel metering valve to deliver the correct fuel flow.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Component</th><th>Function</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>EEC (Electronic Engine Control)</td><td>Computes fuel requirements; the engine computer</td></tr>
+              <tr><td>Fuel Metering Valve</td><td>Adjusts fuel flow according to EEC commands</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>EEC Functions</h3>
+        <ul class="bullet-list check">
+          <li>Receives data from engine sensors and aircraft systems</li>
+          <li>Calculates required fuel flow</li>
+          <li>Controls engine operation</li>
+          <li>Maintains safe operating limits</li>
+        </ul>
+
+        <h3>Pressure Inputs Monitored by the EEC</h3>
+        <ul class="bullet-list">
+          <li>Ambient pressure</li>
+          <li>Burner pressure</li>
+          <li>LPC (Low Pressure Compressor) exit pressure</li>
+          <li>Fan inlet pressure</li>
+        </ul>
+
+        <h3>EEC Power Supply</h3>
+        <div class="two-col">
+          <div class="compare-card info">
+            <div class="cc-title">⚡ Aircraft Electrical System</div>
+            <ul>
+              <li>Primary power source</li>
+              <li>Powers EEC on ground</li>
+            </ul>
+          </div>
+          <div class="compare-card success">
+            <div class="cc-title">🔋 PMA (Permanent Magnet Alternator)</div>
+            <ul>
+              <li>Powers EEC when engine is running</li>
+              <li>Independent of aircraft electrical bus</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="alert alert-info mt-md">
+          <span class="alert-icon">💡</span>
+          <div class="alert-content">
+            <span class="alert-label">Key Point — PMA</span>
+            <p>When the engine is running, the <strong>Permanent Magnet Alternator (PMA) powers the EEC directly</strong>, providing reliable operation independent of the aircraft electrical system.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 9: DUAL-CHANNEL EEC
+    ═══════════════════════════════════════════ -->
+    <div class="section scroll-anchor" id="sec-dual" data-section-id="sec-dual">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-dual">
+        <div class="section-title-group">
+          <span class="section-icon">🔁</span>
+          <div>
+            <div class="section-title">Dual-Channel EEC Design</div>
+            <span class="section-subtitle">Redundancy, channel identification, and the programming plug</span>
+          </div>
+        </div>
+        <span class="section-badge badge-purple">FADEC</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-dual">
+        <p class="lead">Modern FADEC systems use two independent electronic channels to ensure reliability and provide backup capability in the event of a channel failure.</p>
+
+        <h3>Advantages of Dual-Channel Design</h3>
+        <ul class="bullet-list check">
+          <li>Increased reliability</li>
+          <li>Backup capability if one channel fails</li>
+          <li>Improved safety</li>
+        </ul>
+
+        <h3>Channel Wiring Identification</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Wiring</th><th>Color</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Channel A</td><td>Blue</td></tr>
+              <tr><td>Channel B</td><td>Green</td></tr>
+              <tr><td>Non-EEC wiring</td><td>Gray</td></tr>
+              <tr><td>Thermocouple wiring</td><td>Yellow</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Programming Plug</h3>
+        <div class="key-concept">
+          <div class="kc-title">💡 Programming Plug Purpose</div>
+          <div class="kc-body">The programming plug <strong>selects the correct engine software</strong> and <strong>determines the engine thrust rating</strong>. It is a critical component for engine configuration.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 10: FUEL HEATERS
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-heater" data-section-id="sec-heater">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-heater">
+        <div class="section-title-group">
+          <span class="section-icon">🌡️</span>
+          <div>
+            <div class="section-title">Fuel Heaters</div>
+            <span class="section-subtitle">Ice prevention in the fuel system at high altitude</span>
+          </div>
+        </div>
+        <span class="section-badge badge-amber">SAFETY</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-heater">
+        <p class="lead">At high altitude, fuel temperature can fall below 0°C. Any residual water in the fuel may freeze, forming ice crystals that block fuel filters and restrict fuel flow.</p>
+
+        <div class="alert alert-danger">
+          <span class="alert-icon">🧊</span>
+          <div class="alert-content">
+            <span class="alert-label">Ice in Fuel — Danger</span>
+            <p>Ice crystals can <strong>block fuel filters</strong>, <strong>restrict fuel flow</strong>, and cause <strong>engine fuel starvation</strong>.</p>
+          </div>
+        </div>
+
+        <h3>Fuel Heater Purpose</h3>
+        <ul class="bullet-list check">
+          <li>Prevent ice formation in the fuel</li>
+          <li>Melt existing ice crystals</li>
+          <li>Improve combustion quality</li>
+        </ul>
+
+        <h3>Types of Fuel Heaters</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Heater Type</th><th>Heat Source</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Air-to-liquid heat exchanger</td><td>Engine bleed air</td></tr>
+              <tr><td>Liquid-to-liquid heat exchanger</td><td>Engine oil</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Warning System</h3>
+        <ul class="bullet-list">
+          <li><span class="term">Pressure drop warning switches</span> detect filter blockage caused by ice.</li>
+          <li>If ice blocks the filter, a <span class="term">warning light illuminates</span> in the cockpit.</li>
+        </ul>
+
+        <h3>Operation Modes</h3>
+        <div class="two-col">
+          <div class="compare-card info">
+            <div class="cc-title">🖐 Manual</div>
+            <ul>
+              <li>Pilot selects fuel heating</li>
+              <li>Activated based on conditions</li>
+            </ul>
+          </div>
+          <div class="compare-card success">
+            <div class="cc-title">🤖 Automatic (FADEC)</div>
+            <ul>
+              <li>FADEC regulates fuel temperature</li>
+              <li>No pilot action required</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 11: FUEL NOZZLE TYPES
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-nozzles" data-section-id="sec-nozzles">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-nozzles">
+        <div class="section-title-group">
+          <span class="section-icon">🔩</span>
+          <div>
+            <div class="section-title">Fuel Nozzle Types</div>
+            <span class="section-subtitle">Simplex, duplex, and airblast — comparison and characteristics</span>
+          </div>
+        </div>
+        <span class="section-badge badge-teal">NOZZLES</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-nozzles">
+        <p class="lead">Fuel nozzles spray fuel into the combustion chamber. Nozzle design directly affects atomization quality, combustion efficiency, and engine reliability.</p>
+
+        <div class="nozzle-cards">
+          <div class="nozzle-card">
+            <div class="nc-icon">🔵</div>
+            <div class="nc-name">Simplex Nozzle</div>
+            <span class="nc-tag" style="color:var(--text-muted);border-color:var(--border);">Earliest Design</span>
+            <div class="nc-body">
+              <ul class="bullet-list" style="margin-top:0.25rem;">
+                <li>Single fuel manifold</li>
+                <li>Single fuel passage</li>
+                <li>Components: nozzle tip, insert, fine mesh strainer</li>
+                <li>Poorer atomization at low engine speeds</li>
+              </ul>
+            </div>
+          </div>
+          <div class="nozzle-card">
+            <div class="nc-icon">🟢</div>
+            <div class="nc-name">Duplex Nozzle</div>
+            <span class="nc-tag" style="color:var(--green);border-color:var(--green);background:var(--green-soft);">Most Common</span>
+            <div class="nc-body">
+              <ul class="bullet-list" style="margin-top:0.25rem;">
+                <li>Dual fuel passages</li>
+                <li>Requires dual fuel manifold + flow divider / pressurizing valve</li>
+                <li>Better starting performance</li>
+                <li>Improved idle combustion</li>
+                <li>Better spray pattern across wide pressure range</li>
+              </ul>
+            </div>
+          </div>
+          <div class="nozzle-card">
+            <div class="nc-icon">🔵</div>
+            <div class="nc-name">Airblast Nozzle</div>
+            <span class="nc-tag" style="color:var(--teal);border-color:var(--teal);background:var(--teal-soft);">Airflow-Assisted</span>
+            <div class="nc-body">
+              <ul class="bullet-list" style="margin-top:0.25rem;">
+                <li>Uses airflow for atomization (squirrel vanes)</li>
+                <li>Lower operating pressure required</li>
+                <li>Better combustion efficiency</li>
+                <li>Reduced local rich fuel areas</li>
+                <li>Reduced carbon buildup ("carboning")</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-success mt-md">
+          <span class="alert-icon">✅</span>
+          <div class="alert-content">
+            <span class="alert-label">Airblast Nozzle Advantage</span>
+            <p>Airblast nozzles help prevent <strong>disturbed spray patterns caused by carbon deposits</strong>, reducing carboning and improving long-term combustion quality.</p>
+          </div>
+        </div>
+
+        <h3>Nozzle Matching Requirement</h3>
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <span class="alert-label">Critical Maintenance Point</span>
+            <p>All fuel nozzles in the same engine must <strong>deliver equal fuel flow</strong>. Uneven fuel flow causes uneven combustion, temperature imbalance, and reduced efficiency.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 12: NOZZLE INSTALLATION
+    ═══════════════════════════════════════════ -->
+    <div class="section scroll-anchor" id="sec-install" data-section-id="sec-install">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-install">
+        <div class="section-title-group">
+          <span class="section-icon">🔧</span>
+          <div>
+            <div class="section-title">Nozzle Installation Methods</div>
+            <span class="section-subtitle">External vs. internal mounting and maintenance implications</span>
+          </div>
+        </div>
+        <span class="section-badge badge-teal">NOZZLES</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-install">
+        <p class="lead">Fuel nozzles can be mounted in two positions, each with different maintenance implications.</p>
+
+        <div class="two-col">
+          <div class="compare-card info">
+            <div class="cc-title">🔵 External Mounting</div>
+            <ul>
+              <li>Nozzle attaches outside the combustion case</li>
+              <li>Easier maintenance access</li>
+            </ul>
+          </div>
+          <div class="compare-card warning">
+            <div class="cc-title">🟡 Internal Mounting</div>
+            <ul>
+              <li>Nozzle installs inside the combustion liner dome</li>
+              <li>Requires chamber cover removal for maintenance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 13: FLASHCARDS
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-flashcards" data-section-id="sec-flashcards">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-flashcards">
+        <div class="section-title-group">
+          <span class="section-icon">🃏</span>
+          <div>
+            <div class="section-title">Flashcards</div>
+            <span class="section-subtitle">Click any card to reveal the answer — keyboard friendly</span>
+          </div>
+        </div>
+        <span class="section-badge badge-green">ACTIVE RECALL</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-flashcards">
+        <div class="flashcard-grid" role="list">
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: What does FADEC stand for?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Term</span>
+                <div class="fc-q">What does FADEC stand for?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Full Authority Digital Electronic Control</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: What is a rich blowout?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Definition</span>
+                <div class="fc-q">What is a rich blowout?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Excess fuel prevents proper combustion — oxygen becomes insufficient, causing flame instability or failure.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: What is a lean flameout?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Definition</span>
+                <div class="fc-q">What is a lean flameout?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Fuel quantity falls too low to sustain combustion — the flame is extinguished.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: What is the role of the EEC?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Component</span>
+                <div class="fc-q">What is the role of the EEC?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Acts as the engine computer — receives sensor data, calculates fuel flow, and controls engine operation.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: What powers the EEC when the engine is running?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">System</span>
+                <div class="fc-q">What powers the EEC when the engine is running?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">The Permanent Magnet Alternator (PMA) powers the EEC directly when the engine is running.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: Why are fuel heaters necessary?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Safety</span>
+                <div class="fc-q">Why are fuel heaters necessary?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">At high altitude, fuel temperature can fall below 0°C. Residual water freezes into ice crystals that can block fuel filters.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: Simplex vs. Duplex nozzle key difference?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Compare</span>
+                <div class="fc-q">Simplex vs. Duplex nozzle — key difference?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Simplex: single passage — poorer atomization at low speed. Duplex: dual passages — better atomization over a wider pressure range.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: How does an airblast nozzle improve atomization?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Mechanism</span>
+                <div class="fc-q">How does an airblast nozzle improve atomization?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Airflow mixes with fuel at the nozzle opening using squirrel vanes, improving spray quality and reducing carbon buildup.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: Why must fuel nozzles be matched?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Maintenance</span>
+                <div class="fc-q">Why must fuel nozzles be matched?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Uneven fuel flow causes uneven combustion, temperature imbalance, and reduced efficiency. All nozzles must deliver equal flow.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard" role="listitem" tabindex="0" aria-label="Flashcard: What is the purpose of the programming plug?" data-flashcard>
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <span class="fc-label">Component</span>
+                <div class="fc-q">What is the purpose of the programming plug?</div>
+                <span class="fc-hint">tap / click to flip</span>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-a">Selects the correct engine software and determines the engine thrust rating.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         SECTION 14: SELF-CHECK QUIZ
+    ═══════════════════════════════════════════ -->
+    <div class="section open scroll-anchor" id="sec-quiz" data-section-id="sec-quiz">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-quiz">
+        <div class="section-title-group">
+          <span class="section-icon">🧪</span>
+          <div>
+            <div class="section-title">Self-Check Quiz</div>
+            <span class="section-subtitle">10 exam-style MCQ questions with instant feedback</span>
+          </div>
+        </div>
+        <span class="section-badge badge-green">EXAM PREP</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="section-body" id="body-quiz">
+
+        <div class="quiz-block" id="quiz-block">
+
+          <!-- Q1 -->
+          <div class="quiz-item" data-qid="1">
+            <div class="quiz-question"><span class="q-num">Q1.</span> What is the primary function of a turbine engine fuel system?</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> To cool the combustion chamber</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">B</span> To deliver the correct amount of fuel at the correct pressure for efficient combustion</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">C</span> To pressurise the aircraft cabin</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> To lubricate the engine bearings</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-item" data-qid="2">
+            <div class="quiz-question"><span class="q-num">Q2.</span> A rich blowout occurs when:</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> Fuel quantity is too low for combustion</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">B</span> The fuel filter becomes blocked with ice</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">C</span> Excess fuel prevents proper combustion due to insufficient oxygen</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> The EEC fails to compute fuel requirements</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-item" data-qid="3">
+            <div class="quiz-question"><span class="q-num">Q3.</span> What is the consequence of rapid fuel increase during acceleration?</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> Lean flameout and engine shutdown</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">B</span> Over-rich mixture leading to compressor stall or rich blowout</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">C</span> Ice formation in the fuel system</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> Loss of aircraft electrical power</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-item" data-qid="4">
+            <div class="quiz-question"><span class="q-num">Q4.</span> FADEC stands for:</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> Fuel And Digital Engine Control</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">B</span> Full Automated Digital Engine Computer</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">C</span> Full Authority Digital Electronic Control</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> Fuel Authority Data Engine Control</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-item" data-qid="5">
+            <div class="quiz-question"><span class="q-num">Q5.</span> A true FADEC system:</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> Uses a hydromechanical backup control</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">B</span> Controls only fuel flow; other engine functions are separate</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">C</span> Has NO hydromechanical backup fuel control</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> Is powered only by the aircraft electrical system</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q6 -->
+          <div class="quiz-item" data-qid="6">
+            <div class="quiz-question"><span class="q-num">Q6.</span> When the engine is running, the EEC is powered by:</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> Aircraft main battery</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">B</span> Ground power unit</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">C</span> The Permanent Magnet Alternator (PMA)</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> The aircraft hydraulic system</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q7 -->
+          <div class="quiz-item" data-qid="7">
+            <div class="quiz-question"><span class="q-num">Q7.</span> Fuel heaters are necessary primarily because:</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> Cold fuel causes compressor stall</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">B</span> Residual water in fuel can freeze at altitude, blocking fuel filters</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">C</span> Warm fuel burns more efficiently at sea level</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> Cold fuel causes the EEC to malfunction</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q8 -->
+          <div class="quiz-item" data-qid="8">
+            <div class="quiz-question"><span class="q-num">Q8.</span> The duplex fuel nozzle differs from the simplex nozzle primarily because it:</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> Uses airflow to assist atomization</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">B</span> Is the earliest nozzle design</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">C</span> Has dual fuel passages and provides better atomization over a wider pressure range</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> Requires no flow divider</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q9 -->
+          <div class="quiz-item" data-qid="9">
+            <div class="quiz-question"><span class="q-num">Q9.</span> An advantage of airblast nozzles over other types is:</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> They use a single fuel manifold</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">B</span> They require no airflow for operation</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">C</span> They reduce carbon buildup and require lower operating pressure</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> They are the simplest nozzle design</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+          <!-- Q10 -->
+          <div class="quiz-item" data-qid="10">
+            <div class="quiz-question"><span class="q-num">Q10.</span> Why must all fuel nozzles in the same engine be matched?</div>
+            <div class="quiz-options">
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">A</span> To ensure they all fail at the same time</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">B</span> To reduce maintenance workload</button>
+              <button class="quiz-option" data-correct="true"><span class="opt-letter">C</span> To ensure equal fuel flow, preventing uneven combustion and temperature imbalance</button>
+              <button class="quiz-option" data-correct="false"><span class="opt-letter">D</span> To allow the FADEC to identify individual nozzles</button>
+            </div>
+            <div class="quiz-feedback"></div>
+          </div>
+
+        </div><!-- /quiz-block -->
+
+        <div class="quiz-score" id="quiz-score-display"></div>
+        <button class="quiz-reset-btn" id="quiz-reset-btn">↺ Reset Quiz</button>
+
+      </div>
+    </div>
+
+  </main>
+</div><!-- /layout -->
+
+<script>
+  /* ═══════════════════════════════════════════════
+     SCROLL PROGRESS BAR
+  ═══════════════════════════════════════════════ */
+  (function () {
+    const bar = document.getElementById('progress-bar');
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+      bar.style.width = pct + '%';
+      bar.setAttribute('aria-valuenow', Math.round(pct));
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  })();
+
+  /* ═══════════════════════════════════════════════
+     COLLAPSIBLE SECTIONS
+  ═══════════════════════════════════════════════ */
+  (function () {
+    const headers = document.querySelectorAll('.section-header');
+    headers.forEach(function (header) {
+      function toggle() {
+        const section = header.closest('.section');
+        const isOpen = section.classList.contains('open');
+        section.classList.toggle('open', !isOpen);
+        header.setAttribute('aria-expanded', String(!isOpen));
+      }
+      header.addEventListener('click', toggle);
+      header.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    });
+  })();
+
+  /* ═══════════════════════════════════════════════
+     EXPAND / COLLAPSE ALL
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var expandBtn = document.getElementById('expand-all-btn');
+    var collapseBtn = document.getElementById('collapse-all-btn');
+
+    expandBtn.addEventListener('click', function () {
+      document.querySelectorAll('.section').forEach(function (s) {
+        s.classList.add('open');
+        var h = s.querySelector('.section-header');
+        if (h) h.setAttribute('aria-expanded', 'true');
+      });
+    });
+
+    collapseBtn.addEventListener('click', function () {
+      document.querySelectorAll('.section').forEach(function (s) {
+        s.classList.remove('open');
+        var h = s.querySelector('.section-header');
+        if (h) h.setAttribute('aria-expanded', 'false');
+      });
+    });
+  })();
+
+  /* ═══════════════════════════════════════════════
+     FOCUS MODE
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var btn = document.getElementById('focus-btn');
+    var active = false;
+    btn.addEventListener('click', function () {
+      active = !active;
+      document.body.classList.toggle('focus-mode', active);
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+      btn.textContent = active ? '⚡ Focus ON' : '⚡ Focus';
+    });
+  })();
+
+  /* ═══════════════════════════════════════════════
+     EXAM MODE
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var btn = document.getElementById('exam-btn');
+    var active = false;
+    btn.addEventListener('click', function () {
+      active = !active;
+      document.body.classList.toggle('exam-mode', active);
+      btn.classList.toggle('active', active);
+      btn.setAttribute('aria-pressed', String(active));
+      btn.textContent = active ? '📝 Exam ON' : '📝 Exam Mode';
+
+      // In exam mode, open all sections so content is visible
+      if (active) {
+        document.querySelectorAll('.section').forEach(function (s) {
+          s.classList.add('open');
+          var h = s.querySelector('.section-header');
+          if (h) h.setAttribute('aria-expanded', 'true');
+        });
+      }
+    });
+  })();
+
+  /* ═══════════════════════════════════════════════
+     MOBILE SIDEBAR
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var menuToggle = document.getElementById('menu-toggle');
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebar-overlay');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('open');
+      overlay.removeAttribute('aria-hidden');
+      menuToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    menuToggle.addEventListener('click', function () {
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    overlay.addEventListener('click', closeSidebar);
+
+    // Close sidebar on link click (mobile)
+    sidebar.querySelectorAll('.sidebar-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        if (window.innerWidth <= 700) closeSidebar();
+      });
+    });
+  })();
+
+  /* ═══════════════════════════════════════════════
+     SIDEBAR ACTIVE STATE ON SCROLL
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var sections = document.querySelectorAll('.scroll-anchor[id]');
+    var links = document.querySelectorAll('.sidebar-link[data-section]');
+
+    function updateActive() {
+      var scrollY = window.scrollY + 100;
+      var current = '';
+      sections.forEach(function (sec) {
+        if (sec.offsetTop <= scrollY) {
+          current = sec.id;
+        }
+      });
+      links.forEach(function (link) {
+        link.classList.toggle('active', link.dataset.section === current);
+      });
+    }
+
+    window.addEventListener('scroll', updateActive, { passive: true });
+    updateActive();
+  })();
+
+  /* ═══════════════════════════════════════════════
+     FLASHCARDS
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var cards = document.querySelectorAll('[data-flashcard]');
+    cards.forEach(function (card) {
+      function flip() {
+        var flipped = card.classList.toggle('flipped');
+        card.setAttribute('aria-label',
+          flipped
+            ? card.getAttribute('aria-label').replace('Flashcard:', 'Answer:')
+            : card.getAttribute('aria-label').replace('Answer:', 'Flashcard:')
+        );
+      }
+      card.addEventListener('click', flip);
+      card.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          flip();
+        }
+      });
+    });
+  })();
+
+  /* ═══════════════════════════════════════════════
+     QUIZ
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var answered = 0;
+    var correct  = 0;
+    var total    = document.querySelectorAll('.quiz-item').length;
+    var scoreDisplay = document.getElementById('quiz-score-display');
+
+    document.querySelectorAll('.quiz-item').forEach(function (item) {
+      var options  = item.querySelectorAll('.quiz-option');
+      var feedback = item.querySelector('.quiz-feedback');
+      var done     = false;
+
+      options.forEach(function (opt) {
+        opt.addEventListener('click', function () {
+          if (done) return;
+          done = true;
+          answered++;
+          item.classList.add('answered');
+
+          var isCorrect = opt.dataset.correct === 'true';
+          if (isCorrect) {
+            correct++;
+            opt.classList.add('correct');
+            feedback.textContent = '✓ Correct!';
+            feedback.className = 'quiz-feedback show ok';
+          } else {
+            opt.classList.add('incorrect');
+            feedback.className = 'quiz-feedback show bad';
+            feedback.textContent = '✕ Incorrect. ';
+            // Reveal correct answer
+            options.forEach(function (o) {
+              if (o.dataset.correct === 'true') {
+                o.classList.add('reveal-correct');
+                feedback.textContent += 'The correct answer has been highlighted.';
+              }
+            });
+          }
+
+          // Disable all options
+          options.forEach(function (o) { o.disabled = true; });
+
+          // Show score when all answered
+          if (answered === total) {
+            scoreDisplay.textContent = '📊 Final Score: ' + correct + ' / ' + total + ' — ' +
+              (correct === total ? '🏆 Perfect!' : correct >= total * 0.7 ? '✅ Good work!' : '📖 Review the sections and try again.');
+            scoreDisplay.classList.add('show');
+          }
+        });
+      });
+    });
+
+    // Reset
+    document.getElementById('quiz-reset-btn').addEventListener('click', function () {
+      answered = 0;
+      correct  = 0;
+      scoreDisplay.classList.remove('show');
+      scoreDisplay.textContent = '';
+
+      document.querySelectorAll('.quiz-item').forEach(function (item) {
+        item.classList.remove('answered');
+        var opts = item.querySelectorAll('.quiz-option');
+        opts.forEach(function (o) {
+          o.disabled = false;
+          o.classList.remove('correct', 'incorrect', 'reveal-correct');
+        });
+        var fb = item.querySelector('.quiz-feedback');
+        fb.className = 'quiz-feedback';
+        fb.textContent = '';
+      });
+    });
+  })();
+
+  /* ═══════════════════════════════════════════════
+     CHECKLIST
+  ═══════════════════════════════════════════════ */
+  (function () {
+    var items   = document.querySelectorAll('.check-item');
+    var fill    = document.getElementById('checklist-fill');
+    var counter = document.getElementById('checklist-count');
+    var states  = new Array(items.length).fill(false);
+
+    function updateBar() {
+      var done = states.filter(Boolean).length;
+      var pct  = (done / states.length) * 100;
+      fill.style.width = pct + '%';
+      counter.textContent = done + ' / ' + states.length + ' completed';
+    }
+
+    items.forEach(function (item, idx) {
+      item.addEventListener('click', function () {
+        states[idx] = !states[idx];
+        item.classList.toggle('checked', states[idx]);
+        updateBar();
+      });
+      item.setAttribute('role', 'checkbox');
+      item.setAttribute('aria-checked', 'false');
+      item.setAttribute('tabindex', '0');
+      item.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.click();
+          item.setAttribute('aria-checked', String(states[idx]));
+        }
+      });
+    });
+
+    updateBar();
+  })();
+</script>
+</body>
+</html>
