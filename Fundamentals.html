@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aviation Fundamentals — Revision Dashboard</title>
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #13151a;
+      --bg2:         #1a1d24;
+      --bg3:         #20242e;
+      --surface:     #252932;
+      --surface2:    #2e3340;
+      --border:      #343944;
+      --border2:     #3f4554;
+      --text:        #dde3ef;
+      --text2:       #9aa3b8;
+      --text3:       #6b7489;
+      --accent:      #5b8dee;
+      --accent2:     #3a6de0;
+      --accent-dim:  rgba(91,141,238,.12);
+      --green:       #3ecf7e;
+      --green-dim:   rgba(62,207,126,.12);
+      --amber:       #f5a623;
+      --amber-dim:   rgba(245,166,35,.12);
+      --red:         #e05c5c;
+      --red-dim:     rgba(224,92,92,.12);
+      --teal:        #38c9c0;
+      --teal-dim:    rgba(56,201,192,.12);
+      --purple:      #a78bfa;
+      --purple-dim:  rgba(167,139,250,.12);
+      --radius:      12px;
+      --radius-sm:   8px;
+      --shadow:      0 4px 24px rgba(0,0,0,.35);
+      --transition:  .22s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    /* ─── PROGRESS BAR ─────────────────────────────────────────── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--teal));
+      width: 0%; z-index: 9999;
+      transition: width .1s linear;
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* ─── TOPBAR ────────────────────────────────────────────────── */
+    #topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 56px;
+      background: rgba(19,21,26,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; z-index: 900; gap: 12px;
+    }
+
+    .topbar-left {
+      display: flex; align-items: center; gap: 12px; min-width: 0;
+    }
+
+    #sidebar-toggle {
+      background: none; border: none; cursor: pointer;
+      color: var(--text2); padding: 6px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background var(--transition), color var(--transition);
+    }
+    #sidebar-toggle:hover { background: var(--surface); color: var(--text); }
+
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 700; color: var(--text);
+      white-space: nowrap; overflow: hidden;
+    }
+    .logo-icon {
+      width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent), var(--teal));
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
+    }
+    .logo-sub {
+      font-size: 11px; font-weight: 400; color: var(--text3);
+      display: block; line-height: 1;
+    }
+
+    .topbar-controls {
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+
+    .ctrl-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 7px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text2);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: all var(--transition); white-space: nowrap;
+    }
+    .ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .ctrl-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+    .ctrl-btn svg { flex-shrink: 0; }
+
+    .ctrl-label { display: none; }
+    @media(min-width:600px){ .ctrl-label { display: inline; } }
+
+    /* ─── LAYOUT ────────────────────────────────────────────────── */
+    #layout {
+      display: flex; min-height: 100vh;
+      padding-top: 56px;
+    }
+
+    /* ─── SIDEBAR ───────────────────────────────────────────────── */
+    #sidebar {
+      width: 264px; flex-shrink: 0;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      position: fixed; top: 56px; left: 0; bottom: 0;
+      overflow-y: auto; z-index: 800;
+      transition: transform var(--transition);
+    }
+    #sidebar.hidden { transform: translateX(-100%); }
+
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-track { background: transparent; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+    .sidebar-inner { padding: 16px 0 32px; }
+
+    .sidebar-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--text3);
+      padding: 4px 20px 8px; display: block;
+    }
+
+    .toc-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px; color: var(--text2);
+      text-decoration: none; font-size: 13px; font-weight: 500;
+      border-left: 3px solid transparent;
+      transition: all var(--transition); cursor: pointer;
+    }
+    .toc-link:hover { color: var(--text); background: var(--surface); }
+    .toc-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-dim); }
+    .toc-num {
+      font-size: 11px; color: var(--text3); font-weight: 600;
+      min-width: 18px;
+    }
+
+    .sidebar-divider {
+      height: 1px; background: var(--border); margin: 12px 20px;
+    }
+
+    /* Sidebar checklist */
+    .sidebar-checklist { padding: 4px 20px 0; }
+    .sidebar-checklist-title {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text3); margin-bottom: 8px;
+    }
+    .check-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 0; cursor: pointer; user-select: none;
+    }
+    .check-item input[type=checkbox] {
+      accent-color: var(--green); width: 14px; height: 14px; cursor: pointer;
+    }
+    .check-item label {
+      font-size: 12px; color: var(--text2); cursor: pointer;
+      transition: color var(--transition);
+    }
+    .check-item input:checked + label { color: var(--green); text-decoration: line-through; }
+
+    /* ─── MAIN ──────────────────────────────────────────────────── */
+    #main {
+      flex: 1;
+      min-width: 0;
+      margin-left: 264px;
+      padding: 36px 32px 80px;
+      max-width: 900px;
+      transition: margin-left var(--transition);
+    }
+    #main.sidebar-hidden { margin-left: 0; max-width: 960px; }
+
+    @media(max-width:900px){
+      #main { padding: 28px 20px 60px; }
+    }
+    @media(max-width:640px){
+      #sidebar { width: 240px; }
+      #main { margin-left: 0 !important; padding: 20px 14px 60px; }
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+    }
+
+    /* Overlay on mobile */
+    #overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      z-index: 750; backdrop-filter: blur(2px);
+    }
+    @media(max-width:640px){
+      #overlay.show { display: block; }
+    }
+
+    /* ─── PAGE HEADER ───────────────────────────────────────────── */
+    .page-header { margin-bottom: 40px; }
+    .page-header .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent);
+      background: var(--accent-dim); border: 1px solid rgba(91,141,238,.25);
+      padding: 4px 10px; border-radius: 20px; margin-bottom: 14px;
+    }
+    .page-header h1 {
+      font-size: clamp(22px, 4vw, 34px);
+      font-weight: 800; color: var(--text); line-height: 1.2; margin-bottom: 10px;
+    }
+    .page-header .subtitle {
+      font-size: 14px; color: var(--text2); max-width: 560px; line-height: 1.6;
+    }
+
+    .stat-row {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px;
+    }
+    .stat-chip {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 13px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface);
+      font-size: 12px; color: var(--text2);
+    }
+    .stat-chip span { color: var(--text); font-weight: 700; }
+
+    /* ─── SECTION ───────────────────────────────────────────────── */
+    .section { margin-bottom: 36px; scroll-margin-top: 80px; }
+
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+      cursor: pointer; user-select: none;
+      transition: background var(--transition), border-color var(--transition);
+    }
+    .section-header:hover { background: var(--surface2); border-color: var(--border2); }
+
+    .section-header-left {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .section-icon {
+      width: 36px; height: 36px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; flex-shrink: 0;
+    }
+    .section-title { font-size: 16px; font-weight: 700; color: var(--text); }
+    .section-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+    .chevron {
+      transition: transform var(--transition); color: var(--text3); flex-shrink: 0;
+    }
+    .section-header[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    .section-body {
+      overflow: hidden;
+      transition: max-height .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+      max-height: 0; opacity: 0;
+    }
+    .section-body.open { max-height: 9999px; opacity: 1; }
+    .section-body-inner {
+      padding: 20px 0 4px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    /* ─── CARDS ─────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 20px;
+    }
+    .card-title {
+      font-size: 13px; font-weight: 700; color: var(--text2);
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 12px;
+    }
+
+    .card-grid {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    .card-small {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+    }
+    .card-small-label {
+      font-size: 11px; color: var(--text3); font-weight: 600;
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;
+    }
+    .card-small-value { font-size: 14px; color: var(--text); font-weight: 600; }
+    .card-small-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+
+    /* ─── NOTICE BOXES ──────────────────────────────────────────── */
+    .box {
+      border-radius: var(--radius-sm); padding: 14px 16px;
+      display: flex; gap: 12px; align-items: flex-start;
+      border-left: 3px solid;
+    }
+    .box-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+    .box-content { flex: 1; min-width: 0; }
+    .box-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; }
+    .box-text { font-size: 13.5px; color: var(--text2); line-height: 1.6; }
+    .box-text strong { color: var(--text); }
+
+    .box-green  { background: var(--green-dim);  border-color: var(--green);  }
+    .box-green .box-title  { color: var(--green); }
+    .box-amber  { background: var(--amber-dim);  border-color: var(--amber);  }
+    .box-amber .box-title  { color: var(--amber); }
+    .box-accent { background: var(--accent-dim); border-color: var(--accent); }
+    .box-accent .box-title { color: var(--accent); }
+    .box-teal   { background: var(--teal-dim);   border-color: var(--teal);   }
+    .box-teal .box-title   { color: var(--teal);  }
+    .box-purple { background: var(--purple-dim); border-color: var(--purple); }
+    .box-purple .box-title { color: var(--purple); }
+    .box-red    { background: var(--red-dim);    border-color: var(--red);    }
+    .box-red .box-title    { color: var(--red);   }
+
+    /* ─── FORMULA BLOCK ─────────────────────────────────────────── */
+    .formula {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      flex-wrap: wrap;
+    }
+    .formula-eq {
+      font-size: 17px; font-weight: 700; color: var(--accent);
+      font-family: 'Courier New', monospace; letter-spacing: .04em;
+    }
+    .formula-vars { font-size: 12px; color: var(--text3); line-height: 1.8; }
+    .formula-vars b { color: var(--text2); }
+
+    /* ─── BULLET LIST ───────────────────────────────────────────── */
+    .bullet-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .bullet-list li {
+      display: flex; align-items: flex-start; gap: 9px;
+      font-size: 14px; color: var(--text2); line-height: 1.55;
+    }
+    .bullet-list li::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0; margin-top: 6px;
+    }
+    .bullet-list li strong { color: var(--text); }
+
+    /* ─── TABLE ─────────────────────────────────────────────────── */
+    .rev-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .rev-table th {
+      text-align: left; padding: 9px 14px;
+      background: var(--bg); color: var(--text3);
+      font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+      font-weight: 700; border-bottom: 1px solid var(--border);
+    }
+    .rev-table td {
+      padding: 10px 14px; border-bottom: 1px solid var(--border);
+      color: var(--text2); vertical-align: top;
+    }
+    .rev-table td:first-child { color: var(--text); font-weight: 600; }
+    .rev-table tr:last-child td { border-bottom: none; }
+    .rev-table tr:hover td { background: var(--bg3); }
+
+    /* ─── FLASHCARDS ────────────────────────────────────────────── */
+    .flashcard-grid {
+      display: grid; gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    .flashcard-wrap { perspective: 900px; height: 140px; cursor: pointer; }
+    .flashcard-wrap:focus { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--radius-sm); }
+
+    .flashcard-inner {
+      position: relative; width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.4,0,.2,1);
+    }
+    .flashcard-wrap.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+    .fc-front, .fc-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-sm); padding: 16px 18px;
+      display: flex; flex-direction: column; justify-content: center;
+      border: 1px solid var(--border);
+    }
+    .fc-front {
+      background: var(--surface);
+    }
+    .fc-back {
+      background: linear-gradient(135deg, rgba(91,141,238,.12), rgba(56,201,192,.08));
+      border-color: var(--accent);
+      transform: rotateY(180deg);
+    }
+    .fc-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text3); margin-bottom: 8px;
+    }
+    .fc-front .fc-tag { color: var(--text3); }
+    .fc-back .fc-tag  { color: var(--accent); }
+    .fc-q { font-size: 13.5px; font-weight: 600; color: var(--text); line-height: 1.4; }
+    .fc-a { font-size: 13px; color: var(--text2); line-height: 1.5; }
+    .fc-hint {
+      font-size: 10px; color: var(--text3); margin-top: auto;
+      padding-top: 8px; display: flex; align-items: center; gap: 4px;
+    }
+
+    /* ─── QUIZ ──────────────────────────────────────────────────── */
+    .quiz-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 22px;
+      margin-bottom: 14px;
+    }
+    .quiz-q {
+      font-size: 14.5px; font-weight: 600; color: var(--text);
+      margin-bottom: 14px; line-height: 1.5;
+    }
+    .quiz-q .q-num {
+      color: var(--accent); font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .07em;
+      display: block; margin-bottom: 5px;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-option {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 14px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); cursor: pointer;
+      background: var(--bg3); color: var(--text2); font-size: 13.5px;
+      transition: all var(--transition); user-select: none;
+    }
+    .quiz-option:hover { border-color: var(--border2); background: var(--surface2); color: var(--text); }
+    .quiz-option.correct { background: var(--green-dim); border-color: var(--green); color: var(--text); }
+    .quiz-option.incorrect { background: var(--red-dim); border-color: var(--red); color: var(--text); }
+    .quiz-option.disabled { pointer-events: none; }
+    .quiz-option .opt-letter {
+      font-weight: 700; font-size: 12px; color: var(--text3);
+      flex-shrink: 0; margin-top: 1px; min-width: 16px;
+    }
+    .quiz-feedback {
+      margin-top: 12px; padding: 10px 14px;
+      border-radius: var(--radius-sm); font-size: 13px;
+      display: none; line-height: 1.5;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct-fb { background: var(--green-dim); color: var(--green); border: 1px solid rgba(62,207,126,.25); }
+    .quiz-feedback.incorrect-fb { background: var(--red-dim); color: #f08080; border: 1px solid rgba(224,92,92,.25); }
+
+    .quiz-reset-btn {
+      margin-top: 18px; display: flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .quiz-reset-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* quiz score */
+    .quiz-score {
+      padding: 14px 18px; background: var(--bg);
+      border-radius: var(--radius-sm); border: 1px solid var(--border);
+      font-size: 13px; color: var(--text2); margin-top: 6px; display: none;
+    }
+    .quiz-score.show { display: block; }
+    .quiz-score strong { color: var(--accent); font-size: 16px; }
+
+    /* ─── FOCUS / EXAM MODE HELPERS ─────────────────────────────── */
+    body.focus-mode .extra-text { display: none !important; }
+    body.exam-mode .section-body-inner > *:not(.box-green):not(.box-accent):not(.flashcard-grid):not(.quiz-card):not(.quiz-reset-btn):not(.quiz-score):not(.box-purple) { display: none !important; }
+    body.exam-mode .section-body { max-height: 9999px !important; opacity: 1 !important; }
+    body.exam-mode .section-body.open { max-height: 9999px; }
+
+    /* ─── MEMORY AID ────────────────────────────────────────────── */
+    .memory-aid {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: var(--purple-dim); border: 1px solid rgba(167,139,250,.25);
+      border-radius: var(--radius-sm); padding: 14px 16px;
+    }
+    .memory-big {
+      font-size: 28px; font-weight: 900; color: var(--purple);
+      line-height: 1; flex-shrink: 0; font-family: 'Courier New', monospace;
+    }
+    .memory-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .memory-text b { color: var(--text); }
+
+    /* ─── KEY TERM ──────────────────────────────────────────────── */
+    .key-term {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--accent-dim); border: 1px solid rgba(91,141,238,.2);
+      color: var(--accent); border-radius: 4px;
+      padding: 1px 7px; font-size: 12.5px; font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ─── DEF LIST ──────────────────────────────────────────────── */
+    .def-list { display: flex; flex-direction: column; gap: 12px; }
+    .def-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 11px 14px; border-radius: var(--radius-sm);
+      background: var(--bg3); border: 1px solid var(--border);
+    }
+    .def-term {
+      font-size: 13px; font-weight: 700; color: var(--accent);
+      min-width: 110px; flex-shrink: 0; padding-top: 1px;
+    }
+    .def-desc { font-size: 13.5px; color: var(--text2); line-height: 1.55; }
+    .def-desc strong { color: var(--text); }
+
+    /* ─── VENTURI TABLE ─────────────────────────────────────────── */
+    .venturi-row { display: flex; gap: 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); }
+    .venturi-cell {
+      flex: 1; padding: 14px 12px; text-align: center;
+      font-size: 13px; border-right: 1px solid var(--border);
+    }
+    .venturi-cell:last-child { border-right: none; }
+    .venturi-cell .v-label { font-size: 11px; color: var(--text3); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+    .venturi-cell .v-hi { color: var(--red); font-weight: 700; }
+    .venturi-cell .v-lo { color: var(--green); font-weight: 700; }
+    .venturi-cell.wide-area { background: rgba(62,207,126,.06); }
+    .venturi-cell.narrow-area { background: rgba(224,92,92,.06); }
+
+    /* ─── DIVIDER ───────────────────────────────────────────────── */
+    .content-divider {
+      height: 1px; background: var(--border); margin: 4px 0;
+    }
+
+    /* ─── NEWTON BLOCK ──────────────────────────────────────────── */
+    .law-block {
+      border-radius: var(--radius-sm); padding: 16px 18px;
+      border: 1px solid var(--border); background: var(--bg3);
+    }
+    .law-number {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; margin-bottom: 6px; color: var(--teal);
+    }
+    .law-name { font-size: 15px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .law-statement {
+      font-size: 13.5px; color: var(--text2); font-style: italic;
+      padding: 10px 14px; background: var(--bg2);
+      border-radius: 6px; border-left: 3px solid var(--teal);
+      margin-bottom: 10px; line-height: 1.55;
+    }
+
+    /* ─── FLOAT BUTTON ──────────────────────────────────────────── */
+    #fab {
+      position: fixed; bottom: 22px; right: 22px;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--teal));
+      border: none; cursor: pointer; z-index: 800;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(91,141,238,.4);
+      transition: transform var(--transition), box-shadow var(--transition);
+      color: #fff;
+    }
+    #fab:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(91,141,238,.55); }
+
+    /* ─── SCROLLBAR ─────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+    /* ─── FOCUS STATES ──────────────────────────────────────────── */
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ─── UTILITY ───────────────────────────────────────────────── */
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mt-4 { margin-top: 16px; }
+    .two-col {
+      display: grid; gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media(max-width:500px){ .two-col { grid-template-columns: 1fr; } }
+
+    /* ─── MODE BANNER ───────────────────────────────────────────── */
+    #mode-banner {
+      display: none; position: fixed;
+      bottom: 80px; left: 50%; transform: translateX(-50%);
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 30px; padding: 8px 20px;
+      font-size: 12px; font-weight: 700; color: var(--text2);
+      z-index: 700; letter-spacing: .05em;
+      box-shadow: var(--shadow);
+    }
+    #mode-banner.show { display: block; }
+
+    /* ─── MINI PROGRESS ─────────────────────────────────────────── */
+    .quiz-progress-row {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; color: var(--text3); margin-bottom: 16px;
+    }
+    .quiz-progress-bar-bg {
+      flex: 1; height: 4px; background: var(--border);
+      border-radius: 4px; margin: 0 10px; overflow: hidden;
+    }
+    .quiz-progress-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--teal));
+      border-radius: 4px; width: 0%; transition: width .3s ease;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar" role="progressbar" aria-label="Reading progress"></div>
+
+<!-- Topbar -->
+<header id="topbar">
+  <div class="topbar-left">
+    <button id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <div class="logo">
+      <div class="logo-icon">✈</div>
+      <div>
+        Aviation Fundamentals
+        <span class="logo-sub">Energy · Motion · Forces · Engines</span>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-controls">
+    <button class="ctrl-btn" id="expand-all-btn" title="Expand All Sections">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/>
+      </svg>
+      <span class="ctrl-label">Expand All</span>
+    </button>
+    <button class="ctrl-btn" id="focus-btn" title="Focus Mode">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/>
+      </svg>
+      <span class="ctrl-label">Focus</span>
+    </button>
+    <button class="ctrl-btn" id="exam-btn" title="Exam Mode">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <rect x="5" y="3" width="14" height="18" rx="2"/>
+        <line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/>
+      </svg>
+      <span class="ctrl-label">Exam Mode</span>
+    </button>
+  </div>
+</header>
+
+<!-- Overlay (mobile) -->
+<div id="overlay"></div>
+
+<!-- Layout -->
+<div id="layout">
+
+  <!-- Sidebar -->
+  <nav id="sidebar" aria-label="Table of Contents">
+    <div class="sidebar-inner">
+      <span class="sidebar-label">Contents</span>
+
+      <a class="toc-link" data-target="sec-energy">
+        <span class="toc-num">01</span> Energy Overview
+      </a>
+      <a class="toc-link" data-target="sec-potential">
+        <span class="toc-num">02</span> Potential Energy
+      </a>
+      <a class="toc-link" data-target="sec-kinetic">
+        <span class="toc-num">03</span> Kinetic Energy
+      </a>
+      <a class="toc-link" data-target="sec-force">
+        <span class="toc-num">04</span> Force
+      </a>
+      <a class="toc-link" data-target="sec-work">
+        <span class="toc-num">05</span> Work &amp; Torque
+      </a>
+      <a class="toc-link" data-target="sec-motion">
+        <span class="toc-num">06</span> Motion &amp; Velocity
+      </a>
+      <a class="toc-link" data-target="sec-newton">
+        <span class="toc-num">07</span> Newton's Laws
+      </a>
+      <a class="toc-link" data-target="sec-bernoulli">
+        <span class="toc-num">08</span> Bernoulli's Principle
+      </a>
+      <a class="toc-link" data-target="sec-gas-laws">
+        <span class="toc-num">09</span> Gas Laws
+      </a>
+      <a class="toc-link" data-target="sec-thrust">
+        <span class="toc-num">10</span> Thrust &amp; Propulsion
+      </a>
+      <a class="toc-link" data-target="sec-power">
+        <span class="toc-num">11</span> Power
+      </a>
+      <a class="toc-link" data-target="sec-flashcards">
+        <span class="toc-num">FC</span> Flashcards
+      </a>
+      <a class="toc-link" data-target="sec-quiz">
+        <span class="toc-num">Q</span> Self-Check Quiz
+      </a>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-checklist">
+        <div class="sidebar-checklist-title">📋 Study Checklist</div>
+        <div class="check-item">
+          <input type="checkbox" id="ck1"><label for="ck1">Energy types & formulas</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="ck2"><label for="ck2">Newton's 3 Laws</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="ck3"><label for="ck3">Bernoulli's Principle</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="ck4"><label for="ck4">Boyle's & Charles' Laws</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="ck5"><label for="ck5">Thrust & propulsion types</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="ck6"><label for="ck6">Work vs Torque distinction</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="ck7"><label for="ck7">Speed vs Velocity</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="ck8"><label for="ck8">Completed self-check quiz</label>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="badge">✈ EASA Part-66 Level · Revision Module</div>
+      <h1>Aviation Fundamentals</h1>
+      <p class="subtitle">Energy, Motion, Forces &amp; Engine Principles — structured for fast, exam-focused revision.</p>
+      <div class="stat-row">
+        <div class="stat-chip">📚 <span>11</span> Topics</div>
+        <div class="stat-chip">🃏 <span>12</span> Flashcards</div>
+        <div class="stat-chip">🧪 <span>10</span> Quiz Questions</div>
+        <div class="stat-chip">⏱ <span>~25 min</span> study session</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 1: Energy Overview -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-energy">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(91,141,238,.15);">⚡</div>
+          <div>
+            <div class="section-title">01 — Energy Overview</div>
+            <div class="section-desc">The foundation of all aircraft motion and engine operation</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body open">
+        <div class="section-body-inner">
+
+          <div class="box box-accent">
+            <div class="box-icon">💡</div>
+            <div class="box-content">
+              <div class="box-title">Key Concept</div>
+              <div class="box-text"><strong>Energy</strong> is the ability to perform work. In aviation, energy enables aircraft to move, accelerate, produce thrust, and generate lift.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Two Main Types of Energy</div>
+            <div class="card-grid">
+              <div class="card-small">
+                <div class="card-small-label">Potential Energy</div>
+                <div class="card-small-value">Stored / at rest</div>
+                <div class="card-small-sub">e.g. Fuel in tanks, aircraft on jacks</div>
+              </div>
+              <div class="card-small">
+                <div class="card-small-label">Kinetic Energy</div>
+                <div class="card-small-value">Energy in motion</div>
+                <div class="card-small-sub">e.g. Aircraft rolling on runway</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Energy = ability to do work &nbsp;|&nbsp; Two types: <strong>Potential</strong> (stored) &amp; <strong>Kinetic</strong> (motion)</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 2: Potential Energy -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-potential">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(245,166,35,.12);">🔋</div>
+          <div>
+            <div class="section-title">02 — Potential Energy</div>
+            <div class="section-desc">Stored energy — position, elasticity, or chemical form</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body open">
+        <div class="section-body-inner">
+
+          <div class="card extra-text">
+            <div class="card-title">Three Forms of Potential Energy</div>
+            <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr));">
+              <div class="card-small">
+                <div class="card-small-label">1. Position</div>
+                <div class="card-small-value">Height / Location</div>
+                <div class="card-small-sub">Water in elevated tank · Aircraft on jacks</div>
+              </div>
+              <div class="card-small">
+                <div class="card-small-label">2. Elastic Distortion</div>
+                <div class="card-small-value">Stretched / Compressed</div>
+                <div class="card-small-sub">Compressed spring · Bungee cord</div>
+              </div>
+              <div class="card-small">
+                <div class="card-small-label">3. Chemical</div>
+                <div class="card-small-value">Chemical reaction</div>
+                <div class="card-small-sub">Aviation fuel · Aircraft batteries</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="formula">
+            <div class="formula-eq">PE = W × H</div>
+            <div class="formula-vars">
+              <b>PE</b> = Potential Energy<br>
+              <b>W</b> = Weight<br>
+              <b>H</b> = Height
+            </div>
+          </div>
+
+          <div class="box box-amber">
+            <div class="box-icon">⚠️</div>
+            <div class="box-content">
+              <div class="box-title">Exam Watch</div>
+              <div class="box-text">Aviation fuel is a form of <strong>chemical potential energy</strong> — it stores energy that is released through combustion, not motion.</div>
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Potential energy is <strong>stored</strong>. Three forms: <strong>position</strong>, <strong>elasticity</strong>, <strong>chemical</strong>. Formula: <span class="key-term">PE = W × H</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 3: Kinetic Energy -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-kinetic">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(56,201,192,.12);">🚀</div>
+          <div>
+            <div class="section-title">03 — Kinetic Energy</div>
+            <div class="section-desc">Energy of motion — depends on mass and velocity</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+
+          <div class="box box-accent">
+            <div class="box-icon">💡</div>
+            <div class="box-content">
+              <div class="box-title">Definition</div>
+              <div class="box-text"><strong>Kinetic energy</strong> is energy possessed by a body due to its motion.</div>
+            </div>
+          </div>
+
+          <div class="formula">
+            <div class="formula-eq">KE = ½mv²</div>
+            <div class="formula-vars">
+              <b>m</b> = Mass<br>
+              <b>v</b> = Velocity
+            </div>
+          </div>
+
+          <div class="card extra-text">
+            <div class="card-title">Aviation Examples</div>
+            <ul class="bullet-list">
+              <li>Aircraft taking off along a runway</li>
+              <li>Rotating turbine blades inside an engine</li>
+              <li>Spinning flywheel</li>
+            </ul>
+          </div>
+
+          <div class="box box-amber">
+            <div class="box-icon">⚠️</div>
+            <div class="box-content">
+              <div class="box-title">Critical Point</div>
+              <div class="box-text">Velocity is <strong>squared</strong> in the formula. Doubling speed increases kinetic energy by <strong>four times</strong> — critical for understanding stopping distances.</div>
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">KE = energy of motion. Formula: <span class="key-term">KE = ½mv²</span>. Greater speed = exponentially greater KE.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 4: Force -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-force">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(224,92,92,.12);">💪</div>
+          <div>
+            <div class="section-title">04 — Force</div>
+            <div class="section-desc">The push or pull that drives all aircraft motion</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+
+          <div class="box box-accent">
+            <div class="box-icon">💡</div>
+            <div class="box-content">
+              <div class="box-title">Definition</div>
+              <div class="box-text"><strong>Force</strong> is a push or pull that tends to move an object. Without force: no motion, no work, no thrust.</div>
+            </div>
+          </div>
+
+          <div class="formula">
+            <div class="formula-eq">F = m × a</div>
+            <div class="formula-vars">
+              <b>F</b> = Force<br>
+              <b>m</b> = Mass<br>
+              <b>a</b> = Acceleration
+            </div>
+          </div>
+
+          <div class="card extra-text">
+            <div class="card-title">Aviation Applications of F = ma</div>
+            <ul class="bullet-list">
+              <li>Calculating <strong>engine thrust</strong></li>
+              <li>Determining <strong>aircraft acceleration</strong> on takeoff roll</li>
+              <li>Analysing <strong>engine performance</strong></li>
+            </ul>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Force = push or pull. Formula: <span class="key-term">F = ma</span>. Foundation of Newton's Second Law &amp; thrust calculations.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 5: Work & Torque -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-work">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(167,139,250,.12);">🔧</div>
+          <div>
+            <div class="section-title">05 — Work &amp; Torque</div>
+            <div class="section-desc">Linear vs rotational force — a critical distinction</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">Work</div>
+              <div class="box-text" style="font-size:13.5px;color:var(--text2);margin-bottom:12px;">Force applied over a <strong style="color:var(--text)">linear distance</strong>.</div>
+              <div class="formula" style="margin-bottom:10px;">
+                <div class="formula-eq" style="font-size:14px;">W = F × d</div>
+              </div>
+              <div class="box box-amber" style="margin-top:8px;">
+                <div class="box-icon" style="font-size:13px;">⚠️</div>
+                <div class="box-content">
+                  <div class="box-text" style="font-size:12.5px;">If the object <strong>does not move</strong>, no mechanical work is done — even if force is applied.</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Torque</div>
+              <div class="box-text" style="font-size:13.5px;color:var(--text2);margin-bottom:12px;">A <strong style="color:var(--text)">twisting force</strong> that causes rotation.</div>
+              <div class="formula" style="margin-bottom:10px;">
+                <div class="formula-eq" style="font-size:14px;">τ = F × d</div>
+              </div>
+              <ul class="bullet-list" style="margin-top:8px;">
+                <li>Turning a wrench</li>
+                <li>Rotating propeller shaft</li>
+                <li>Turbine shaft rotation</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="box box-red">
+            <div class="box-icon">⚠️</div>
+            <div class="box-content">
+              <div class="box-title">Exam Distinction — Do Not Confuse</div>
+              <div class="box-text">Work and Torque use the same formula (<strong>Force × Distance</strong>) but describe different phenomena:<br>
+              &nbsp;• <strong>Work</strong> → linear movement &nbsp;|&nbsp; <strong>Torque</strong> → rotational movement</div>
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Work = force × linear distance. Torque = twisting force × distance. Same formula — different physical actions.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 6: Motion, Speed, Velocity, Acceleration -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-motion">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(56,201,192,.12);">📐</div>
+          <div>
+            <div class="section-title">06 — Motion, Speed, Velocity &amp; Acceleration</div>
+            <div class="section-desc">Understanding how objects move and change speed</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+
+          <div class="card extra-text">
+            <div class="card-title">Motion &amp; Kinematics</div>
+            <ul class="bullet-list">
+              <li><strong>Motion</strong> — continuous change in position relative to another object.</li>
+              <li><strong>Kinematics</strong> — studies velocity, acceleration &amp; distance <em>without</em> analysing the forces causing motion.</li>
+            </ul>
+          </div>
+
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">Speed</div>
+              <div class="formula" style="margin-bottom:10px;">
+                <div class="formula-eq" style="font-size:14px;">s = d / t</div>
+              </div>
+              <ul class="bullet-list">
+                <li>Magnitude only — <strong>no direction</strong></li>
+                <li>Scalar quantity</li>
+              </ul>
+            </div>
+            <div class="card">
+              <div class="card-title">Velocity</div>
+              <div style="font-size:13.5px;color:var(--text2);margin-bottom:10px;">Speed <strong style="color:var(--text)">with direction</strong></div>
+              <ul class="bullet-list">
+                <li>Example: <strong>250 knots eastward</strong></li>
+                <li><strong>Vector quantity</strong></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="box box-red">
+            <div class="box-icon">⚠️</div>
+            <div class="box-content">
+              <div class="box-title">Key Distinction — Speed vs Velocity</div>
+              <div class="box-text"><strong>Speed</strong> tells you how fast. <strong>Velocity</strong> tells you how fast <em>and</em> in which direction. Velocity is a <strong>vector</strong>; speed is a <strong>scalar</strong>.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Acceleration</div>
+            <div class="box-text" style="font-size:13.5px;color:var(--text2);margin-bottom:12px;">Rate of change of velocity over time.</div>
+            <div class="formula">
+              <div class="formula-eq">a = Δv / t</div>
+              <div class="formula-vars">
+                <b>Δv</b> = Change in velocity<br>
+                <b>t</b> = Time
+              </div>
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Speed = magnitude only · Velocity = speed + direction (vector) · Acceleration = rate of velocity change: <span class="key-term">a = Δv/t</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 7: Newton's Laws -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-newton">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(56,201,192,.12);">🍎</div>
+          <div>
+            <div class="section-title">07 — Newton's Laws of Motion</div>
+            <div class="section-desc">The three fundamental laws governing all aircraft movement</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body open">
+        <div class="section-body-inner">
+
+          <div class="law-block">
+            <div class="law-number">Newton's First Law</div>
+            <div class="law-name">Law of Inertia</div>
+            <div class="law-statement">"An object at rest stays at rest, and an object in motion stays in motion, unless acted upon by an external force."</div>
+            <ul class="bullet-list">
+              <li><strong>Inertia</strong> — the tendency of matter to resist changes in motion.</li>
+              <li class="extra-text">Aviation example: passengers lurch forward when an aircraft stops suddenly.</li>
+            </ul>
+          </div>
+
+          <div class="law-block">
+            <div class="law-number">Newton's Second Law</div>
+            <div class="law-name">F = ma</div>
+            <div class="law-statement">"Force causes acceleration — proportional to mass and in the same direction as the applied force."</div>
+            <div class="formula" style="margin-top:10px;">
+              <div class="formula-eq">F = m × a</div>
+              <div class="formula-vars">Used to calculate thrust &amp; aircraft acceleration</div>
+            </div>
+          </div>
+
+          <div class="law-block">
+            <div class="law-number">Newton's Third Law</div>
+            <div class="law-name">Action &amp; Reaction</div>
+            <div class="law-statement">"For every action, there is an equal and opposite reaction."</div>
+            <ul class="bullet-list">
+              <li>Explains <strong>jet thrust</strong> — gases expelled backward → aircraft moves forward.</li>
+              <li>Also explains <strong>rocket propulsion</strong> &amp; propeller action.</li>
+            </ul>
+          </div>
+
+          <div class="memory-aid">
+            <div class="memory-big">3×N</div>
+            <div class="memory-text">
+              <b>1st Law:</b> Inertia — resist change<br>
+              <b>2nd Law:</b> F = ma — force causes acceleration<br>
+              <b>3rd Law:</b> Action = opposite Reaction (explains jet thrust)
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">1st: Inertia (resist change) · 2nd: F = ma · 3rd: Action = Reaction (jet thrust). All three laws directly apply to aircraft operation.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 8: Bernoulli's Principle -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-bernoulli">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(91,141,238,.15);">🌊</div>
+          <div>
+            <div class="section-title">08 — Bernoulli's Principle</div>
+            <div class="section-desc">The velocity-pressure relationship that explains wing lift</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body open">
+        <div class="section-body-inner">
+
+          <div class="box box-accent">
+            <div class="box-icon">💡</div>
+            <div class="box-content">
+              <div class="box-title">Core Principle</div>
+              <div class="box-text">As the <strong>velocity of a fluid increases</strong>, its <strong>static pressure decreases</strong> — and vice versa.</div>
+            </div>
+          </div>
+
+          <div class="card extra-text">
+            <div class="card-title">Venturi Tube — How it Works</div>
+            <p style="font-size:13px;color:var(--text3);margin-bottom:14px;">A Venturi has a converging section → narrow throat → diverging section.</p>
+            <div class="venturi-row">
+              <div class="venturi-cell wide-area">
+                <div class="v-label">Wide Area</div>
+                <div>Velocity: <span class="v-lo">Low</span></div>
+                <div>Pressure: <span class="v-hi">High</span></div>
+              </div>
+              <div class="venturi-cell narrow-area">
+                <div class="v-label">Narrow Throat</div>
+                <div>Velocity: <span class="v-hi">High</span></div>
+                <div>Pressure: <span class="v-lo">Low</span></div>
+              </div>
+              <div class="venturi-cell wide-area">
+                <div class="v-label">Wide Area</div>
+                <div>Velocity: <span class="v-lo">Low</span></div>
+                <div>Pressure: <span class="v-hi">High</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Aviation Applications</div>
+            <ul class="bullet-list">
+              <li><strong>Wing lift</strong> — faster airflow over upper surface reduces pressure → net upward force</li>
+              <li><strong>Carburettors</strong> — venturi effect draws fuel into airflow</li>
+              <li><strong>Turbine engine inlet ducts</strong> — airflow management</li>
+            </ul>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">↑ Velocity → ↓ Pressure. The venturi effect underpins <strong>wing lift</strong>, <strong>carburettors</strong>, and <strong>engine inlet ducts</strong>.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 9: Gas Laws -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-gas-laws">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(62,207,126,.1);">🧪</div>
+          <div>
+            <div class="section-title">09 — Gas Laws</div>
+            <div class="section-desc">Boyle's &amp; Charles' Laws — engine compression and airflow</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+
+          <div class="two-col">
+            <div class="card">
+              <div class="card-title">Boyle's Law</div>
+              <div class="box box-accent" style="margin-bottom:10px;">
+                <div class="box-content">
+                  <div class="box-text" style="font-size:13px;"><strong>At constant temperature</strong> — pressure and volume are inversely proportional.</div>
+                </div>
+              </div>
+              <ul class="bullet-list">
+                <li>↑ Pressure → ↓ Volume</li>
+                <li>↓ Pressure → ↑ Volume</li>
+              </ul>
+              <div class="card-small" style="margin-top:12px;">
+                <div class="card-small-label">Aviation Uses</div>
+                <div class="card-small-sub">Engine compression · Pneumatic systems · Gas turbine operation</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Charles' Law</div>
+              <div class="box box-accent" style="margin-bottom:10px;">
+                <div class="box-content">
+                  <div class="box-text" style="font-size:13px;"><strong>At constant pressure</strong> — temperature and volume are directly proportional.</div>
+                </div>
+              </div>
+              <ul class="bullet-list">
+                <li>↑ Temperature → ↑ Volume</li>
+              </ul>
+              <div class="card-small" style="margin-top:12px;">
+                <div class="card-small-label">Aviation Uses</div>
+                <div class="card-small-sub">Expansion of heated air · Turbine engine airflow behaviour</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="memory-aid">
+            <div class="memory-big">B↔C</div>
+            <div class="memory-text">
+              <b>Boyle:</b> Pressure ↕ Volume (inverse) — constant Temperature<br>
+              <b>Charles:</b> Temperature ↕ Volume (direct) — constant Pressure
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Boyle: P↑ V↓ (constant T) — Charles: T↑ V↑ (constant P). Both laws govern engine compression &amp; gas expansion in turbines.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 10: Thrust & Propulsion -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-thrust">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(224,92,92,.1);">🔥</div>
+          <div>
+            <div class="section-title">10 — Thrust &amp; Propulsion</div>
+            <div class="section-desc">How engines produce the forward force to fly</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+
+          <div class="box box-accent">
+            <div class="box-icon">💡</div>
+            <div class="box-content">
+              <div class="box-title">Definition</div>
+              <div class="box-text"><strong>Thrust</strong> is the forward propulsive force produced by an engine, used to overcome drag, accelerate, and maintain flight.</div>
+            </div>
+          </div>
+
+          <div class="card extra-text">
+            <div class="card-title">How a Jet Engine Produces Thrust</div>
+            <ul class="bullet-list">
+              <li><strong>Step 1:</strong> Air is drawn into the engine</li>
+              <li><strong>Step 2:</strong> Air is compressed</li>
+              <li><strong>Step 3:</strong> Fuel is added and burned</li>
+              <li><strong>Step 4:</strong> Hot gases are expelled rearward at high velocity</li>
+              <li><strong>Result:</strong> Aircraft moves forward — Newton's 3rd Law</li>
+            </ul>
+          </div>
+
+          <div class="card extra-text">
+            <div class="card-title">Exhaust Nozzles</div>
+            <div class="two-col">
+              <div class="card-small">
+                <div class="card-small-label">Convergent Nozzle</div>
+                <div class="card-small-value">↑ Exhaust velocity</div>
+                <div class="card-small-sub">Produces maximum subsonic thrust</div>
+              </div>
+              <div class="card-small">
+                <div class="card-small-label">Choked Nozzle</div>
+                <div class="card-small-value">Gases reach speed of sound</div>
+                <div class="card-small-sub">Maximum efficiency for subsonic operation</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Propulsion Types Compared</div>
+            <table class="rev-table">
+              <thead>
+                <tr><th>Engine Type</th><th>Method</th><th>Key Feature</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Turbojet</td>
+                  <td>Accelerates small air mass</td>
+                  <td>High exhaust velocity</td>
+                </tr>
+                <tr>
+                  <td>Turboprop</td>
+                  <td>Accelerates large air mass</td>
+                  <td>Lower velocity, via propeller</td>
+                </tr>
+                <tr>
+                  <td>Rocket</td>
+                  <td>Carries own fuel &amp; oxidizer</td>
+                  <td>Can operate in space — no atmosphere needed</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box box-amber">
+            <div class="box-icon">⚠️</div>
+            <div class="box-content">
+              <div class="box-title">Rockets vs Aircraft Engines</div>
+              <div class="box-text">Aircraft engines <strong>require atmospheric oxygen</strong> for combustion. Rockets carry their own <strong>fuel + oxidizer</strong> — this is why rockets can operate in space.</div>
+            </div>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Thrust = forward force via Newton's 3rd Law. Jet engines: intake → compress → burn → expel. Rockets carry own oxidizer (space-capable).</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 11: Power -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-power">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(245,166,35,.12);">⚙️</div>
+          <div>
+            <div class="section-title">11 — Power</div>
+            <div class="section-desc">The rate of doing work — measured in horsepower or watts</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+
+          <div class="box box-accent">
+            <div class="box-icon">💡</div>
+            <div class="box-content">
+              <div class="box-title">Definition</div>
+              <div class="box-text"><strong>Power</strong> is the rate at which work is done.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Horsepower Conversions</div>
+            <table class="rev-table">
+              <thead>
+                <tr><th>Unit</th><th>Equivalent</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>1 hp</td><td>550 ft·lb/s</td></tr>
+                <tr><td>1 hp</td><td>33,000 ft·lb/min</td></tr>
+                <tr><td>1 hp</td><td>746 watts</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box box-green">
+            <div class="box-icon">⚡</div>
+            <div class="box-content">
+              <div class="box-title">Quick Recap</div>
+              <div class="box-text">Power = rate of doing work. <span class="key-term">1 hp = 550 ft·lb/s = 746 W</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 12: Flashcards -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-flashcards">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(167,139,250,.12);">🃏</div>
+          <div>
+            <div class="section-title">Flashcards</div>
+            <div class="section-desc">Click (or press Enter/Space) to flip — test yourself before the quiz</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body open">
+        <div class="section-body-inner">
+          <div class="flashcard-grid" id="flashcard-container">
+            <!-- cards injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- SECTION 13: Self-Check Quiz -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-quiz">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="true">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(62,207,126,.1);">🧪</div>
+          <div>
+            <div class="section-title">Self-Check Quiz</div>
+            <div class="section-desc">10 exam-style questions — instant feedback</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body open">
+        <div class="section-body-inner">
+          <div class="quiz-progress-row">
+            <span id="quiz-progress-text">0 / 10 answered</span>
+            <div class="quiz-progress-bar-bg">
+              <div class="quiz-progress-bar-fill" id="quiz-progress-fill"></div>
+            </div>
+            <span id="quiz-score-mini"></span>
+          </div>
+          <div id="quiz-container">
+            <!-- questions injected by JS -->
+          </div>
+          <div class="quiz-score" id="quiz-score-box"></div>
+          <button class="quiz-reset-btn" id="quiz-reset">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/>
+            </svg>
+            Reset Quiz
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!-- KEY DEFINITIONS SUMMARY -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-defs" style="margin-top:8px;">
+      <div class="section-header" role="button" tabindex="0" aria-expanded="false">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:rgba(56,201,192,.1);">📖</div>
+          <div>
+            <div class="section-title">Key Definitions — Quick Reference</div>
+            <div class="section-desc">All must-know terms in one place</div>
+          </div>
+        </div>
+        <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="section-body">
+        <div class="section-body-inner">
+          <div class="def-list">
+            <div class="def-item"><div class="def-term">Force</div><div class="def-desc">A <strong>push or pull</strong> that tends to move an object. F = ma.</div></div>
+            <div class="def-item"><div class="def-term">Work</div><div class="def-desc">Done when a <strong>force moves an object through a distance</strong>. W = F × d. No movement = no work.</div></div>
+            <div class="def-item"><div class="def-term">Torque</div><div class="def-desc">A <strong>twisting force</strong> causing rotation. τ = F × d. Different from work despite same formula.</div></div>
+            <div class="def-item"><div class="def-term">Energy</div><div class="def-desc">The <strong>ability to perform work</strong>. Exists as potential (stored) or kinetic (motion).</div></div>
+            <div class="def-item"><div class="def-term">Velocity</div><div class="def-desc"><strong>Speed with direction</strong>. A vector quantity. e.g. 250 knots eastward.</div></div>
+            <div class="def-item"><div class="def-term">Acceleration</div><div class="def-desc"><strong>Rate of change of velocity</strong>. a = Δv / t.</div></div>
+            <div class="def-item"><div class="def-term">Thrust</div><div class="def-desc">The <strong>forward propulsive force</strong> produced by an engine to overcome drag and maintain flight.</div></div>
+            <div class="def-item"><div class="def-term">Inertia</div><div class="def-desc">The <strong>tendency of matter to resist changes</strong> in its state of motion (Newton's 1st Law).</div></div>
+            <div class="def-item"><div class="def-term">Power</div><div class="def-desc">The <strong>rate at which work is done</strong>. 1 hp = 550 ft·lb/s = 746 W.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Float Action Button (back to top) -->
+<button id="fab" aria-label="Back to top" title="Back to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<!-- Mode Banner -->
+<div id="mode-banner"></div>
+
+<script>
+  // ─── DATA ────────────────────────────────────────────────────
+  const FLASHCARDS = [
+    { q: "What is energy?", a: "The ability to perform work. Enables aircraft to move, accelerate, produce thrust, and generate lift." },
+    { q: "What is kinetic energy and its formula?", a: "Energy of motion. KE = ½mv² — velocity is squared, so doubling speed quadruples KE." },
+    { q: "What is potential energy? Give 3 forms.", a: "Stored energy. Forms: Position (height), Elastic distortion (spring/bungee), Chemical (fuel/battery)." },
+    { q: "State Newton's First Law.", a: "A body at rest stays at rest; a body in motion stays in motion — unless acted on by an external force. (Law of Inertia)" },
+    { q: "State Newton's Third Law and its aviation link.", a: "Every action has an equal and opposite reaction. In jets: gases expelled backward → aircraft thrust forward." },
+    { q: "What does Bernoulli's Principle state?", a: "As fluid velocity increases, static pressure decreases. Higher velocity = lower pressure (explains wing lift)." },
+    { q: "Distinguish Work from Torque.", a: "Both use Force × Distance. Work = linear movement. Torque = rotational movement. No movement = no work done." },
+    { q: "What is Boyle's Law?", a: "At constant temperature: pressure and volume are inversely proportional. ↑P → ↓V (key for engine compression)." },
+    { q: "What is Charles' Law?", a: "At constant pressure: volume is directly proportional to temperature. ↑T → ↑V (heated air expansion in turbines)." },
+    { q: "Difference between Speed and Velocity?", a: "Speed = magnitude only (scalar). Velocity = speed + direction (vector). e.g. 250 knots eastward = velocity." },
+    { q: "How does a jet engine produce thrust?", a: "Intake → Compress → Burn fuel → Expel gases rearward at high velocity → forward reaction = thrust (Newton's 3rd Law)." },
+    { q: "1 horsepower equals how many watts?", a: "1 hp = 746 watts = 550 ft·lb/s = 33,000 ft·lb/min." },
+  ];
+
+  const QUESTIONS = [
+    {
+      q: "Which formula correctly represents Kinetic Energy?",
+      opts: ["KE = W × H", "KE = F × d", "KE = ½mv²", "KE = ma"],
+      correct: 2,
+      feedback: "Correct! KE = ½mv². Note that velocity is squared — doubling speed quadruples kinetic energy."
+    },
+    {
+      q: "Newton's Third Law directly explains which aviation phenomenon?",
+      opts: ["Wing stall", "Jet engine thrust", "Fuel combustion temperature", "Gyroscopic precession"],
+      correct: 1,
+      feedback: "Correct! Gases expelled rearward → equal and opposite forward thrust. This is Newton's Third Law in action."
+    },
+    {
+      q: "According to Bernoulli's Principle, what happens to static pressure when fluid velocity increases?",
+      opts: ["Pressure increases", "Pressure stays the same", "Pressure decreases", "Pressure becomes zero"],
+      correct: 2,
+      feedback: "Correct! As velocity increases, static pressure decreases. This velocity–pressure relationship underpins wing lift."
+    },
+    {
+      q: "Boyle's Law applies at constant:",
+      opts: ["Pressure", "Temperature", "Volume", "Density"],
+      correct: 1,
+      feedback: "Correct! Boyle's Law states that at constant temperature, pressure and volume are inversely proportional."
+    },
+    {
+      q: "A technician pushes a stuck aircraft with full force but it does not move. How much mechanical work is done?",
+      opts: ["Maximum work", "Half work", "Minimum work", "Zero work"],
+      correct: 3,
+      feedback: "Correct! Work = Force × Distance. If distance = 0, work = 0. Force alone does not constitute mechanical work."
+    },
+    {
+      q: "What type of quantity is velocity?",
+      opts: ["Scalar — magnitude only", "Vector — magnitude and direction", "Constant — independent of time", "Relative — depends on observer only"],
+      correct: 1,
+      feedback: "Correct! Velocity is a vector quantity — it has both magnitude (speed) and direction. Speed alone is scalar."
+    },
+    {
+      q: "Which type of potential energy does aviation fuel represent?",
+      opts: ["Positional potential energy", "Elastic potential energy", "Chemical potential energy", "Kinetic potential energy"],
+      correct: 2,
+      feedback: "Correct! Aviation fuel stores energy through its chemical bonds, released during combustion. This is chemical potential energy."
+    },
+    {
+      q: "A convergent (converging) nozzle on a jet engine is designed to:",
+      opts: ["Slow exhaust gases down", "Increase exhaust gas velocity", "Reduce fuel consumption", "Lower engine temperature"],
+      correct: 1,
+      feedback: "Correct! A converging nozzle increases exhaust gas velocity, producing maximum subsonic thrust."
+    },
+    {
+      q: "Why can rockets operate in space but aircraft engines cannot?",
+      opts: ["Rockets use less fuel", "Rockets are lighter", "Rockets carry their own oxidizer; aircraft engines need atmospheric oxygen", "Rockets have more thrust"],
+      correct: 2,
+      feedback: "Correct! Aircraft engines rely on atmospheric oxygen for combustion. Rockets carry both fuel and oxidizer, making them independent of atmosphere."
+    },
+    {
+      q: "Charles' Law states that at constant pressure, increasing temperature will:",
+      opts: ["Decrease volume", "Keep volume unchanged", "Increase volume", "Increase pressure instead"],
+      correct: 2,
+      feedback: "Correct! Charles' Law: at constant pressure, volume is directly proportional to temperature. ↑T → ↑V."
+    }
+  ];
+
+  // ─── STATE ───────────────────────────────────────────────────
+  let focusMode = false;
+  let examMode  = false;
+  let allExpanded = false;
+  let quizAnswered = 0;
+  let quizCorrect  = 0;
+  let quizDone = new Array(QUESTIONS.length).fill(false);
+
+  // ─── PROGRESS BAR ───────────────────────────────────────────
+  const progressBar = document.getElementById('progress-bar');
+  function updateProgress() {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // ─── SIDEBAR TOGGLE ─────────────────────────────────────────
+  const sidebar   = document.getElementById('sidebar');
+  const main      = document.getElementById('main');
+  const overlay   = document.getElementById('overlay');
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+
+  const isMobile = () => window.innerWidth <= 640;
+
+  function toggleSidebar() {
+    if (isMobile()) {
+      const isOpen = sidebar.classList.toggle('open');
+      overlay.classList.toggle('show', isOpen);
+      sidebarToggle.setAttribute('aria-expanded', String(isOpen));
+    } else {
+      const isHidden = sidebar.classList.toggle('hidden');
+      main.classList.toggle('sidebar-hidden', isHidden);
+      sidebarToggle.setAttribute('aria-expanded', String(!isHidden));
+    }
+  }
+
+  sidebarToggle.addEventListener('click', toggleSidebar);
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+
+  // Close sidebar on mobile when link clicked
+  document.querySelectorAll('.toc-link').forEach(link => {
+    link.addEventListener('click', () => {
+      const target = link.dataset.target;
+      const el = document.getElementById(target);
+      if (el) {
+        // Ensure section is open
+        const header = el.querySelector('.section-header');
+        const body   = el.querySelector('.section-body');
+        if (header && body && !body.classList.contains('open')) {
+          toggleSection(header, body);
+        }
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }
+      if (isMobile()) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+      }
+    });
+  });
+
+  // ─── SECTION COLLAPSIBLES ────────────────────────────────────
+  function toggleSection(header, body) {
+    const isExpanded = header.getAttribute('aria-expanded') === 'true';
+    header.setAttribute('aria-expanded', String(!isExpanded));
+    body.classList.toggle('open', !isExpanded);
+  }
+
+  document.querySelectorAll('.section-header').forEach(header => {
+    const body = header.nextElementSibling;
+    // Sync initial open state
+    if (header.getAttribute('aria-expanded') === 'true') {
+      body.classList.add('open');
+    }
+    header.addEventListener('click', () => toggleSection(header, body));
+    header.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleSection(header, body);
+      }
+    });
+  });
+
+  // ─── EXPAND / COLLAPSE ALL ───────────────────────────────────
+  const expandBtn = document.getElementById('expand-all-btn');
+  expandBtn.addEventListener('click', () => {
+    allExpanded = !allExpanded;
+    document.querySelectorAll('.section-header').forEach(header => {
+      const body = header.nextElementSibling;
+      header.setAttribute('aria-expanded', String(allExpanded));
+      body.classList.toggle('open', allExpanded);
+    });
+    expandBtn.querySelector('.ctrl-label').textContent = allExpanded ? 'Collapse All' : 'Expand All';
+    expandBtn.classList.toggle('active', allExpanded);
+  });
+
+  // ─── FOCUS MODE ──────────────────────────────────────────────
+  const focusBtn  = document.getElementById('focus-btn');
+  const modeBanner = document.getElementById('mode-banner');
+
+  focusBtn.addEventListener('click', () => {
+    if (examMode) { examMode = false; document.body.classList.remove('exam-mode'); examBtn.classList.remove('active'); }
+    focusMode = !focusMode;
+    document.body.classList.toggle('focus-mode', focusMode);
+    focusBtn.classList.toggle('active', focusMode);
+    focusBtn.querySelector('.ctrl-label').textContent = focusMode ? 'Focus On' : 'Focus';
+    modeBanner.textContent = focusMode ? '🔍 Focus Mode — extra text hidden' : '';
+    modeBanner.classList.toggle('show', focusMode);
+  });
+
+  // ─── EXAM MODE ───────────────────────────────────────────────
+  const examBtn = document.getElementById('exam-btn');
+  examBtn.addEventListener('click', () => {
+    if (focusMode) { focusMode = false; document.body.classList.remove('focus-mode'); focusBtn.classList.remove('active'); focusBtn.querySelector('.ctrl-label').textContent = 'Focus'; }
+    examMode = !examMode;
+    document.body.classList.toggle('exam-mode', examMode);
+    examBtn.classList.toggle('active', examMode);
+    examBtn.querySelector('.ctrl-label').textContent = examMode ? 'Exam On' : 'Exam Mode';
+    modeBanner.textContent = examMode ? '📋 Exam Mode — recaps, flashcards & quiz only' : '';
+    modeBanner.classList.toggle('show', examMode);
+    if (examMode) {
+      // Expand all so exam-mode content is visible
+      document.querySelectorAll('.section-header').forEach(header => {
+        const body = header.nextElementSibling;
+        header.setAttribute('aria-expanded', 'true');
+        body.classList.add('open');
+      });
+    }
+  });
+
+  // ─── FLASHCARDS ──────────────────────────────────────────────
+  const fcContainer = document.getElementById('flashcard-container');
+  FLASHCARDS.forEach((fc, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'flashcard-wrap';
+    wrap.setAttribute('tabindex', '0');
+    wrap.setAttribute('role', 'button');
+    wrap.setAttribute('aria-label', `Flashcard ${i+1}: ${fc.q} — press Enter or Space to flip`);
+    wrap.innerHTML = `
+      <div class="flashcard-inner">
+        <div class="fc-front">
+          <div class="fc-tag">Question ${i+1} of ${FLASHCARDS.length}</div>
+          <div class="fc-q">${fc.q}</div>
+          <div class="fc-hint">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+              <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+            Tap to reveal answer
+          </div>
+        </div>
+        <div class="fc-back">
+          <div class="fc-tag">Answer</div>
+          <div class="fc-a">${fc.a}</div>
+        </div>
+      </div>`;
+    const flip = () => wrap.classList.toggle('flipped');
+    wrap.addEventListener('click', flip);
+    wrap.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+    fcContainer.appendChild(wrap);
+  });
+
+  // ─── QUIZ ────────────────────────────────────────────────────
+  const quizContainer = document.getElementById('quiz-container');
+  const quizScoreBox  = document.getElementById('quiz-score-box');
+  const quizReset     = document.getElementById('quiz-reset');
+  const quizProgressText = document.getElementById('quiz-progress-text');
+  const quizProgressFill = document.getElementById('quiz-progress-fill');
+  const quizScoreMini = document.getElementById('quiz-score-mini');
+
+  function buildQuiz() {
+    quizContainer.innerHTML = '';
+    quizAnswered = 0; quizCorrect = 0;
+    quizDone = new Array(QUESTIONS.length).fill(false);
+    quizScoreBox.classList.remove('show');
+    updateQuizProgress();
+
+    QUESTIONS.forEach((qObj, qi) => {
+      const card = document.createElement('div');
+      card.className = 'quiz-card';
+      const letters = ['A', 'B', 'C', 'D'];
+      card.innerHTML = `
+        <div class="quiz-q">
+          <span class="q-num">Question ${qi + 1} of ${QUESTIONS.length}</span>
+          ${qObj.q}
+        </div>
+        <div class="quiz-options">
+          ${qObj.opts.map((o, oi) => `
+            <div class="quiz-option" data-qi="${qi}" data-oi="${oi}" data-correct="${oi === qObj.correct}" tabindex="0" role="button">
+              <span class="opt-letter">${letters[oi]}.</span>
+              ${o}
+            </div>`).join('')}
+        </div>
+        <div class="quiz-feedback" id="qfb-${qi}"></div>`;
+      quizContainer.appendChild(card);
+    });
+
+    // Bind events
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+      const handle = () => {
+        const qi = parseInt(opt.dataset.qi);
+        if (quizDone[qi]) return;
+        quizDone[qi] = true;
+
+        const isCorrect = opt.dataset.correct === 'true';
+        const allOpts = document.querySelectorAll(`.quiz-option[data-qi="${qi}"]`);
+        allOpts.forEach(o => {
+          o.classList.add('disabled');
+          if (o.dataset.correct === 'true') o.classList.add('correct');
+        });
+        if (!isCorrect) opt.classList.add('incorrect');
+
+        const fb = document.getElementById(`qfb-${qi}`);
+        if (isCorrect) {
+          quizCorrect++;
+          fb.textContent = '✓ ' + QUESTIONS[qi].feedback;
+          fb.className = 'quiz-feedback show correct-fb';
+        } else {
+          fb.textContent = '✗ Incorrect. ' + QUESTIONS[qi].feedback;
+          fb.className = 'quiz-feedback show incorrect-fb';
+        }
+
+        quizAnswered++;
+        updateQuizProgress();
+
+        if (quizAnswered === QUESTIONS.length) {
+          showFinalScore();
+        }
+      };
+      opt.addEventListener('click', handle);
+      opt.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handle(); } });
+    });
+  }
+
+  function updateQuizProgress() {
+    quizProgressText.textContent = `${quizAnswered} / ${QUESTIONS.length} answered`;
+    const pct = (quizAnswered / QUESTIONS.length) * 100;
+    quizProgressFill.style.width = pct + '%';
+    if (quizAnswered > 0) {
+      quizScoreMini.textContent = `${quizCorrect} correct`;
+    } else {
+      quizScoreMini.textContent = '';
+    }
+  }
+
+  function showFinalScore() {
+    const pct = Math.round((quizCorrect / QUESTIONS.length) * 100);
+    let grade = pct >= 80 ? '🎉 Excellent — exam ready!' : pct >= 60 ? '👍 Good — review weak areas.' : '📚 Keep studying — revisit key sections.';
+    quizScoreBox.innerHTML = `Final Score: <strong>${quizCorrect} / ${QUESTIONS.length}</strong> (${pct}%) &nbsp;&nbsp; ${grade}`;
+    quizScoreBox.classList.add('show');
+  }
+
+  quizReset.addEventListener('click', buildQuiz);
+
+  // ─── TOC ACTIVE STATE (Intersection Observer) ─────────────────
+  const sections = document.querySelectorAll('.section');
+  const tocLinks = document.querySelectorAll('.toc-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        tocLinks.forEach(l => {
+          l.classList.toggle('active', l.dataset.target === id);
+        });
+      }
+    });
+  }, { rootMargin: '-56px 0px -60% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+
+  // ─── FAB (Back to top) ───────────────────────────────────────
+  document.getElementById('fab').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ─── RESPONSIVE SIDEBAR ──────────────────────────────────────
+  window.addEventListener('resize', () => {
+    if (!isMobile()) {
+      overlay.classList.remove('show');
+      sidebar.classList.remove('open');
+      if (!sidebar.classList.contains('hidden')) {
+        main.style.marginLeft = '';
+      }
+    }
+  });
+
+  // ─── INIT ────────────────────────────────────────────────────
+  buildQuiz();
+  updateProgress();
+</script>
+</body>
+</html>
