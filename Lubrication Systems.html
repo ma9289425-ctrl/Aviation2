@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>15.10 – Turbine Engine Lubrication Systems | Aviation Revision</title>
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:       #141820;
+      --bg-surface:    #1c2230;
+      --bg-card:       #222b3a;
+      --bg-card-hover: #28344a;
+      --border:        #2e3d55;
+      --border-light:  #3a4f6e;
+      --text-primary:  #e2e8f0;
+      --text-secondary:#9aafc8;
+      --text-muted:    #607090;
+      --accent-blue:   #4a9eff;
+      --accent-teal:   #2dd4bf;
+      --accent-amber:  #f59e0b;
+      --accent-red:    #f87171;
+      --accent-green:  #4ade80;
+      --accent-purple: #a78bfa;
+      --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --radius: 10px;
+      --radius-lg: 16px;
+      --transition: 0.22s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.7;
+      font-size: 15px;
+      overflow-x: hidden;
+    }
+
+    /* ─── PROGRESS BAR ─────────────────────────────────────────────── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+      z-index: 9999;
+      transition: width 0.1s linear;
+    }
+
+    /* ─── TOP NAV ──────────────────────────────────────────────────── */
+    #topnav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 54px;
+      background: rgba(20,24,32,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      z-index: 1000;
+    }
+
+    #topnav .nav-brand {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-teal);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-badge {
+      font-size: 11px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .mode-btn {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .mode-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .mode-btn.active { background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+
+    #menu-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    /* ─── LAYOUT ───────────────────────────────────────────────────── */
+    #layout {
+      display: flex;
+      padding-top: 54px;
+      min-height: 100vh;
+    }
+
+    /* ─── SIDEBAR ──────────────────────────────────────────────────── */
+    #sidebar {
+      width: 260px;
+      flex-shrink: 0;
+      position: fixed;
+      top: 54px;
+      left: 0;
+      bottom: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      z-index: 900;
+      padding: 16px 0 40px;
+      transition: transform var(--transition);
+    }
+
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-track { background: transparent; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 12px 20px 6px;
+    }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: var(--transition);
+    }
+    .toc-link:hover { color: var(--text-primary); background: rgba(74,158,255,0.07); border-left-color: var(--accent-blue); }
+    .toc-link.active { color: var(--accent-blue); background: rgba(74,158,255,0.1); border-left-color: var(--accent-blue); }
+    .toc-link .toc-icon { font-size: 14px; flex-shrink: 0; }
+
+    .sidebar-divider { height: 1px; background: var(--border); margin: 10px 16px; }
+
+    .sidebar-actions { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+
+    .sidebar-btn {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-btn:hover { border-color: var(--accent-blue); color: var(--text-primary); background: var(--bg-card-hover); }
+
+    /* ─── MAIN CONTENT ─────────────────────────────────────────────── */
+    #main {
+      margin-left: 260px;
+      flex: 1;
+      padding: 32px 40px 80px;
+      max-width: 900px;
+    }
+
+    /* ─── PAGE HEADER ──────────────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 36px;
+      padding: 32px;
+      background: linear-gradient(135deg, #1a2540 0%, #1c2a3a 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(74,158,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .page-header .module-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      background: rgba(45,212,191,0.12);
+      border: 1px solid rgba(45,212,191,0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 560px;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .meta-chip {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ─── CHECKLIST BAR ────────────────────────────────────────────── */
+    #checklist-bar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 28px;
+    }
+
+    .checklist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .checklist-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .checklist-progress {
+      font-size: 12px;
+      color: var(--accent-teal);
+      font-weight: 600;
+    }
+
+    .checklist-track {
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .checklist-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .checklist-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 11px;
+      border-radius: 20px;
+      transition: var(--transition);
+      user-select: none;
+    }
+    .check-item:hover { border-color: var(--accent-blue); }
+    .check-item.done { color: var(--accent-green); border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.06); }
+    .check-item .check-box { width: 14px; height: 14px; border: 1.5px solid var(--border-light); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+    .check-item.done .check-box { border-color: var(--accent-green); background: var(--accent-green); color: var(--bg-base); }
+
+    /* ─── SECTION ──────────────────────────────────────────────────── */
+    .section {
+      margin-bottom: 28px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-surface);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+      cursor: pointer;
+      user-select: none;
+      gap: 12px;
+      transition: background var(--transition);
+    }
+    .section-header:hover { background: rgba(74,158,255,0.05); }
+
+    .section-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--accent-blue);
+      background: rgba(74,158,255,0.12);
+      border: 1px solid rgba(74,158,255,0.25);
+      padding: 3px 9px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .section-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .chevron {
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+    .section-header[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+    .section-body {
+      padding: 0 22px 22px;
+      display: none;
+    }
+    .section-body.open { display: block; }
+
+    /* ─── CONTENT ELEMENTS ─────────────────────────────────────────── */
+    .content-intro {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.7;
+    }
+
+    h3.sub-heading {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent-teal);
+      margin: 20px 0 10px;
+    }
+
+    /* Cards grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      transition: var(--transition);
+    }
+    .card:hover { border-color: var(--border-light); background: var(--bg-card-hover); }
+
+    .card .card-icon { font-size: 22px; margin-bottom: 8px; }
+    .card .card-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .card .card-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* Bullet list */
+    .bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .bullet-list li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+      line-height: 1.55;
+    }
+    .bullet-list li::before {
+      content: '›';
+      position: absolute;
+      left: 4px;
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+    .bullet-list li strong { color: var(--text-primary); }
+
+    /* Comparison table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 13px;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .compare-table th {
+      background: var(--bg-card);
+      color: var(--accent-teal);
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table td {
+      padding: 9px 14px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .compare-table td strong { color: var(--text-primary); }
+
+    /* ─── CALLOUT BOXES ────────────────────────────────────────────── */
+    .callout {
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 14px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+    .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { flex: 1; }
+    .callout-title { font-weight: 700; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .callout-text { color: var(--text-secondary); }
+
+    .callout.warning {
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.3);
+    }
+    .callout.warning .callout-title { color: var(--accent-red); }
+
+    .callout.key {
+      background: rgba(74,158,255,0.08);
+      border: 1px solid rgba(74,158,255,0.25);
+    }
+    .callout.key .callout-title { color: var(--accent-blue); }
+
+    .callout.tip {
+      background: rgba(167,139,250,0.08);
+      border: 1px solid rgba(167,139,250,0.25);
+    }
+    .callout.tip .callout-title { color: var(--accent-purple); }
+
+    .callout.memory {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.28);
+    }
+    .callout.memory .callout-title { color: var(--accent-amber); }
+
+    /* ─── QUICK RECAP BOX ──────────────────────────────────────────── */
+    .recap-box {
+      background: linear-gradient(135deg, rgba(74,158,255,0.07), rgba(45,212,191,0.07));
+      border: 1px solid rgba(74,158,255,0.22);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin: 18px 0;
+    }
+
+    .recap-box .recap-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-teal);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .recap-box .recap-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .recap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .recap-item::before {
+      content: '✓';
+      color: var(--accent-green);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .recap-item strong { color: var(--text-primary); }
+
+    /* ─── FLASHCARDS ───────────────────────────────────────────────── */
+    .flashcard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .flashcard-wrapper {
+      height: 150px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.45s ease;
+    }
+
+    .flashcard-wrapper.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      backface-visibility: hidden;
+    }
+
+    .flashcard-front {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+    .flashcard-back {
+      background: linear-gradient(135deg, #1e3a5c, #1a3040);
+      border: 1px solid rgba(74,158,255,0.3);
+      transform: rotateY(180deg);
+    }
+
+    .fc-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .flashcard-front .fc-label { color: var(--accent-blue); }
+    .flashcard-back .fc-label { color: var(--accent-teal); }
+
+    .fc-question {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .fc-answer {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .fc-hint {
+      margin-top: auto;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    /* ─── QUIZ ─────────────────────────────────────────────────────── */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin: 16px 0;
+    }
+
+    .quiz-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .quiz-question {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .quiz-question .q-num {
+      display: inline-block;
+      font-size: 11px;
+      background: rgba(74,158,255,0.15);
+      color: var(--accent-blue);
+      border-radius: 20px;
+      padding: 2px 8px;
+      margin-right: 8px;
+      font-weight: 700;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .quiz-option:hover:not(.locked) { border-color: var(--accent-blue); color: var(--text-primary); background: rgba(74,158,255,0.07); }
+    .quiz-option .opt-marker {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+    .quiz-option.correct { border-color: rgba(74,222,128,0.5); background: rgba(74,222,128,0.07); color: var(--text-primary); }
+    .quiz-option.correct .opt-marker { background: var(--accent-green); border-color: var(--accent-green); color: var(--bg-base); }
+    .quiz-option.wrong { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.07); color: var(--text-secondary); }
+    .quiz-option.wrong .opt-marker { background: var(--accent-red); border-color: var(--accent-red); color: #fff; }
+    .quiz-option.locked { cursor: default; }
+
+    .quiz-feedback {
+      margin-top: 10px;
+      padding: 9px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      display: none;
+    }
+    .quiz-feedback.correct { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); color: var(--accent-green); }
+    .quiz-feedback.wrong { background: rgba(248,113,113,0.09); border: 1px solid rgba(248,113,113,0.3); color: var(--accent-red); }
+
+    .quiz-reset-btn {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      display: none;
+    }
+    .quiz-reset-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+    /* ─── KEY TERM PILL ────────────────────────────────────────────── */
+    .term {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(167,139,250,0.12);
+      color: var(--accent-purple);
+      border: 1px solid rgba(167,139,250,0.25);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* ─── TWO-COLUMN LAYOUT ────────────────────────────────────────── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .info-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+
+    .info-block .ib-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-teal);
+      margin-bottom: 8px;
+    }
+
+    .info-block ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .info-block ul li {
+      font-size: 13px;
+      color: var(--text-secondary);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .info-block ul li::before { content: '·'; position: absolute; left: 4px; color: var(--accent-blue); font-size: 16px; line-height: 1.2; }
+
+    /* ─── FLOW DIAGRAM ─────────────────────────────────────────────── */
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 14px 0;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 10px 0;
+      position: relative;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 36px;
+      bottom: -10px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .flow-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid var(--accent-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .flow-content {
+      flex: 1;
+      padding-bottom: 8px;
+    }
+    .flow-content strong { font-size: 13px; color: var(--text-primary); }
+    .flow-content p { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+
+    /* ─── MODES ────────────────────────────────────────────────────── */
+    body.focus-mode .content-intro,
+    body.focus-mode .card-text,
+    body.focus-mode .bullet-list li:not(.key-point),
+    body.focus-mode .callout.tip,
+    body.focus-mode .flow-content p { display: none !important; }
+
+    body.exam-mode .section-body { display: block !important; }
+    body.exam-mode .card-grid,
+    body.exam-mode .two-col,
+    body.exam-mode .compare-table,
+    body.exam-mode .flow-steps,
+    body.exam-mode .content-intro,
+    body.exam-mode .callout.key,
+    body.exam-mode .callout.tip { display: none !important; }
+
+    /* ─── SIDEBAR OVERLAY (MOBILE) ─────────────────────────────────── */
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 850;
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      #main { margin-left: 0; padding: 24px 20px 60px; max-width: 100%; }
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      #sidebar-overlay.visible { display: block; }
+      #menu-toggle { display: flex; align-items: center; }
+      .two-col { grid-template-columns: 1fr; }
+      .card-grid { grid-template-columns: 1fr 1fr; }
+      .flashcard-grid { grid-template-columns: 1fr; }
+      #topnav .nav-badge { display: none; }
+    }
+
+    @media (max-width: 540px) {
+      .page-header h1 { font-size: 20px; }
+      .card-grid { grid-template-columns: 1fr; }
+      .mode-btn { font-size: 11px; padding: 4px 9px; }
+    }
+
+    /* ─── FOCUS STATES (ACCESSIBILITY) ────────────────────────────── */
+    *:focus-visible {
+      outline: 2px solid var(--accent-blue);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* ─── SCROLL SMOOTH INDICATOR ──────────────────────────────────── */
+    .back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, border-color 0.2s ease;
+      z-index: 500;
+    }
+    .back-to-top.visible { opacity: 1; pointer-events: auto; }
+    .back-to-top:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+    /* ─── QUIZ SCORE SUMMARY ───────────────────────────────────────── */
+    .score-summary {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+    }
+    .score-summary .score-val {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--accent-teal);
+    }
+    .score-summary .score-label { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+    .score-summary .score-reset {
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .score-summary .score-reset:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+  </style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar" role="progressbar" aria-label="Reading progress"></div>
+
+<!-- TOP NAV -->
+<nav id="topnav">
+  <button id="menu-toggle" aria-label="Toggle sidebar" aria-expanded="false">☰</button>
+  <div class="nav-brand">15.10 – Turbine Lubrication Systems</div>
+  <span class="nav-badge">EASA Part-66</span>
+  <button class="mode-btn" id="focus-btn" title="Show key points only">⚡ Focus</button>
+  <button class="mode-btn" id="exam-btn" title="Show quizzes and recaps only">📝 Exam</button>
+</nav>
+
+<!-- SIDEBAR OVERLAY -->
+<div id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" aria-label="Navigation">
+    <div class="sidebar-label">Navigation</div>
+
+    <a class="toc-link" href="#s1"><span class="toc-icon">🔧</span>Introduction</a>
+    <a class="toc-link" href="#s2"><span class="toc-icon">🗂️</span>System Types</a>
+    <a class="toc-link" href="#s3"><span class="toc-icon">📊</span>Classifications</a>
+    <a class="toc-link" href="#s4"><span class="toc-icon">⚙️</span>Oil Functions</a>
+    <a class="toc-link" href="#s5"><span class="toc-icon">❄️</span>Bearing Cooling</a>
+    <a class="toc-link" href="#s6"><span class="toc-icon">🌡️</span>Oil Coolers</a>
+    <a class="toc-link" href="#s7"><span class="toc-icon">🔀</span>Bypass Valves</a>
+    <a class="toc-link" href="#s8"><span class="toc-icon">🚫</span>Check Valves</a>
+    <a class="toc-link" href="#s9"><span class="toc-icon">🌀</span>Deoiler</a>
+    <a class="toc-link" href="#s10"><span class="toc-icon">🧲</span>Chip Detectors</a>
+    <a class="toc-link" href="#s11"><span class="toc-icon">🃏</span>Flashcards</a>
+    <a class="toc-link" href="#s12"><span class="toc-icon">📝</span>Self-Check Quiz</a>
+
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-label">Actions</div>
+    <div class="sidebar-actions">
+      <button class="sidebar-btn" id="expand-all-btn">⬇ Expand All</button>
+      <button class="sidebar-btn" id="collapse-all-btn">⬆ Collapse All</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+      <div class="module-tag">Module 15 · Section 10</div>
+      <h1>Turbine Engine Lubrication Systems</h1>
+      <p>Revision guide covering system types, oil functions, cooling methods, components, and safety-critical concepts.</p>
+      <div class="header-meta">
+        <span class="meta-chip">🎯 Exam-Focused</span>
+        <span class="meta-chip">📚 10 Topics</span>
+        <span class="meta-chip">🧪 10 Quiz Questions</span>
+        <span class="meta-chip">🃏 8 Flashcards</span>
+      </div>
+    </header>
+
+    <!-- TOPIC CHECKLIST -->
+    <div id="checklist-bar">
+      <div class="checklist-header">
+        <span class="checklist-title">📋 Topic Tracker</span>
+        <span class="checklist-progress" id="check-progress">0 / 10 complete</span>
+      </div>
+      <div class="checklist-track"><div class="checklist-fill" id="check-fill"></div></div>
+      <div class="checklist-items">
+        <div class="check-item" data-topic="intro"><span class="check-box"></span>Introduction</div>
+        <div class="check-item" data-topic="types"><span class="check-box"></span>System Types</div>
+        <div class="check-item" data-topic="class"><span class="check-box"></span>Classifications</div>
+        <div class="check-item" data-topic="func"><span class="check-box"></span>Oil Functions</div>
+        <div class="check-item" data-topic="cool"><span class="check-box"></span>Bearing Cooling</div>
+        <div class="check-item" data-topic="cooler"><span class="check-box"></span>Oil Coolers</div>
+        <div class="check-item" data-topic="valve"><span class="check-box"></span>Bypass Valves</div>
+        <div class="check-item" data-topic="check"><span class="check-box"></span>Check Valves</div>
+        <div class="check-item" data-topic="deoil"><span class="check-box"></span>Deoiler</div>
+        <div class="check-item" data-topic="chip"><span class="check-box"></span>Chip Detectors</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 1 – Introduction -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s1">
+      <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">01</span>
+          <div>
+            <div class="section-title">Introduction to Turbine Lubrication</div>
+            <div class="section-desc">Why lubrication is essential in gas turbine engines</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body open">
+        <p class="content-intro">Gas turbine engines operate under extreme conditions — very high temperatures, high rotational speeds, and heavy bearing loads. The lubrication system is essential to protect engine components and maintain reliable operation.</p>
+
+        <h3 class="sub-heading">Core Functions of Lubrication</h3>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-icon">🔩</div>
+            <div class="card-title">Friction Reduction</div>
+            <div class="card-text">Separates moving surfaces to prevent wear on bearings and gears.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🌡️</div>
+            <div class="card-title">Cooling</div>
+            <div class="card-text">Absorbs and removes heat from bearings and other engine components.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🧹</div>
+            <div class="card-title">Cleaning</div>
+            <div class="card-text">Carries away contaminants and metallic debris from contact surfaces.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon">🛡️</div>
+            <div class="card-title">Corrosion Protection</div>
+            <div class="card-text">Forms a protective film on metal surfaces to prevent oxidation.</div>
+          </div>
+        </div>
+
+        <div class="callout warning">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <div class="callout-title">Safety Critical</div>
+            <div class="callout-text">Without proper lubrication, bearings may overheat, components may fail, and engine damage can occur.</div>
+          </div>
+        </div>
+
+        <div class="recap-box">
+          <div class="recap-title">⚡ Quick Recap</div>
+          <div class="recap-items">
+            <div class="recap-item">The four main functions of turbine oil are: <strong>lubrication, cooling, cleaning, and corrosion protection</strong>.</div>
+            <div class="recap-item">Turbine engines operate at <strong>very high temperatures, speeds, and bearing loads</strong>.</div>
+            <div class="recap-item"><strong>Bearing cooling</strong> is one of the most important functions of the oil system.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 2 – System Types -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s2">
+      <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">02</span>
+          <div>
+            <div class="section-title">Types of Lubrication Systems</div>
+            <div class="section-desc">Wet sump vs. dry sump — key differences and applications</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body open">
+        <p class="content-intro">The two primary design types differ in where the oil is stored. This affects cooling capability, capacity, and performance during aircraft maneuvering.</p>
+
+        <div class="two-col">
+          <div class="info-block">
+            <div class="ib-title">🪣 Wet Sump</div>
+            <ul>
+              <li>Oil stored <strong>inside the engine</strong></li>
+              <li>Simpler design</li>
+              <li>Common in <strong>smaller engines</strong></li>
+              <li>Limited oil capacity</li>
+            </ul>
+          </div>
+          <div class="info-block">
+            <div class="ib-title">🛢️ Dry Sump</div>
+            <ul>
+              <li>Oil stored in a <strong>separate external tank</strong></li>
+              <li>Most common in <strong>turbine engines</strong></li>
+              <li>Larger oil capacity</li>
+              <li>Better during maneuvering</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="sub-heading">Why Dry Sump Is Preferred in Turbines</h3>
+        <ul class="bullet-list">
+          <li class="key-point"><strong>Better cooling capability</strong> — larger volume of oil available</li>
+          <li class="key-point"><strong>Larger oil capacity</strong> — stored in external tank</li>
+          <li class="key-point"><strong>Improved lubrication control</strong> — consistent flow management</li>
+          <li class="key-point"><strong>Better maneuvering performance</strong> — oil supply not affected by aircraft attitude</li>
+        </ul>
+
+        <div class="callout key">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Key Concept</div>
+            <div class="callout-text">The <span class="term">dry sump system</span> is the most common design in turbine engines. Oil is stored in an external tank, allowing greater capacity and reliable supply during all flight attitudes.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 3 – Classifications -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s3">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">03</span>
+          <div>
+            <div class="section-title">Lubrication System Classifications</div>
+            <div class="section-desc">Systems classified by oil flow method — pressure relief, full flow, total loss</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">Beyond where oil is stored, systems are also classified by how oil pressure and flow is managed.</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>System Type</th>
+              <th>Oil Pressure</th>
+              <th>Application</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pressure Relief</strong></td>
+              <td>Relatively constant</td>
+              <td>Most common system</td>
+            </tr>
+            <tr>
+              <td><strong>Full Flow</strong></td>
+              <td>Varies with engine speed</td>
+              <td>Large turbofan engines</td>
+            </tr>
+            <tr>
+              <td><strong>Total Loss</strong></td>
+              <td>Oil not recirculated</td>
+              <td>Missiles, target drones</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout key">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Key Concept</div>
+            <div class="callout-text">The <span class="term">pressure relief system</span> maintains relatively constant oil pressure and is the most common type. The <span class="term">total loss system</span> does not recirculate oil — it is used only for short-duration engines such as missiles.</div>
+          </div>
+        </div>
+
+        <div class="recap-box">
+          <div class="recap-title">⚡ Quick Recap</div>
+          <div class="recap-items">
+            <div class="recap-item"><strong>Pressure relief</strong> = most common; maintains constant pressure.</div>
+            <div class="recap-item"><strong>Full flow</strong> = pressure varies with speed; used in large turbofans.</div>
+            <div class="recap-item"><strong>Total loss</strong> = oil not reused; only for short-duration engines.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 4 – Oil Functions -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s4">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">04</span>
+          <div>
+            <div class="section-title">Main Functions of Turbine Engine Oil</div>
+            <div class="section-desc">What the oil system does and why bearing cooling is the most critical</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">Turbine engine oil performs four primary functions, with cooling being particularly critical due to the proximity of bearings to extremely hot turbine sections.</p>
+
+        <h3 class="sub-heading">The Four Primary Functions</h3>
+        <ul class="bullet-list">
+          <li class="key-point"><strong>Lubrication</strong> — reduces friction between rotating components</li>
+          <li class="key-point"><strong>Cooling</strong> — absorbs and removes heat from bearings</li>
+          <li class="key-point"><strong>Cleaning</strong> — carries contaminants away from surfaces</li>
+          <li class="key-point"><strong>Corrosion protection</strong> — protective film on metal parts</li>
+        </ul>
+
+        <div class="callout warning">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <div class="callout-title">Most Critical Lubrication Point</div>
+            <div class="callout-text">The <strong>turbine bearing area</strong> is the most critical lubrication point in the engine. Bearings operate near extremely hot turbine sections and depend heavily on oil cooling.</div>
+          </div>
+        </div>
+
+        <div class="callout memory">
+          <span class="callout-icon">🧠</span>
+          <div class="callout-body">
+            <div class="callout-title">Memory Aid</div>
+            <div class="callout-text"><strong>L-C-C-C</strong> → <strong>L</strong>ubrication · <strong>C</strong>ooling · <strong>C</strong>leaning · <strong>C</strong>orrosion protection</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 5 – Bearing Cooling -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s5">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">05</span>
+          <div>
+            <div class="section-title">Bearing Cooling Systems</div>
+            <div class="section-desc">Oil cooling and secondary airflow — how bearings are kept cool</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">Turbine bearings are exposed to extreme heat from nearby turbine sections. Two methods are used together: oil cooling and secondary airflow (compressor bleed air).</p>
+
+        <h3 class="sub-heading">Method 1 – Oil Cooling</h3>
+        <ul class="bullet-list">
+          <li>Oil circulates around bearings to <strong>absorb heat</strong></li>
+          <li>Hot oil is then <strong>carried away</strong> to the oil cooler</li>
+        </ul>
+
+        <h3 class="sub-heading">Method 2 – Secondary Airflow</h3>
+        <div class="callout key">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Key Concept – Secondary Airflow</div>
+            <div class="callout-text"><span class="term">Secondary airflow</span> is compressor bleed air used to cool turbine components. It is taken from <strong>early compressor stages</strong> — where pressure is adequate but temperature is lower than later stages.</div>
+          </div>
+        </div>
+
+        <h3 class="sub-heading">Components Cooled by Secondary Airflow</h3>
+        <div class="card-grid">
+          <div class="card"><div class="card-icon">⚙️</div><div class="card-title">Turbine Bearings</div></div>
+          <div class="card"><div class="card-icon">💿</div><div class="card-title">Turbine Disks</div></div>
+          <div class="card"><div class="card-icon">🔆</div><div class="card-title">Turbine Blades</div></div>
+          <div class="card"><div class="card-icon">🔻</div><div class="card-title">Turbine Vanes</div></div>
+        </div>
+
+        <div class="callout tip">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Important Benefit</div>
+            <div class="callout-text">Air cooling <strong>reduces the amount of oil needed</strong> for cooling, improving overall system efficiency.</div>
+          </div>
+        </div>
+
+        <div class="recap-box">
+          <div class="recap-title">⚡ Quick Recap</div>
+          <div class="recap-items">
+            <div class="recap-item">Secondary airflow = <strong>compressor bleed air</strong> used for cooling.</div>
+            <div class="recap-item">Taken from <strong>early compressor stages</strong> — lower temperature, adequate pressure.</div>
+            <div class="recap-item">Cools turbine bearings, disks, blades, and vanes.</div>
+            <div class="recap-item">Reduces the amount of oil required for cooling.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 6 – Oil Coolers -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s6">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">06</span>
+          <div>
+            <div class="section-title">Oil Coolers</div>
+            <div class="section-desc">Air oil coolers and fuel oil coolers — types, function, and operation</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">Because turbine oil absorbs large amounts of heat from bearings, oil coolers are necessary to reduce oil temperature before recirculation.</p>
+
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Cooler Type</th>
+              <th>Cooling Medium</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Air Oil Cooler</strong></td>
+              <td>Airflow</td>
+              <td>Installed at forward end of engine; used in dry sump systems</td>
+            </tr>
+            <tr>
+              <td><strong>Fuel Oil Cooler</strong></td>
+              <td>Fuel (heat exchanger)</td>
+              <td>Cools oil AND heats fuel to prevent ice formation</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="sub-heading">Fuel Oil Cooler – How It Works</h3>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-dot">1</div>
+            <div class="flow-content">
+              <strong>Hot oil enters the heat exchanger</strong>
+              <p>Oil from the scavenge system passes through the fuel oil cooler.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">2</div>
+            <div class="flow-content">
+              <strong>Heat transfers from oil to fuel</strong>
+              <p>The oil transfers its heat to the fuel flowing through the exchanger.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">3</div>
+            <div class="flow-content">
+              <strong>Oil is cooled — fuel is warmed</strong>
+              <p>Cooled oil returns to the system; warmer fuel proceeds to combustion.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout key">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Dual Benefit</div>
+            <div class="callout-text">The fuel oil cooler provides two benefits simultaneously: it <strong>cools the engine oil</strong> and <strong>heats the fuel</strong> to help prevent ice formation before combustion.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 7 – Thermostatic Bypass Valves -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s7">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">07</span>
+          <div>
+            <div class="section-title">Thermostatic Bypass Valves</div>
+            <div class="section-desc">Temperature control and protection against cooler failure</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">The thermostatic bypass valve controls oil temperature by regulating how much oil passes through the cooler, and protects the system if the cooler becomes blocked.</p>
+
+        <h3 class="sub-heading">Normal Operation</h3>
+        <ul class="bullet-list">
+          <li>Valve controls the <strong>amount of oil flowing through the cooler</strong></li>
+          <li>Maintains <strong>proper oil temperature</strong> at all times</li>
+        </ul>
+
+        <h3 class="sub-heading">Bypass Operation</h3>
+        <ul class="bullet-list">
+          <li class="key-point">If the cooler is <strong>blocked, damaged, or restricted</strong>, the valve <strong>opens automatically</strong></li>
+          <li class="key-point">Oil <strong>bypasses the cooler</strong> and continues to circulate</li>
+        </ul>
+
+        <div class="callout warning">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <div class="callout-title">Why This Is Critical</div>
+            <div class="callout-text">Without the bypass function, a blocked cooler could cause <strong>excessive pressure buildup</strong> or <strong>oil starvation</strong> — both potentially catastrophic for the engine.</div>
+          </div>
+        </div>
+
+        <div class="callout key">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Key Concept</div>
+            <div class="callout-text">The <span class="term">thermostatic bypass valve</span> serves two roles: temperature regulation under normal conditions, and cooler protection under fault conditions.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 8 – Check Valves -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s8">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">08</span>
+          <div>
+            <div class="section-title">Check Valves</div>
+            <div class="section-desc">Preventing reverse oil flow and its dangerous consequences</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">Check valves prevent oil from draining back into the engine by gravity after shutdown. Without them, oil can accumulate in unwanted areas and create serious hazards.</p>
+
+        <h3 class="sub-heading">Purpose</h3>
+        <ul class="bullet-list">
+          <li class="key-point">Prevent <strong>reverse oil flow</strong> after engine shutdown</li>
+          <li>Stop oil draining into low-lying engine areas by gravity</li>
+        </ul>
+
+        <h3 class="sub-heading">Consequences Without Check Valves</h3>
+        <div class="callout warning">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <div class="callout-title">Safety Critical – Without Check Valves</div>
+            <div class="callout-text">
+              Oil may accumulate → leading to:<br>
+              · <strong>Internal oil fires</strong><br>
+              · <strong>Gearbox flooding</strong><br>
+              · <strong>Cabin air contamination</strong>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="sub-heading">Design Details</h3>
+        <ul class="bullet-list">
+          <li>Most check valves are <strong>spring-loaded ball-and-seat</strong> type</li>
+          <li class="key-point">Typical opening pressure: <strong>2 to 5 psi</strong></li>
+        </ul>
+
+        <div class="callout key">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Key Concept</div>
+            <div class="callout-text">Check valves are especially important in <span class="term">dry sump systems</span>, where the external tank and pipework create more opportunity for reverse oil flow under gravity.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 9 – Deoiler -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s9">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">09</span>
+          <div>
+            <div class="section-title">Deoiler</div>
+            <div class="section-desc">Centrifugal separation of oil from breather air</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">The deoiler prevents oil loss by separating oil droplets from the breather air before it is vented overboard. It uses centrifugal action.</p>
+
+        <h3 class="sub-heading">Operating Principle</h3>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-dot">1</div>
+            <div class="flow-content">
+              <strong>Breather air (containing oil mist) enters the deoiler</strong>
+              <p>Air from the engine venting system passes into a rotating impeller.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">2</div>
+            <div class="flow-content">
+              <strong>Spinning impeller causes centrifugal separation</strong>
+              <p>The spinning action flings heavier oil droplets outward. Lighter air remains near the center.</p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">3</div>
+            <div class="flow-content">
+              <strong>Oil and air are separated</strong>
+              <p>Oil is returned to the sump/tank. Clean air is vented overboard.</p>
+            </div>
+          </div>
+        </div>
+
+        <table class="compare-table">
+          <thead>
+            <tr><th>Substance</th><th>Destination</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Oil</strong></td><td>Returned to sump / tank</td></tr>
+            <tr><td><strong>Air</strong></td><td>Vented overboard</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout key">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <div class="callout-title">Key Concept</div>
+            <div class="callout-text">The <span class="term">deoiler</span> uses <strong>centrifugal force</strong> via a rotating impeller to separate oil from breather air, preventing oil loss and environmental contamination.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 10 – Magnetic Chip Detectors -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s10">
+      <div class="section-header" role="button" aria-expanded="false" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num">10</span>
+          <div>
+            <div class="section-title">Magnetic Chip Detectors</div>
+            <div class="section-desc">Early warning of internal engine damage via metallic particle detection</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body">
+        <p class="content-intro">Magnetic chip detectors are a key engine health monitoring tool. They attract ferrous metal particles circulating in the oil, providing early warning of internal damage.</p>
+
+        <h3 class="sub-heading">Purpose and Function</h3>
+        <ul class="bullet-list">
+          <li class="key-point">Detect <strong>ferrous (magnetic) metallic particles</strong> in the oil</li>
+          <li>Metal particles indicate bearing wear, gear damage, or engine failure</li>
+          <li>Provide <strong>early warning</strong> before catastrophic damage occurs</li>
+        </ul>
+
+        <h3 class="sub-heading">Typical Installation Locations</h3>
+        <div class="card-grid">
+          <div class="card"><div class="card-icon">🔗</div><div class="card-title">Scavenge Lines</div><div class="card-text">Most common location — captures particles from returning oil.</div></div>
+          <div class="card"><div class="card-icon">🪣</div><div class="card-title">Oil Sumps</div><div class="card-text">Detects particles settling in the sump.</div></div>
+          <div class="card"><div class="card-icon">🛢️</div><div class="card-title">Oil Tanks</div><div class="card-text">Secondary detection point in the storage tank.</div></div>
+        </div>
+
+        <h3 class="sub-heading">Maintenance Procedure</h3>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-dot">1</div>
+            <div class="flow-content"><strong>Detector is removed</strong><p>Removed from scavenge line or sump during scheduled inspection.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">2</div>
+            <div class="flow-content"><strong>Checked for metal particles</strong><p>Visual and tactile inspection for ferrous debris on the magnetic tip.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">3</div>
+            <div class="flow-content"><strong>If normal: cleaned and reinstalled</strong><p>No action required if only minor clean metal is found.</p></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-dot">!</div>
+            <div class="flow-content"><strong>If significant metal found: investigate immediately</strong><p>Source must be identified before returning the engine to service.</p></div>
+          </div>
+        </div>
+
+        <div class="callout warning">
+          <span class="callout-icon">⚠️</span>
+          <div class="callout-body">
+            <div class="callout-title">Safety Critical</div>
+            <div class="callout-text">Metal particles on a chip detector may indicate <strong>bearing wear, gear damage, or internal engine failure</strong>. The source must be investigated <strong>immediately</strong>.</div>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <span class="callout-icon">📝</span>
+          <div class="callout-body">
+            <div class="callout-title">Exam Tip</div>
+            <div class="callout-text">Magnetic chip detectors provide <strong>early warning</strong> of internal engine damage — a key exam point. Remember they detect <strong>ferrous</strong> particles only.</div>
+          </div>
+        </div>
+
+        <div class="recap-box">
+          <div class="recap-title">⚡ Quick Recap – Full System</div>
+          <div class="recap-items">
+            <div class="recap-item">Turbine oil: <strong>lubricates, cools, cleans, and protects</strong> against corrosion.</div>
+            <div class="recap-item"><strong>Dry sump</strong> is the most common turbine engine system — oil in external tank.</div>
+            <div class="recap-item"><strong>Secondary airflow</strong> = compressor bleed air from early stages — cools turbine components.</div>
+            <div class="recap-item"><strong>Air oil coolers</strong> use airflow; <strong>fuel oil coolers</strong> use fuel as a heat exchange medium.</div>
+            <div class="recap-item"><strong>Thermostatic bypass valve</strong> controls temperature and bypasses cooler if blocked.</div>
+            <div class="recap-item"><strong>Check valves</strong> prevent reverse oil flow after shutdown — prevent fires and flooding.</div>
+            <div class="recap-item"><strong>Deoiler</strong> uses centrifugal action to recover oil from breather air.</div>
+            <div class="recap-item"><strong>Chip detectors</strong> attract ferrous particles — early warning of engine damage.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 11 – FLASHCARDS -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s11">
+      <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num" style="background:rgba(167,139,250,0.15);border-color:rgba(167,139,250,0.3);color:var(--accent-purple);">🃏</span>
+          <div>
+            <div class="section-title">Flashcards</div>
+            <div class="section-desc">Click or press Enter to flip — test your recall</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body open">
+        <div class="flashcard-grid" id="flashcard-grid">
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: What is a dry sump system?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">What is a dry sump lubrication system?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">A system where oil is stored in a <strong>separate external tank</strong>, not inside the engine. Most common in turbine engines — provides greater capacity and better maneuvering performance.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: What is secondary airflow?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">What is secondary airflow?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">Compressor <strong>bleed air</strong> used to cool turbine components (bearings, disks, blades, vanes). Taken from early compressor stages — adequate pressure, lower temperature.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: What does a thermostatic bypass valve do?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">What does a thermostatic bypass valve do?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">Controls oil temperature by regulating flow through the cooler. If the cooler is blocked/damaged, it <strong>opens automatically</strong> to allow oil to bypass — preventing excessive pressure or oil starvation.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: What is the purpose of a check valve?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">Why are check valves installed in the lubrication system?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">To prevent <strong>reverse oil flow</strong> after shutdown. Without them, oil drains by gravity causing: internal fires, gearbox flooding, cabin air contamination. Typical opening pressure: <strong>2–5 psi</strong>.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: How does a deoiler work?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">How does a deoiler work?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">Breather air enters a <strong>rotating impeller</strong>. Centrifugal force flings oil outward → oil returns to sump. Air (near centre) is vented overboard.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: What do magnetic chip detectors detect?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">What do magnetic chip detectors detect and why does it matter?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">They detect <strong>ferrous metal particles</strong> in the oil — indicating bearing wear, gear damage, or internal failure. Provide early warning before catastrophic damage occurs.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: Fuel oil cooler dual benefit?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">What are the two benefits of a fuel oil cooler?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">1. <strong>Cools the engine oil</strong> by transferring heat to fuel.<br>2. <strong>Warms the fuel</strong> to help prevent ice formation before combustion.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-wrapper" tabindex="0" role="button" aria-label="Flashcard: What is the most critical lubrication point?" data-flipped="false">
+            <div class="flashcard-inner">
+              <div class="flashcard-front">
+                <div class="fc-label">Question</div>
+                <div class="fc-question">What is the most critical lubrication point in a turbine engine?</div>
+                <div class="fc-hint">Tap to reveal ↩</div>
+              </div>
+              <div class="flashcard-back">
+                <div class="fc-label">Answer</div>
+                <div class="fc-answer">The <strong>turbine bearing area</strong>. Bearings here operate near extremely hot turbine sections and are highly dependent on oil cooling to prevent overheating and failure.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- SECTION 12 – QUIZ -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <section class="section" id="s12">
+      <div class="section-header" role="button" aria-expanded="true" tabindex="0">
+        <div class="section-header-left">
+          <span class="section-num" style="background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.3);color:var(--accent-amber);">📝</span>
+          <div>
+            <div class="section-title">Self-Check Quiz</div>
+            <div class="section-desc">10 exam-style questions — click an option to check your answer</div>
+          </div>
+        </div>
+        <span class="chevron" aria-hidden="true">⌄</span>
+      </div>
+      <div class="section-body open">
+        <div class="quiz-container" id="quiz-container">
+
+          <!-- Q1 -->
+          <div class="quiz-item" data-question="1">
+            <div class="quiz-question"><span class="q-num">Q1</span>What is the primary difference between a wet sump and a dry sump lubrication system?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>Wet sump uses synthetic oil; dry sump uses mineral oil</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">B</span>Wet sump stores oil inside the engine; dry sump uses an external tank</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">C</span>Dry sump systems do not use an oil pump</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>Wet sump systems are only used in turbofan engines</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-item" data-question="2">
+            <div class="quiz-question"><span class="q-num">Q2</span>Which of the following is NOT listed as a primary function of turbine engine oil?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>Lubrication</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">B</span>Cooling</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">C</span>Sealing</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>Corrosion protection</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-item" data-question="3">
+            <div class="quiz-question"><span class="q-num">Q3</span>The most critical lubrication point in a turbine engine is the:</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>Compressor inlet guide vanes</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">B</span>Turbine bearing area</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">C</span>Accessory gearbox</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>Oil tank</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q4 -->
+          <div class="quiz-item" data-question="4">
+            <div class="quiz-question"><span class="q-num">Q4</span>Secondary airflow in a turbine engine refers to:</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>Recirculated exhaust gases used to cool turbine blades</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">B</span>Oil mist vented overboard through the breather system</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">C</span>Compressor bleed air used to cool turbine components</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>Airflow through the oil cooler matrix</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q5 -->
+          <div class="quiz-item" data-question="5">
+            <div class="quiz-question"><span class="q-num">Q5</span>A fuel oil cooler provides which TWO benefits?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>Reduces oil viscosity and increases fuel pressure</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">B</span>Cools the engine oil and heats the fuel to help prevent ice formation</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">C</span>Filters the oil and pre-heats the combustion air</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>Cools the fuel and reduces oil temperature by airflow</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q6 -->
+          <div class="quiz-item" data-question="6">
+            <div class="quiz-question"><span class="q-num">Q6</span>What action does a thermostatic bypass valve take if the oil cooler becomes blocked?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>It shuts off oil supply to the bearings</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">B</span>It closes completely to prevent oil loss</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">C</span>It opens automatically to allow oil to bypass the cooler</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>It activates the secondary airflow system</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q7 -->
+          <div class="quiz-item" data-question="7">
+            <div class="quiz-question"><span class="q-num">Q7</span>Check valves in a dry sump system are designed to prevent:</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>Excessive oil pressure during high-power operation</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">B</span>Reverse oil flow after engine shutdown</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">C</span>Oil contamination by fuel</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>Over-cooling of the oil</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q8 -->
+          <div class="quiz-item" data-question="8">
+            <div class="quiz-question"><span class="q-num">Q8</span>The typical opening pressure of a lubrication system check valve is:</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>10 to 15 psi</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">B</span>2 to 5 psi</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">C</span>50 to 100 psi</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>0.5 to 1 psi</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q9 -->
+          <div class="quiz-item" data-question="9">
+            <div class="quiz-question"><span class="q-num">Q9</span>How does a deoiler separate oil from breather air?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>By filtering through a fine mesh screen</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">B</span>By cooling the air so oil droplets condense</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">C</span>By spinning the mixture in a rotating impeller — centrifugal force moves oil outward</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>By using magnetic attraction to capture oil molecules</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+          <!-- Q10 -->
+          <div class="quiz-item" data-question="10">
+            <div class="quiz-question"><span class="q-num">Q10</span>A magnetic chip detector found to contain significant metal debris requires:</div>
+            <div class="quiz-options">
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">A</span>The detector to be cleaned and the oil to be changed only</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">B</span>No action — some debris is normal</div>
+              <div class="quiz-option" data-correct="true"><span class="opt-marker">C</span>Immediate investigation to identify the source of debris</div>
+              <div class="quiz-option" data-correct="false"><span class="opt-marker">D</span>The engine to be run for 10 minutes to flush the system</div>
+            </div>
+            <div class="quiz-feedback"></div>
+            <button class="quiz-reset-btn">↺ Reset</button>
+          </div>
+
+        </div><!-- end quiz-container -->
+
+        <!-- Score Summary -->
+        <div class="score-summary" id="score-summary">
+          <div class="score-val" id="score-val">—</div>
+          <div class="score-label" id="score-label">Score will appear when all questions are answered</div>
+          <button class="score-reset" id="score-reset">↺ Reset All Questions</button>
+        </div>
+
+      </div>
+    </section>
+
+  </main><!-- end #main -->
+</div><!-- end #layout -->
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="back-to-top" aria-label="Scroll to top" title="Scroll to top">↑</button>
+
+<!-- ───────────────────────────────────────────────────────── -->
+<!-- JAVASCRIPT -->
+<!-- ───────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  /* ─── SCROLL PROGRESS BAR ───────────────────────────────── */
+  const progressBar = document.getElementById('progress-bar');
+  const backToTop   = document.getElementById('back-to-top');
+
+  window.addEventListener('scroll', () => {
+    const scrollTop  = window.scrollY;
+    const docHeight  = document.documentElement.scrollHeight - window.innerHeight;
+    const pct        = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+    backToTop.classList.toggle('visible', scrollTop > 400);
+    updateTOC();
+  }, { passive: true });
+
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* ─── COLLAPSIBLE SECTIONS ──────────────────────────────── */
+  function getBody(header) {
+    return header.parentElement.querySelector('.section-body');
+  }
+
+  document.querySelectorAll('.section-header').forEach(header => {
+    const body = getBody(header);
+    const isOpen = body && body.classList.contains('open');
+    header.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+    header.addEventListener('click', () => toggleSection(header));
+    header.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSection(header); }
+    });
+  });
+
+  function toggleSection(header) {
+    const body = getBody(header);
+    if (!body) return;
+    const open = body.classList.toggle('open');
+    header.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function openSection(header) {
+    const body = getBody(header);
+    if (!body) return;
+    body.classList.add('open');
+    header.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeSection(header) {
+    const body = getBody(header);
+    if (!body) return;
+    body.classList.remove('open');
+    header.setAttribute('aria-expanded', 'false');
+  }
+
+  /* ─── EXPAND / COLLAPSE ALL ─────────────────────────────── */
+  document.getElementById('expand-all-btn').addEventListener('click', () => {
+    document.querySelectorAll('.section-header').forEach(openSection);
+  });
+
+  document.getElementById('collapse-all-btn').addEventListener('click', () => {
+    document.querySelectorAll('.section-header').forEach(closeSection);
+  });
+
+  /* ─── SIDEBAR MOBILE ────────────────────────────────────── */
+  const sidebar        = document.getElementById('sidebar');
+  const overlay        = document.getElementById('sidebar-overlay');
+  const menuToggle     = document.getElementById('menu-toggle');
+
+  function openSidebar()  { sidebar.classList.add('open');    overlay.classList.add('visible');    menuToggle.setAttribute('aria-expanded', 'true'); }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); menuToggle.setAttribute('aria-expanded', 'false'); }
+
+  menuToggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+  overlay.addEventListener('click', closeSidebar);
+
+  sidebar.querySelectorAll('.toc-link').forEach(link => {
+    link.addEventListener('click', () => { if (window.innerWidth <= 900) closeSidebar(); });
+  });
+
+  /* ─── TOC ACTIVE HIGHLIGHT ──────────────────────────────── */
+  const sections = document.querySelectorAll('section.section');
+  const tocLinks = document.querySelectorAll('.toc-link');
+
+  function updateTOC() {
+    let current = '';
+    sections.forEach(sec => {
+      const top = sec.getBoundingClientRect().top;
+      if (top < 120) current = sec.id;
+    });
+    tocLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+
+  /* ─── CHECKLIST ─────────────────────────────────────────── */
+  const checkItems = document.querySelectorAll('.check-item');
+  const checkFill  = document.getElementById('check-fill');
+  const checkProg  = document.getElementById('check-progress');
+  const total      = checkItems.length;
+
+  function updateChecklist() {
+    const done = document.querySelectorAll('.check-item.done').length;
+    const pct  = Math.round((done / total) * 100);
+    checkFill.style.width = pct + '%';
+    checkProg.textContent = `${done} / ${total} complete`;
+  }
+
+  checkItems.forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('done');
+      const box = item.querySelector('.check-box');
+      box.textContent = item.classList.contains('done') ? '✓' : '';
+      updateChecklist();
+    });
+  });
+
+  /* ─── FLASHCARDS ────────────────────────────────────────── */
+  document.querySelectorAll('.flashcard-wrapper').forEach(card => {
+    function flip() {
+      const flipped = card.classList.toggle('flipped');
+      card.setAttribute('data-flipped', flipped ? 'true' : 'false');
+      card.setAttribute('aria-label', flipped
+        ? card.getAttribute('aria-label').replace('Question', 'Answer (flipped)')
+        : card.getAttribute('aria-label').replace('Answer (flipped)', 'Question')
+      );
+    }
+    card.addEventListener('click', flip);
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+    });
+  });
+
+  /* ─── QUIZ LOGIC ────────────────────────────────────────── */
+  let answeredCount = 0;
+  let correctCount  = 0;
+  const totalQ      = document.querySelectorAll('.quiz-item').length;
+
+  document.querySelectorAll('.quiz-item').forEach(item => {
+    const options   = item.querySelectorAll('.quiz-option');
+    const feedback  = item.querySelector('.quiz-feedback');
+    const resetBtn  = item.querySelector('.quiz-reset-btn');
+    let answered    = false;
+
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+        answeredCount++;
+
+        const isCorrect = opt.getAttribute('data-correct') === 'true';
+
+        options.forEach(o => {
+          o.classList.add('locked');
+          if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+        });
+
+        if (!isCorrect) {
+          opt.classList.add('wrong');
+          feedback.textContent = '✗ Incorrect — the correct answer is highlighted above.';
+          feedback.className = 'quiz-feedback wrong';
+        } else {
+          correctCount++;
+          feedback.textContent = '✓ Correct!';
+          feedback.className = 'quiz-feedback correct';
+        }
+        feedback.style.display = 'block';
+        resetBtn.style.display = 'inline-block';
+
+        if (answeredCount === totalQ) showScore();
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      if (answered) {
+        const wasCorrect = item.querySelector('.quiz-option.correct:not(.wrong)') !== null &&
+                           item.querySelector('.quiz-option.wrong') === null
+                           ? item.querySelector('[data-correct="true"]').classList.contains('correct') &&
+                             !item.querySelectorAll('.quiz-option').length
+                           : false;
+        // Simplified: just decrement if we can
+        answeredCount = Math.max(0, answeredCount - 1);
+        // Recalculate correctCount
+      }
+      answered = false;
+      options.forEach(o => { o.classList.remove('correct', 'wrong', 'locked'); });
+      feedback.style.display = 'none';
+      feedback.className = 'quiz-feedback';
+      resetBtn.style.display = 'none';
+      document.getElementById('score-summary').style.display = 'none';
+      // Full recalc
+      recalcScore();
+    });
+  });
+
+  function recalcScore() {
+    answeredCount = 0;
+    correctCount  = 0;
+    document.querySelectorAll('.quiz-item').forEach(item => {
+      const chosen = item.querySelector('.quiz-option.correct, .quiz-option.wrong');
+      if (chosen) {
+        answeredCount++;
+        if (!item.querySelector('.quiz-option.wrong')) correctCount++;
+        else if (item.querySelector('.quiz-option.correct') && !item.querySelector('.quiz-option.wrong.locked')) {
+          // wrong was chosen but we track correct highlight separately
+        }
+      }
+    });
+  }
+
+  function showScore() {
+    const pct     = Math.round((correctCount / totalQ) * 100);
+    const summary = document.getElementById('score-summary');
+    const valEl   = document.getElementById('score-val');
+    const lblEl   = document.getElementById('score-label');
+
+    valEl.textContent = correctCount + ' / ' + totalQ;
+    valEl.style.color = pct >= 70 ? 'var(--accent-green)' : pct >= 50 ? 'var(--accent-amber)' : 'var(--accent-red)';
+
+    const msgs = ['Keep reviewing the material.', 'Good effort — review incorrect areas.', 'Well done!', 'Excellent result!'];
+    const idx  = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
+    lblEl.textContent = msgs[idx] + ' (' + pct + '%)';
+    summary.style.display = 'block';
+    summary.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.getElementById('score-reset').addEventListener('click', () => {
+    document.querySelectorAll('.quiz-item').forEach(item => {
+      item.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('correct', 'wrong', 'locked'));
+      item.querySelector('.quiz-feedback').style.display = 'none';
+      item.querySelector('.quiz-feedback').className = 'quiz-feedback';
+      item.querySelector('.quiz-reset-btn').style.display = 'none';
+    });
+    answeredCount = 0;
+    correctCount  = 0;
+    document.getElementById('score-summary').style.display = 'none';
+  });
+
+  /* ─── FOCUS MODE ────────────────────────────────────────── */
+  const focusBtn = document.getElementById('focus-btn');
+  focusBtn.addEventListener('click', () => {
+    const active = document.body.classList.toggle('focus-mode');
+    focusBtn.classList.toggle('active', active);
+    focusBtn.textContent = active ? '⚡ Exit Focus' : '⚡ Focus';
+    if (active) {
+      document.body.classList.remove('exam-mode');
+      examBtn.classList.remove('active');
+      examBtn.textContent = '📝 Exam';
+    }
+  });
+
+  /* ─── EXAM MODE ─────────────────────────────────────────── */
+  const examBtn = document.getElementById('exam-btn');
+  examBtn.addEventListener('click', () => {
+    const active = document.body.classList.toggle('exam-mode');
+    examBtn.classList.toggle('active', active);
+    examBtn.textContent = active ? '📝 Exit Exam' : '📝 Exam';
+    if (active) {
+      document.body.classList.remove('focus-mode');
+      focusBtn.classList.remove('active');
+      focusBtn.textContent = '⚡ Focus';
+      // Expand all in exam mode
+      document.querySelectorAll('.section-header').forEach(openSection);
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
