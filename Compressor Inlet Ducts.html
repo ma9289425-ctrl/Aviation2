@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15.3 – Inlet | Compressor Inlet Ducts — Aviation Revision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  /* ═══════ CSS CUSTOM PROPERTIES ═══════ */
+  :root {
+    --bg-primary: #1a1d23;
+    --bg-secondary: #21242b;
+    --bg-card: #272b33;
+    --bg-card-hover: #2d323b;
+    --bg-sidebar: #1e2128;
+    --bg-input: #2a2e37;
+    --text-primary: #e4e6ea;
+    --text-secondary: #a0a5b0;
+    --text-muted: #6b7280;
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-dim: rgba(96,165,250,0.12);
+    --accent-border: rgba(96,165,250,0.25);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,0.12);
+    --green-border: rgba(52,211,153,0.3);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,0.12);
+    --red-border: rgba(248,113,113,0.3);
+    --yellow: #fbbf24;
+    --yellow-dim: rgba(251,191,36,0.1);
+    --yellow-border: rgba(251,191,36,0.25);
+    --purple: #a78bfa;
+    --purple-dim: rgba(167,139,250,0.1);
+    --purple-border: rgba(167,139,250,0.25);
+    --orange: #fb923c;
+    --orange-dim: rgba(251,146,60,0.1);
+    --orange-border: rgba(251,146,60,0.25);
+    --border: #2e3340;
+    --border-light: #363b47;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 16px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.2);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.3);
+    --transition: 0.2s ease;
+    --sidebar-w: 280px;
+    --header-h: 64px;
+  }
+
+  /* ═══════ RESET & BASE ═══════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ═══════ SCROLLBAR ═══════ */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* ═══════ PROGRESS BAR ═══════ */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--purple));
+    z-index: 1001; transition: width 0.15s linear;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* ═══════ HEADER ═══════ */
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--header-h);
+    background: rgba(26,29,35,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 999; display: flex; align-items: center;
+    padding: 0 24px; gap: 16px;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .menu-btn {
+    display: none; background: none; border: none; color: var(--text-primary);
+    cursor: pointer; padding: 8px; border-radius: var(--radius-sm);
+    transition: background var(--transition);
+  }
+  .menu-btn:hover { background: var(--bg-card); }
+  .header-badge {
+    background: var(--accent-dim); color: var(--accent); padding: 4px 12px;
+    border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1px solid var(--accent-border); letter-spacing: 0.5px;
+  }
+  .header-title {
+    font-size: 17px; font-weight: 700; color: var(--text-primary);
+  }
+  .header-sub {
+    font-size: 12px; color: var(--text-muted); font-weight: 400;
+  }
+  .header-actions {
+    margin-left: auto; display: flex; align-items: center; gap: 8px;
+  }
+  .mode-btn {
+    background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-secondary); padding: 7px 14px; border-radius: 20px;
+    cursor: pointer; font-size: 12px; font-weight: 500;
+    transition: all var(--transition); display: flex; align-items: center; gap: 6px;
+    font-family: inherit;
+  }
+  .mode-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+  .mode-btn.active {
+    background: var(--accent-dim); color: var(--accent);
+    border-color: var(--accent-border);
+  }
+  .mode-btn svg { width: 14px; height: 14px; }
+
+  /* ═══════ SIDEBAR ═══════ */
+  .sidebar {
+    position: fixed; top: var(--header-h); left: 0; bottom: 0;
+    width: var(--sidebar-w); background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 20px 0; z-index: 998;
+    transition: transform 0.3s ease;
+  }
+  .sidebar-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--text-muted);
+    padding: 0 20px 12px; border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .sidebar-nav { list-style: none; }
+  .sidebar-nav li a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; color: var(--text-secondary);
+    text-decoration: none; font-size: 13px; font-weight: 450;
+    transition: all var(--transition); border-left: 3px solid transparent;
+  }
+  .sidebar-nav li a:hover {
+    color: var(--text-primary); background: rgba(96,165,250,0.05);
+  }
+  .sidebar-nav li a.active {
+    color: var(--accent); background: var(--accent-dim);
+    border-left-color: var(--accent);
+  }
+  .sidebar-nav li a .nav-num {
+    font-size: 10px; font-weight: 700; color: var(--text-muted);
+    min-width: 20px;
+  }
+  .sidebar-checklist {
+    margin: 20px 16px 0; padding: 16px;
+    background: var(--bg-card); border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .sidebar-checklist h4 {
+    font-size: 12px; font-weight: 700; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+  }
+  .checklist-item {
+    display: flex; align-items: center; gap: 8px; padding: 5px 0;
+    cursor: pointer; font-size: 13px; color: var(--text-secondary);
+    transition: color var(--transition); user-select: none;
+  }
+  .checklist-item:hover { color: var(--text-primary); }
+  .checklist-item.checked { color: var(--green); text-decoration: line-through; text-decoration-color: var(--green); }
+  .checklist-box {
+    width: 16px; height: 16px; border: 2px solid var(--border-light);
+    border-radius: 4px; flex-shrink: 0; display: flex;
+    align-items: center; justify-content: center;
+    transition: all var(--transition);
+  }
+  .checklist-item.checked .checklist-box {
+    background: var(--green); border-color: var(--green);
+  }
+  .checklist-item.checked .checklist-box::after {
+    content: '✓'; color: var(--bg-primary); font-size: 10px; font-weight: 700;
+  }
+  .checklist-progress-bar {
+    height: 4px; background: var(--bg-input); border-radius: 2px;
+    margin-top: 12px; overflow: hidden;
+  }
+  .checklist-progress-fill {
+    height: 100%; background: var(--green); border-radius: 2px;
+    transition: width 0.3s ease; width: 0%;
+  }
+
+  /* ═══════ MAIN CONTENT ═══════ */
+  .main {
+    margin-left: var(--sidebar-w); margin-top: var(--header-h);
+    padding: 32px 40px 80px;
+    max-width: 900px;
+  }
+
+  /* ═══════ HERO ═══════ */
+  .hero {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(96,165,250,0.08) 100%);
+    border: 1px solid var(--accent-border); border-radius: var(--radius-lg);
+    padding: 36px; margin-bottom: 32px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(96,165,250,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-label {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--accent); margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 28px; font-weight: 800; color: var(--text-primary);
+    margin-bottom: 8px; line-height: 1.3;
+  }
+  .hero p { color: var(--text-secondary); font-size: 15px; max-width: 580px; }
+  .hero-img {
+    width: 100%; max-height: 220px; object-fit: cover;
+    border-radius: var(--radius); margin-top: 20px; opacity: 0.8;
+    border: 1px solid var(--border);
+  }
+
+  /* ═══════ SECTIONS ═══════ */
+  .section { margin-bottom: 36px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; padding: 16px 20px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); transition: all var(--transition);
+    user-select: none;
+  }
+  .section-header:hover { background: var(--bg-card-hover); border-color: var(--border-light); }
+  .section-header:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 2px;
+  }
+  .section-num {
+    font-size: 11px; font-weight: 800; color: var(--accent);
+    background: var(--accent-dim); padding: 4px 10px;
+    border-radius: 6px; letter-spacing: 0.5px;
+  }
+  .section-title {
+    font-size: 16px; font-weight: 700; color: var(--text-primary); flex: 1;
+  }
+  .section-arrow {
+    color: var(--text-muted); transition: transform 0.3s ease;
+    font-size: 18px; line-height: 1;
+  }
+  .section.open .section-arrow { transform: rotate(180deg); }
+  .section-body {
+    display: none; padding: 20px; margin-top: -1px;
+    border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    background: var(--bg-secondary);
+  }
+  .section.open .section-body { display: block; }
+
+  /* ═══════ CONTENT ELEMENTS ═══════ */
+  .content-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    margin-bottom: 14px; transition: border-color var(--transition);
+  }
+  .content-card:hover { border-color: var(--border-light); }
+  .content-card h3 {
+    font-size: 14px; font-weight: 700; color: var(--accent);
+    margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .content-card p, .content-card li {
+    color: var(--text-secondary); font-size: 14px; line-height: 1.7;
+  }
+  .content-card ul { list-style: none; padding: 0; }
+  .content-card ul li {
+    padding: 4px 0 4px 20px; position: relative;
+  }
+  .content-card ul li::before {
+    content: '›'; position: absolute; left: 4px;
+    color: var(--accent); font-weight: 700; font-size: 16px;
+  }
+
+  .key-term {
+    color: var(--accent); font-weight: 600;
+    background: var(--accent-dim); padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .safety-critical {
+    color: var(--orange); font-weight: 600;
+  }
+
+  /* ═══════ DEFINITION BOX ═══════ */
+  .definition-box {
+    background: var(--purple-dim); border: 1px solid var(--purple-border);
+    border-left: 4px solid var(--purple); border-radius: var(--radius-sm);
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .definition-box .def-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--purple); margin-bottom: 6px;
+  }
+  .definition-box p { color: var(--text-secondary); font-size: 14px; }
+
+  /* ═══════ KEY CONCEPT ═══════ */
+  .key-concept {
+    background: var(--accent-dim); border: 1px solid var(--accent-border);
+    border-left: 4px solid var(--accent); border-radius: var(--radius-sm);
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .key-concept .kc-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin-bottom: 6px;
+  }
+  .key-concept p, .key-concept li {
+    color: var(--text-secondary); font-size: 14px;
+  }
+
+  /* ═══════ WARNING BOX ═══════ */
+  .warning-box {
+    background: var(--red-dim); border: 1px solid var(--red-border);
+    border-left: 4px solid var(--red); border-radius: var(--radius-sm);
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .warning-box .warn-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--red); margin-bottom: 6px;
+  }
+  .warning-box p, .warning-box li {
+    color: var(--text-secondary); font-size: 14px;
+  }
+
+  /* ═══════ RECAP BOX ═══════ */
+  .recap-box {
+    background: var(--green-dim); border: 1px solid var(--green-border);
+    border-left: 4px solid var(--green); border-radius: var(--radius-sm);
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .recap-box .recap-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--green); margin-bottom: 6px;
+  }
+  .recap-box ul { list-style: none; padding: 0; }
+  .recap-box ul li {
+    padding: 3px 0 3px 20px; position: relative;
+    color: var(--text-secondary); font-size: 14px;
+  }
+  .recap-box ul li::before {
+    content: '✓'; position: absolute; left: 0;
+    color: var(--green); font-weight: 700; font-size: 13px;
+  }
+
+  /* ═══════ MEMORY AID ═══════ */
+  .memory-aid {
+    background: var(--orange-dim); border: 1px solid var(--orange-border);
+    border-left: 4px solid var(--orange); border-radius: var(--radius-sm);
+    padding: 16px 18px; margin-bottom: 14px;
+  }
+  .memory-aid .mem-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--orange); margin-bottom: 6px;
+  }
+  .memory-aid p { color: var(--text-secondary); font-size: 14px; }
+
+  /* ═══════ TABLE ═══════ */
+  .data-table {
+    width: 100%; border-collapse: collapse;
+    background: var(--bg-card); border-radius: var(--radius);
+    overflow: hidden; margin-bottom: 14px;
+    border: 1px solid var(--border);
+  }
+  .data-table th {
+    background: rgba(96,165,250,0.08); color: var(--accent);
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 12px 16px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 10px 16px; font-size: 14px; color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(96,165,250,0.03); }
+
+  /* ═══════ FLASHCARDS ═══════ */
+  .flashcard-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px; margin-bottom: 14px;
+  }
+  .flashcard {
+    perspective: 800px; height: 180px; cursor: pointer;
+  }
+  .flashcard-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.5s ease;
+    transform-style: preserve-3d;
+  }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: var(--radius); padding: 20px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .flashcard-front {
+    background: var(--bg-card); border: 1px solid var(--accent-border);
+  }
+  .flashcard-back {
+    background: var(--accent-dim); border: 1px solid var(--accent-border);
+    transform: rotateY(180deg);
+  }
+  .flashcard-front .fc-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;
+  }
+  .flashcard-front p {
+    font-size: 14px; font-weight: 600; color: var(--text-primary);
+  }
+  .flashcard-front .fc-hint {
+    font-size: 11px; color: var(--text-muted); margin-top: 10px;
+  }
+  .flashcard-back .fc-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin-bottom: 8px;
+  }
+  .flashcard-back p {
+    font-size: 14px; color: var(--text-primary); line-height: 1.6;
+  }
+
+  /* ═══════ QUIZ ═══════ */
+  .quiz-container { margin-bottom: 14px; }
+  .quiz-question {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 12px;
+  }
+  .quiz-question .q-num {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+  }
+  .quiz-question .q-text {
+    font-size: 15px; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 14px;
+  }
+  .quiz-option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; margin-bottom: 6px;
+    background: var(--bg-input); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); cursor: pointer;
+    transition: all var(--transition); font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .quiz-option:hover { border-color: var(--accent-border); color: var(--text-primary); }
+  .quiz-option:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .quiz-option .opt-marker {
+    width: 22px; height: 22px; border: 2px solid var(--border-light);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    transition: all var(--transition);
+  }
+  .quiz-option.selected { border-color: var(--accent); background: var(--accent-dim); }
+  .quiz-option.selected .opt-marker {
+    border-color: var(--accent); background: var(--accent); color: var(--bg-primary);
+  }
+  .quiz-option.correct {
+    border-color: var(--green); background: var(--green-dim);
+    color: var(--green);
+  }
+  .quiz-option.correct .opt-marker {
+    border-color: var(--green); background: var(--green); color: var(--bg-primary);
+  }
+  .quiz-option.incorrect {
+    border-color: var(--red); background: var(--red-dim);
+    color: var(--red);
+  }
+  .quiz-option.incorrect .opt-marker {
+    border-color: var(--red); background: var(--red); color: var(--bg-primary);
+  }
+  .quiz-option.disabled { pointer-events: none; }
+  .quiz-feedback {
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 500; margin-top: 8px; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb {
+    background: var(--green-dim); color: var(--green);
+    border: 1px solid var(--green-border);
+  }
+  .quiz-feedback.incorrect-fb {
+    background: var(--red-dim); color: var(--red);
+    border: 1px solid var(--red-border);
+  }
+  .quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .quiz-btn {
+    background: var(--accent); color: var(--bg-primary); border: none;
+    padding: 10px 20px; border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all var(--transition); font-family: inherit;
+  }
+  .quiz-btn:hover { background: var(--accent-hover); }
+  .quiz-btn.secondary {
+    background: var(--bg-card); color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .quiz-btn.secondary:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+  .quiz-score {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; text-align: center;
+    display: none;
+  }
+  .quiz-score.show { display: block; }
+  .quiz-score .score-num {
+    font-size: 36px; font-weight: 800; color: var(--accent);
+  }
+  .quiz-score .score-label {
+    font-size: 13px; color: var(--text-muted); margin-top: 4px;
+  }
+
+  /* ═══════ EXTRA TEXT (for focus mode) ═══════ */
+  .extra-text {}
+  body.focus-mode .extra-text { display: none !important; }
+  body.exam-mode .section-body > *:not(.recap-box):not(.quiz-container):not(.flashcard-grid):not(.quiz-question):not(.quiz-actions):not(.quiz-score) {
+    display: none !important;
+  }
+  body.exam-mode .recap-box,
+  body.exam-mode .quiz-container,
+  body.exam-mode .flashcard-grid,
+  body.exam-mode .quiz-question,
+  body.exam-mode .quiz-actions,
+  body.exam-mode .quiz-score { display: block !important; }
+
+  /* ═══════ OVERLAY ═══════ */
+  .sidebar-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 997;
+  }
+
+  /* ═══════ MOBILE ═══════ */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); z-index: 998; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay.show { display: block; }
+    .main { margin-left: 0; padding: 24px 16px 60px; }
+    .menu-btn { display: flex; }
+    .header-actions { gap: 4px; }
+    .mode-btn span.btn-label { display: none; }
+    .hero h1 { font-size: 22px; }
+    .flashcard-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .header-title { font-size: 14px; }
+    .hero { padding: 24px; }
+    .section-header { padding: 14px 16px; }
+    .section-body { padding: 16px; }
+  }
+
+  /* ═══════ FOCUS STATES ═══════ */
+  *:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ═══════ FORMULA ═══════ */
+  .formula-box {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 16px 20px;
+    margin-bottom: 14px; text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px; color: var(--text-primary);
+    letter-spacing: 0.5px;
+  }
+  .formula-box .frac {
+    display: inline-flex; flex-direction: column; align-items: center;
+    vertical-align: middle; margin: 0 4px;
+  }
+  .formula-box .frac-num { border-bottom: 2px solid var(--accent); padding-bottom: 3px; }
+  .formula-box .frac-den { padding-top: 3px; }
+
+  /* ═══════ SECTION DESCRIPTION ═══════ */
+  .section-desc {
+    font-size: 13px; color: var(--text-muted); margin-bottom: 16px;
+    font-style: italic; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+
+  /* ═══════ SUB HEADING ═══════ */
+  .sub-heading {
+    font-size: 14px; font-weight: 700; color: var(--text-primary);
+    margin: 18px 0 10px; padding-left: 12px;
+    border-left: 3px solid var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-left">
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle sidebar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span class="header-badge">15.3</span>
+    <div>
+      <div class="header-title">Compressor Inlet Ducts</div>
+      <div class="header-sub">Gas Turbine Engines — Inlet Systems</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="mode-btn" id="focusBtn" title="Focus Mode — show only key points">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+      <span class="btn-label">Focus</span>
+    </button>
+    <button class="mode-btn" id="examBtn" title="Exam Mode — show recaps, quizzes & flashcards only">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span class="btn-label">Exam</span>
+    </button>
+    <button class="mode-btn" id="expandCollapseBtn" title="Expand / Collapse all sections">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"/><polyline points="7 6 12 11 17 6"/></svg>
+      <span class="btn-label">Expand All</span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-title">Table of Contents</div>
+  <ul class="sidebar-nav" id="sidebarNav">
+    <li><a href="#sec-intro" data-section="sec-intro"><span class="nav-num">01</span>Introduction & Purpose</a></li>
+    <li><a href="#sec-cpr" data-section="sec-cpr"><span class="nav-num">02</span>Compressor Pressure Ratio</a></li>
+    <li><a href="#sec-factors" data-section="sec-factors"><span class="nav-num">03</span>Factors Affecting Airflow</a></li>
+    <li><a href="#sec-smooth" data-section="sec-smooth"><span class="nav-num">04</span>Smooth Airflow & Stall</a></li>
+    <li><a href="#sec-variable" data-section="sec-variable"><span class="nav-num">05</span>Variable Geometry Inlets</a></li>
+    <li><a href="#sec-diffuser" data-section="sec-diffuser"><span class="nav-num">06</span>Inlet Ducts as Diffusers</a></li>
+    <li><a href="#sec-supersonic" data-section="sec-supersonic"><span class="nav-num">07</span>Supersonic Inlet Design</a></li>
+    <li><a href="#sec-methods" data-section="sec-methods"><span class="nav-num">08</span>Slowing Supersonic Airflow</a></li>
+    <li><a href="#sec-exhaust" data-section="sec-exhaust"><span class="nav-num">09</span>Fan Exhaust Systems</a></li>
+    <li><a href="#sec-flashcards" data-section="sec-flashcards"><span class="nav-num">10</span>Flashcards</a></li>
+    <li><a href="#sec-quiz" data-section="sec-quiz"><span class="nav-num">11</span>Self-Check Quiz</a></li>
+  </ul>
+
+  <!-- Study Checklist -->
+  <div class="sidebar-checklist">
+    <h4>📋 Study Checklist</h4>
+    <div class="checklist-item" data-check="1"><div class="checklist-box"></div>Inlet duct purpose</div>
+    <div class="checklist-item" data-check="2"><div class="checklist-box"></div>Pressure ratio</div>
+    <div class="checklist-item" data-check="3"><div class="checklist-box"></div>Airflow factors</div>
+    <div class="checklist-item" data-check="4"><div class="checklist-box"></div>Compressor stall</div>
+    <div class="checklist-item" data-check="5"><div class="checklist-box"></div>Variable geometry</div>
+    <div class="checklist-item" data-check="6"><div class="checklist-box"></div>Diffuser action</div>
+    <div class="checklist-item" data-check="7"><div class="checklist-box"></div>Supersonic inlets</div>
+    <div class="checklist-item" data-check="8"><div class="checklist-box"></div>Shock waves</div>
+    <div class="checklist-item" data-check="9"><div class="checklist-box"></div>Fan exhaust types</div>
+    <div class="checklist-item" data-check="10"><div class="checklist-box"></div>Completed quiz</div>
+    <div class="checklist-progress-bar"><div class="checklist-progress-fill" id="checklistProgress"></div></div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main" id="mainContent">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-label">Module 15.3 — Gas Turbine Engines</div>
+    <h1>Compressor Inlet Ducts</h1>
+    <p>The first section of a gas turbine engine — delivering smooth, efficient airflow to the compressor while managing speed, pressure, and turbulence.</p>
+    <img src="https://images.pexels.com/photos/11213147/pexels-photo-11213147.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200" alt="Close-up of a commercial aircraft engine on the runway" class="hero-img" loading="lazy">
+  </div>
+
+  <!-- ═══════ SECTION 1: INTRODUCTION ═══════ -->
+  <div class="section open" id="sec-intro">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-intro">
+      <span class="section-num">01</span>
+      <span class="section-title">Introduction & Purpose of the Inlet Duct</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-intro">
+      <p class="section-desc">Understanding what the inlet duct does and why it matters.</p>
+
+      <div class="definition-box">
+        <div class="def-label">📖 Definition</div>
+        <p>The <span class="key-term">compressor inlet duct</span> is the first section of a gas turbine engine. It receives ambient air and delivers it to the compressor face.</p>
+      </div>
+
+      <div class="content-card extra-text">
+        <h3>🎯 Main Functions</h3>
+        <ul>
+          <li>Deliver air <strong>smoothly</strong> to the compressor</li>
+          <li>Minimize energy losses in the airflow</li>
+          <li>Reduce turbulence and aerodynamic drag</li>
+          <li>Improve overall engine efficiency</li>
+        </ul>
+      </div>
+
+      <div class="key-concept">
+        <div class="kc-label">💡 Key Concept</div>
+        <p>A well-designed inlet duct improves compressor efficiency, helps <strong>prevent compressor stall</strong>, and enhances overall aircraft performance.</p>
+      </div>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Inlet duct = first engine section</li>
+          <li>Purpose: smooth, low-turbulence airflow to compressor</li>
+          <li>Good design = better efficiency + stall prevention</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 2: CPR ═══════ -->
+  <div class="section" id="sec-cpr">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-cpr">
+      <span class="section-num">02</span>
+      <span class="section-title">Compressor Pressure Ratio</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-cpr">
+      <p class="section-desc">How the inlet duct contributes to the engine's pressure ratio.</p>
+
+      <div class="definition-box">
+        <div class="def-label">📖 Definition</div>
+        <p><span class="key-term">Compressor Pressure Ratio (CPR)</span> = Compressor Outlet Pressure ÷ Compressor Inlet Pressure</p>
+      </div>
+
+      <div class="formula-box">
+        CPR = <span class="frac"><span class="frac-num">Compressor Outlet Pressure</span><span class="frac-den">Compressor Inlet Pressure</span></span>
+      </div>
+
+      <div class="key-concept">
+        <div class="kc-label">💡 Key Concept</div>
+        <p>A <strong>higher pressure ratio</strong> generally means better engine performance, higher thermal efficiency, and increased thrust.</p>
+      </div>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>CPR = outlet pressure ÷ inlet pressure</li>
+          <li>Higher CPR → better performance & thrust</li>
+          <li>The inlet duct contributes to CPR by managing intake pressure</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 3: FACTORS ═══════ -->
+  <div class="section" id="sec-factors">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-factors">
+      <span class="section-num">03</span>
+      <span class="section-title">Factors Affecting Airflow Through the Engine</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-factors">
+      <p class="section-desc">Three main factors that determine how much air enters the engine.</p>
+
+      <div class="content-card">
+        <h3>1. Compressor Speed (RPM)</h3>
+        <p>Higher RPM draws in more air through the inlet.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>2. Aircraft Forward Speed</h3>
+        <p>Faster aircraft speed increases <span class="key-term">ram air</span> entering the inlet, boosting intake pressure.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>3. Ambient Air Density</h3>
+        <p>Air density changes with <strong>altitude</strong> and <strong>temperature</strong>.</p>
+        <ul>
+          <li><strong>Dense air</strong> (low altitude, cold) → increases mass airflow → improves performance</li>
+          <li><strong>Thin air</strong> (high altitude, hot) → decreases mass airflow → reduces performance</li>
+        </ul>
+      </div>
+
+      <div class="memory-aid">
+        <div class="mem-label">🧠 Memory Aid — "SDA"</div>
+        <p><strong>S</strong>peed (compressor RPM) · <strong>D</strong>ensity (ambient air) · <strong>A</strong>ircraft speed (forward velocity) — the three factors affecting engine airflow.</p>
+      </div>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Compressor RPM → more speed = more air</li>
+          <li>Forward speed → ram effect increases intake air</li>
+          <li>Air density → denser air = better performance</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 4: SMOOTH AIRFLOW & STALL ═══════ -->
+  <div class="section open" id="sec-smooth">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-smooth">
+      <span class="section-num">04</span>
+      <span class="section-title">Smooth Airflow & Compressor Stall</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-smooth">
+      <p class="section-desc">Why uniform airflow is critical and what happens when it fails.</p>
+
+      <div class="key-concept">
+        <div class="kc-label">💡 Key Concept</div>
+        <p>The compressor requires <strong>smooth, stable, non-turbulent</strong> airflow to operate correctly.</p>
+      </div>
+
+      <div class="definition-box">
+        <div class="def-label">📖 Definition</div>
+        <p>A <span class="key-term">compressor stall</span> occurs when airflow over the compressor blades slows down, stops, or reverses direction.</p>
+      </div>
+
+      <div class="warning-box">
+        <div class="warn-label">⚠️ Safety Critical — Effects of Compressor Stall</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="padding:4px 0 4px 20px;position:relative;"><span style="position:absolute;left:0;">⚠️</span> Loss of thrust</li>
+          <li style="padding:4px 0 4px 20px;position:relative;"><span style="position:absolute;left:0;">⚠️</span> Loud bangs or vibrations</li>
+          <li style="padding:4px 0 4px 20px;position:relative;"><span style="position:absolute;left:0;">⚠️</span> Increased turbine temperatures</li>
+          <li style="padding:4px 0 4px 20px;position:relative;"><span style="position:absolute;left:0;">⚠️</span> Possible engine damage</li>
+        </ul>
+      </div>
+
+      <div class="memory-aid extra-text">
+        <div class="mem-label">🧠 Exam Tip</div>
+        <p>Smooth airflow into the compressor is <strong>critical for stable engine operation</strong>. This is a commonly tested concept.</p>
+      </div>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Compressor needs smooth, stable airflow</li>
+          <li>Stall = airflow slows, stops, or reverses</li>
+          <li>Effects: thrust loss, vibration, high temps, damage</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 5: VARIABLE GEOMETRY ═══════ -->
+  <div class="section" id="sec-variable">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-variable">
+      <span class="section-num">05</span>
+      <span class="section-title">Variable Geometry Inlet Ducts</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-variable">
+      <p class="section-desc">How inlet ducts change shape to manage airflow at different speeds.</p>
+
+      <div class="definition-box">
+        <div class="def-label">📖 Definition</div>
+        <p>A <span class="key-term">variable geometry inlet</span> changes its shape during flight to control the airflow entering the engine.</p>
+      </div>
+
+      <div class="key-concept">
+        <div class="kc-label">💡 Key Concept</div>
+        <p>Even when the aircraft flies at <strong>supersonic speed (Mach > 1)</strong>, the airflow entering the compressor must remain <strong>subsonic (Mach < 1)</strong>.</p>
+      </div>
+
+      <div class="content-card extra-text">
+        <h3>Why Is Adjustment Needed?</h3>
+        <p>Aircraft speed changes continuously throughout flight — takeoff, climb, supersonic cruise, landing. The inlet must adapt airflow accordingly.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>Common Variable Geometry Devices</h3>
+        <p><strong>Ramps or Wedges</strong> — movable components inside the duct that:</p>
+        <ul>
+          <li>Change the inlet area</li>
+          <li>Control airflow speed</li>
+          <li>Improve pressure recovery</li>
+        </ul>
+      </div>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Variable geometry = duct changes shape in flight</li>
+          <li>Compressor airflow must always be subsonic (< Mach 1)</li>
+          <li>Uses ramps/wedges to control area, speed, and pressure</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 6: DIFFUSER ═══════ -->
+  <div class="section" id="sec-diffuser">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-diffuser">
+      <span class="section-num">06</span>
+      <span class="section-title">Inlet Ducts as Diffusers</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-diffuser">
+      <p class="section-desc">How the inlet duct converts velocity into pressure.</p>
+
+      <div class="definition-box">
+        <div class="def-label">📖 Definition</div>
+        <p>A <span class="key-term">diffuser</span> is a duct section that decreases airflow velocity and increases static pressure.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Airflow Property</th><th>Change in Diffuser</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Velocity</td><td>⬇ Decreases</td></tr>
+          <tr><td>Static Pressure</td><td>⬆ Increases</td></tr>
+        </tbody>
+      </table>
+
+      <div class="key-concept">
+        <div class="kc-label">💡 Key Concept</div>
+        <p>The compressor works best when air enters at <strong>lower velocity</strong> with <strong>increased pressure</strong> — this is exactly what the diffuser provides.</p>
+      </div>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Inlet duct acts as a diffuser</li>
+          <li>Velocity ↓ and Pressure ↑</li>
+          <li>Prepares air for efficient compression</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 7: SUPERSONIC INLET ═══════ -->
+  <div class="section" id="sec-supersonic">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-supersonic">
+      <span class="section-num">07</span>
+      <span class="section-title">Supersonic Inlet Duct Design</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-supersonic">
+      <p class="section-desc">How supersonic inlets use convergent-divergent geometry to manage airflow.</p>
+
+      <div class="key-concept">
+        <div class="kc-label">💡 Key Concept</div>
+        <p>At very high speeds, incoming air enters faster than Mach 1. This airflow <strong>must be slowed</strong> before reaching the compressor.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>Convergent Section</h3>
+        <ul>
+          <li>Duct area <strong>decreases</strong></li>
+          <li>Reduces supersonic airflow <strong>toward Mach 1</strong></li>
+        </ul>
+      </div>
+
+      <div class="content-card">
+        <h3>Divergent Section</h3>
+        <ul>
+          <li>After airflow becomes subsonic, duct area <strong>increases</strong></li>
+          <li>Further diffusion occurs — velocity ↓, pressure ↑</li>
+        </ul>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Inlet Section</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Convergent</td><td>Reduce supersonic speed toward Mach 1</td></tr>
+          <tr><td>Divergent</td><td>Increase pressure and further diffuse airflow</td></tr>
+        </tbody>
+      </table>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Supersonic inlet uses convergent–divergent shape</li>
+          <li>Convergent = area ↓ = slows supersonic flow to Mach 1</li>
+          <li>Divergent = area ↑ = further diffusion (subsonic)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 8: METHODS TO SLOW SUPERSONIC AIRFLOW ═══════ -->
+  <div class="section" id="sec-methods">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-methods">
+      <span class="section-num">08</span>
+      <span class="section-title">Methods to Slow Supersonic Airflow</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-methods">
+      <p class="section-desc">Three methods used (especially in military aircraft) to decelerate supersonic airflow.</p>
+
+      <div class="sub-heading">Method 1 — Variable Geometry</div>
+      <div class="content-card">
+        <h3>Movable Components</h3>
+        <p>Uses movable ramps, wedges, or adjustable duct shapes to control airflow speed and pressure.</p>
+      </div>
+
+      <div class="sub-heading">Method 2 — Airflow Bypass System</div>
+      <div class="content-card">
+        <h3>Diverting Excess Air</h3>
+        <p>Some inlet air is <strong>diverted away</strong> from the engine to reduce excessive airflow entering the compressor.</p>
+      </div>
+
+      <div class="sub-heading">Method 3 — Shock Waves</div>
+      <div class="definition-box">
+        <div class="def-label">📖 Definition</div>
+        <p>A <span class="key-term">shock wave</span> is a thin region in the airflow where pressure, temperature, density, and velocity change suddenly.</p>
+      </div>
+
+      <div class="content-card">
+        <h3>Across a Shock Wave</h3>
+        <ul>
+          <li>Velocity → <strong>decreases</strong></li>
+          <li>Pressure → <strong>increases</strong></li>
+          <li>Temperature → <strong>increases</strong></li>
+          <li>Density → <strong>increases</strong></li>
+        </ul>
+      </div>
+
+      <div class="key-concept">
+        <div class="kc-label">💡 Key Concept — Combined Systems</div>
+        <p>Some aircraft combine variable geometry and shock wave systems. The same movable device can change duct area <strong>and</strong> generate shock waves — improving airflow control, engine efficiency, and supersonic performance.</p>
+      </div>
+
+      <div class="memory-aid">
+        <div class="mem-label">🧠 Memory Aid — "VBS"</div>
+        <p><strong>V</strong>ariable geometry · <strong>B</strong>ypass system · <strong>S</strong>hock waves — three methods to slow supersonic airflow.</p>
+      </div>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Variable geometry: ramps/wedges adjust duct shape</li>
+          <li>Bypass: diverts excess air away from engine</li>
+          <li>Shock waves: sudden pressure/velocity changes slow air</li>
+          <li>Systems can be combined for better control</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 9: FAN EXHAUST ═══════ -->
+  <div class="section" id="sec-exhaust">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-exhaust">
+      <span class="section-num">09</span>
+      <span class="section-title">Fan Exhaust Systems in Turbofan Engines</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-exhaust">
+      <p class="section-desc">Two ways fan airflow can leave a turbofan engine.</p>
+
+      <div class="content-card">
+        <h3>Type 1 — Dual Exhaust Nozzles</h3>
+        <ul>
+          <li>Fan air exits <strong>separately</strong> from core exhaust</li>
+          <li>Uses short ducts</li>
+          <li>Core and fan exhaust remain <strong>separate</strong></li>
+        </ul>
+      </div>
+
+      <div class="content-card">
+        <h3>Type 2 — Ducted Fan (Mixed Exhaust)</h3>
+        <ul>
+          <li>Fan air travels through ducts to the rear</li>
+          <li>Fan air <strong>mixes with core exhaust</strong></li>
+          <li>Exits through <strong>one common nozzle</strong></li>
+        </ul>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Exhaust System</th><th>Airflow Arrangement</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Dual Exhaust Nozzle</td><td>Separate fan and core exhaust</td></tr>
+          <tr><td>Mixed Exhaust Nozzle</td><td>Fan and core airflow combine</td></tr>
+        </tbody>
+      </table>
+
+      <div class="recap-box">
+        <div class="recap-label">⚡ Quick Recap</div>
+        <ul>
+          <li>Dual exhaust: fan + core exit separately</li>
+          <li>Mixed exhaust: fan + core combine → single nozzle</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 10: FLASHCARDS ═══════ -->
+  <div class="section open" id="sec-flashcards">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-flashcards">
+      <span class="section-num">10</span>
+      <span class="section-title">🔁 Flashcards</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-flashcards">
+      <p class="section-desc">Click or press Enter on any card to reveal the answer.</p>
+
+      <div class="flashcard-grid">
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What does the inlet duct do?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>What is the purpose of the compressor inlet duct?</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>Delivers smooth, low-turbulence airflow to the compressor while minimizing energy losses and drag.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What is CPR?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>What is Compressor Pressure Ratio?</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>CPR = Compressor Outlet Pressure ÷ Compressor Inlet Pressure. Higher CPR → better performance & thrust.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What is a diffuser?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>What does a diffuser do?</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>Decreases airflow velocity and increases static pressure — preparing air for efficient compression.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What is compressor stall?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>What is a compressor stall?</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>When airflow slows, stops, or reverses — causing thrust loss, vibrations, high temps, and possible engine damage.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Why variable geometry?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>Why are variable geometry inlets used?</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>To change duct shape during flight — keeping compressor airflow subsonic even at supersonic aircraft speeds.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Shock wave properties">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>What happens across a shock wave?</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>Velocity ↓ · Pressure ↑ · Temperature ↑ · Density ↑ — sudden changes that slow supersonic airflow.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Three methods to slow supersonic air">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>Name three methods to slow supersonic airflow.</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>1) Variable geometry (ramps/wedges) · 2) Airflow bypass · 3) Shock waves</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Fan exhaust types">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Question</div>
+              <p>What are the two fan exhaust types?</p>
+              <div class="fc-hint">Click to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-label">Answer</div>
+              <p>Dual exhaust (separate fan & core) and Mixed exhaust (fan & core combine into one nozzle).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 11: QUIZ ═══════ -->
+  <div class="section open" id="sec-quiz">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-quiz">
+      <span class="section-num">11</span>
+      <span class="section-title">🧪 Self-Check Quiz</span>
+      <span class="section-arrow">▾</span>
+    </div>
+    <div class="section-body" id="body-quiz">
+      <p class="section-desc">Test your understanding — select the best answer for each question.</p>
+
+      <div class="quiz-container" id="quizContainer">
+        <!-- Q1 -->
+        <div class="quiz-question" data-question="1">
+          <div class="q-num">Question 1 of 8</div>
+          <div class="q-text">What is the primary purpose of the compressor inlet duct?</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">A</span>Increase exhaust gas temperature</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">B</span>Deliver smooth airflow to the compressor with minimum energy loss</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">C</span>Mix fuel with incoming air</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Compress air before the compressor stage</div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="quiz-question" data-question="2">
+          <div class="q-num">Question 2 of 8</div>
+          <div class="q-text">The Compressor Pressure Ratio is defined as:</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">A</span>Inlet pressure ÷ exhaust pressure</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">B</span>Turbine outlet pressure ÷ compressor inlet pressure</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">C</span>Compressor outlet pressure ÷ compressor inlet pressure</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Ambient pressure ÷ compressor outlet pressure</div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="quiz-question" data-question="3">
+          <div class="q-num">Question 3 of 8</div>
+          <div class="q-text">Which of the following factors affects the amount of air entering the engine?</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">A</span>Fuel flow rate only</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">B</span>Compressor RPM, aircraft forward speed, and ambient air density</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">C</span>Exhaust nozzle diameter only</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Turbine inlet temperature only</div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="quiz-question" data-question="4">
+          <div class="q-num">Question 4 of 8</div>
+          <div class="q-text">A compressor stall is caused by airflow that:</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">A</span>Increases beyond design limits</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">B</span>Slows down, stops, or reverses direction</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">C</span>Becomes supersonic in the compressor</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Is too cold and dense</div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="quiz-question" data-question="5">
+          <div class="q-num">Question 5 of 8</div>
+          <div class="q-text">In a diffuser section, what happens to the airflow?</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">A</span>Velocity increases, pressure decreases</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">B</span>Velocity decreases, static pressure increases</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">C</span>Both velocity and pressure increase</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Both velocity and pressure decrease</div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="quiz-question" data-question="6">
+          <div class="q-num">Question 6 of 8</div>
+          <div class="q-text">In a supersonic inlet, the convergent section is used to:</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">A</span>Reduce supersonic airflow speed toward Mach 1</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">B</span>Accelerate the air to supersonic speeds</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">C</span>Cool the air before compression</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Mix bypass air with core air</div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="quiz-question" data-question="7">
+          <div class="q-num">Question 7 of 8</div>
+          <div class="q-text">Across a shock wave, which of the following occurs?</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">A</span>Velocity increases, pressure decreases</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">B</span>All properties remain constant</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">C</span>Velocity decreases; pressure, temperature, and density increase</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Temperature decreases, velocity increases</div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="quiz-question" data-question="8">
+          <div class="q-num">Question 8 of 8</div>
+          <div class="q-text">In a mixed exhaust turbofan, what happens to fan and core airflow?</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">A</span>They exit through separate nozzles</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="true"><span class="opt-marker">B</span>They combine and exit through one common nozzle</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">C</span>Fan air is dumped overboard</div>
+          <div class="quiz-option" tabindex="0" role="button" data-correct="false"><span class="opt-marker">D</span>Core air is redirected to the inlet</div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+
+      <div class="quiz-actions">
+        <button class="quiz-btn" id="quizSubmitBtn">Check Answers</button>
+        <button class="quiz-btn secondary" id="quizResetBtn">Reset Quiz</button>
+      </div>
+
+      <div class="quiz-score" id="quizScore">
+        <div class="score-num" id="scoreNum">0/8</div>
+        <div class="score-label">Questions answered correctly</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════ JAVASCRIPT ═══════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ─── PROGRESS BAR ───
+  const progressBar = document.getElementById('progress-bar');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = Math.min(progress, 100) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // ─── SIDEBAR TOGGLE (MOBILE) ───
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('show');
+  }
+  menuBtn.addEventListener('click', toggleSidebar);
+  overlay.addEventListener('click', toggleSidebar);
+
+  // ─── SIDEBAR ACTIVE STATE ───
+  const navLinks = document.querySelectorAll('.sidebar-nav a');
+  const sections = document.querySelectorAll('.section[id]');
+
+  function updateActiveNav() {
+    let currentId = '';
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 120) currentId = section.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('data-section') === currentId);
+    });
+  }
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+  // Close sidebar on nav click (mobile)
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+      }
+    });
+  });
+
+  // ─── COLLAPSIBLE SECTIONS ───
+  document.querySelectorAll('.section-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const section = header.parentElement;
+      const isOpen = section.classList.contains('open');
+      section.classList.toggle('open');
+      header.setAttribute('aria-expanded', !isOpen);
+    });
+    header.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        header.click();
+      }
+    });
+  });
+
+  // ─── EXPAND / COLLAPSE ALL ───
+  const expandCollapseBtn = document.getElementById('expandCollapseBtn');
+  let allExpanded = false;
+
+  expandCollapseBtn.addEventListener('click', () => {
+    allExpanded = !allExpanded;
+    document.querySelectorAll('.section').forEach(section => {
+      if (allExpanded) {
+        section.classList.add('open');
+        section.querySelector('.section-header').setAttribute('aria-expanded', 'true');
+      } else {
+        section.classList.remove('open');
+        section.querySelector('.section-header').setAttribute('aria-expanded', 'false');
+      }
+    });
+    expandCollapseBtn.querySelector('.btn-label').textContent = allExpanded ? 'Collapse All' : 'Expand All';
+  });
+
+  // ─── FOCUS MODE ───
+  const focusBtn = document.getElementById('focusBtn');
+  focusBtn.addEventListener('click', () => {
+    document.body.classList.toggle('focus-mode');
+    // Turn off exam mode if on
+    if (document.body.classList.contains('exam-mode')) {
+      document.body.classList.remove('exam-mode');
+      examBtn.classList.remove('active');
+    }
+    focusBtn.classList.toggle('active');
+  });
+
+  // ─── EXAM MODE ───
+  const examBtn = document.getElementById('examBtn');
+  examBtn.addEventListener('click', () => {
+    document.body.classList.toggle('exam-mode');
+    // Turn off focus mode if on
+    if (document.body.classList.contains('focus-mode')) {
+      document.body.classList.remove('focus-mode');
+      focusBtn.classList.remove('active');
+    }
+    examBtn.classList.toggle('active');
+    // Auto-expand all sections in exam mode
+    if (document.body.classList.contains('exam-mode')) {
+      document.querySelectorAll('.section').forEach(s => {
+        s.classList.add('open');
+        s.querySelector('.section-header').setAttribute('aria-expanded', 'true');
+      });
+    }
+  });
+
+  // ─── FLASHCARDS ───
+  document.querySelectorAll('.flashcard').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.classList.toggle('flipped');
+      }
+    });
+  });
+
+  // ─── CHECKLIST ───
+  const checklistItems = document.querySelectorAll('.checklist-item');
+  const checklistProgress = document.getElementById('checklistProgress');
+
+  function updateChecklistProgress() {
+    const total = checklistItems.length;
+    const checked = document.querySelectorAll('.checklist-item.checked').length;
+    checklistProgress.style.width = (checked / total * 100) + '%';
+  }
+
+  checklistItems.forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('checked');
+      updateChecklistProgress();
+    });
+  });
+
+  // ─── QUIZ LOGIC ───
+  const quizContainer = document.getElementById('quizContainer');
+  const quizSubmitBtn = document.getElementById('quizSubmitBtn');
+  const quizResetBtn = document.getElementById('quizResetBtn');
+  const quizScoreEl = document.getElementById('quizScore');
+  const scoreNumEl = document.getElementById('scoreNum');
+  const questions = quizContainer.querySelectorAll('.quiz-question');
+
+  // Select option on click
+  quizContainer.addEventListener('click', (e) => {
+    const option = e.target.closest('.quiz-option');
+    if (!option || option.classList.contains('disabled')) return;
+
+    const question = option.closest('.quiz-question');
+    // Deselect others in this question
+    question.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+    option.classList.add('selected');
+  });
+
+  // Keyboard support for options
+  quizContainer.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const option = e.target.closest('.quiz-option');
+      if (option && !option.classList.contains('disabled')) {
+        e.preventDefault();
+        option.click();
+      }
+    }
+  });
+
+  // Submit quiz
+  quizSubmitBtn.addEventListener('click', () => {
+    let correct = 0;
+    let total = questions.length;
+
+    questions.forEach(q => {
+      const selected = q.querySelector('.quiz-option.selected');
+      const feedback = q.querySelector('.quiz-feedback');
+      const options = q.querySelectorAll('.quiz-option');
+
+      options.forEach(o => o.classList.add('disabled'));
+
+      if (selected) {
+        const isCorrect = selected.getAttribute('data-correct') === 'true';
+        if (isCorrect) {
+          correct++;
+          selected.classList.add('correct');
+          feedback.textContent = '✓ Correct!';
+          feedback.className = 'quiz-feedback show correct-fb';
+        } else {
+          selected.classList.add('incorrect');
+          // Highlight correct answer
+          options.forEach(o => {
+            if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+          });
+          feedback.textContent = '✗ Incorrect — see the correct answer highlighted above.';
+          feedback.className = 'quiz-feedback show incorrect-fb';
+        }
+      } else {
+        // No answer selected
+        feedback.textContent = '⚠ No answer selected.';
+        feedback.className = 'quiz-feedback show incorrect-fb';
+        options.forEach(o => {
+          if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+        });
+      }
+    });
+
+    scoreNumEl.textContent = correct + '/' + total;
+    quizScoreEl.classList.add('show');
+    quizSubmitBtn.disabled = true;
+    quizSubmitBtn.style.opacity = '0.5';
+  });
+
+  // Reset quiz
+  quizResetBtn.addEventListener('click', () => {
+    questions.forEach(q => {
+      q.querySelectorAll('.quiz-option').forEach(o => {
+        o.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+      });
+      const feedback = q.querySelector('.quiz-feedback');
+      feedback.className = 'quiz-feedback';
+      feedback.textContent = '';
+    });
+    quizScoreEl.classList.remove('show');
+    quizSubmitBtn.disabled = false;
+    quizSubmitBtn.style.opacity = '1';
+  });
+
+  // ─── INITIAL STATE ───
+  updateProgress();
+  updateActiveNav();
+
+})();
+</script>
+
+</body>
+</html>

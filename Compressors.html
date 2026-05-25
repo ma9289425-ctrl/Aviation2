@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15.4 Compressors | Aviation Revision</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1d23;
+            --bg-secondary: #22262e;
+            --bg-tertiary: #2a2f38;
+            --bg-card: #282c34;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-muted: #6b7280;
+            --accent-blue: #60a5fa;
+            --accent-green: #34d399;
+            --accent-yellow: #fbbf24;
+            --accent-red: #f87171;
+            --accent-purple: #a78bfa;
+            --accent-orange: #fb923c;
+            --border-color: #3a3f4a;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 4px;
+            left: 0;
+            right: 0;
+            background: rgba(26, 29, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .logo-text span {
+            color: var(--accent-blue);
+        }
+
+        .mode-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .mode-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .mode-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        .mode-btn:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* Layout */
+        .layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 80px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 80px;
+            width: 280px;
+            height: calc(100vh - 80px);
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 1.5rem;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 0.6rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .toc-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .toc-link.active {
+            background: rgba(96, 165, 250, 0.1);
+            color: var(--accent-blue);
+            border-left-color: var(--accent-blue);
+        }
+
+        .toc-link:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: -2px;
+        }
+
+        /* Checklist */
+        .checklist {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .checklist-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .checklist-item:hover {
+            color: var(--text-primary);
+        }
+
+        .checklist-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .checklist-item.checked .checklist-checkbox {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .checklist-item.checked .checklist-checkbox::after {
+            content: '✓';
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .checklist-item.checked .checklist-label {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* Mobile sidebar toggle */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            width: 50px;
+            height: 50px;
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.25rem;
+            cursor: pointer;
+            z-index: 1002;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Page Title */
+        .page-title {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .module-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(96, 165, 250, 0.15);
+            color: var(--accent-blue);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Sections */
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius) var(--radius) 0 0;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .section-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .section-header:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: -2px;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .section-title-group {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .section-toggle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .section.collapsed .section-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 var(--radius) var(--radius);
+            padding: 1.5rem;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+        }
+
+        .section.collapsed .section-content {
+            max-height: 0;
+            padding: 0 1.5rem;
+            opacity: 0;
+            border: none;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        /* Key Concept Box */
+        .key-concept {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(167, 139, 250, 0.1));
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .key-concept-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-left: 4px solid var(--accent-red);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--accent-red);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Recap Box */
+        .recap-box {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .recap-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 0.75rem;
+        }
+
+        .recap-box ul {
+            list-style: none;
+            margin: 0;
+        }
+
+        .recap-box li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .recap-box li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        /* Memory Aid Box */
+        .memory-box {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .memory-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--accent-yellow);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Term Definition */
+        .term {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* Bullet Lists */
+        .bullet-list {
+            list-style: none;
+            margin: 0.75rem 0;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .bullet-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-weight: 700;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 0.875rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .comparison-table td {
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Pros/Cons */
+        .pros-cons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .pros, .cons {
+            padding: 1rem;
+            border-radius: var(--radius);
+        }
+
+        .pros {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .cons {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+        }
+
+        .pros-title, .cons-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pros-title {
+            color: var(--accent-green);
+        }
+
+        .cons-title {
+            color: var(--accent-red);
+        }
+
+        .pros li, .cons li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Flashcards */
+        .flashcard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            height: 180px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border: 1px solid var(--border-color);
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.15), rgba(167, 139, 250, 0.15));
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .flashcard-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .flashcard-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            position: absolute;
+            bottom: 0.75rem;
+        }
+
+        /* Quiz */
+        .quiz-container {
+            margin: 1.5rem 0;
+        }
+
+        .quiz-question {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-question-text {
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .quiz-number {
+            background: var(--bg-tertiary);
+            color: var(--accent-blue);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+        }
+
+        .quiz-option:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: -2px;
+        }
+
+        .quiz-option.selected {
+            border-color: var(--accent-blue);
+            background: rgba(96, 165, 250, 0.1);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--accent-green);
+            background: rgba(52, 211, 153, 0.1);
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--accent-red);
+            background: rgba(248, 113, 113, 0.1);
+        }
+
+        .quiz-option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .quiz-radio {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .quiz-option.selected .quiz-radio {
+            border-color: var(--accent-blue);
+            background: var(--accent-blue);
+        }
+
+        .quiz-option.correct .quiz-radio {
+            border-color: var(--accent-green);
+            background: var(--accent-green);
+        }
+
+        .quiz-option.incorrect .quiz-radio {
+            border-color: var(--accent-red);
+            background: var(--accent-red);
+        }
+
+        .quiz-option.selected .quiz-radio::after,
+        .quiz-option.correct .quiz-radio::after,
+        .quiz-option.incorrect .quiz-radio::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .quiz-feedback {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--accent-green);
+        }
+
+        .quiz-feedback.incorrect {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--accent-red);
+        }
+
+        .quiz-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .quiz-btn {
+            padding: 0.625rem 1.25rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .quiz-btn-primary {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        .quiz-btn-primary:hover {
+            background: #4f94e8;
+        }
+
+        .quiz-btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .quiz-btn-secondary:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .quiz-score {
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(96, 165, 250, 0.1));
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1.5rem;
+            display: none;
+        }
+
+        .quiz-score.show {
+            display: block;
+        }
+
+        .quiz-score-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .quiz-score-label {
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Focus Mode */
+        body.focus-mode .focus-hide {
+            display: none !important;
+        }
+
+        body.focus-mode .key-concept,
+        body.focus-mode .warning-box,
+        body.focus-mode .recap-box {
+            display: block !important;
+        }
+
+        /* Exam Mode */
+        body.exam-mode .section-content > *:not(.recap-box):not(.quiz-container):not(.flashcard-container):not(.key-concept) {
+            display: none !important;
+        }
+
+        body.exam-mode .recap-box,
+        body.exam-mode .quiz-container,
+        body.exam-mode .flashcard-container,
+        body.exam-mode .key-concept {
+            display: block !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .mode-controls {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .section-header {
+                padding: 0.875rem 1rem;
+            }
+
+            .section-content {
+                padding: 1rem;
+            }
+
+            .flashcard {
+                height: 160px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mode-btn {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">✈️</div>
+                <div class="logo-text">Aviation <span>Revision</span></div>
+            </div>
+            <div class="mode-controls">
+                <button class="mode-btn" id="focusModeBtn" aria-pressed="false">
+                    <span>🎯</span> Focus Mode
+                </button>
+                <button class="mode-btn" id="examModeBtn" aria-pressed="false">
+                    <span>📝</span> Exam Mode
+                </button>
+                <button class="mode-btn" id="expandAllBtn">
+                    <span>📂</span> Expand All
+                </button>
+                <button class="mode-btn" id="collapseAllBtn">
+                    <span>📁</span> Collapse All
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Toggle (Mobile) -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation menu">
+        ☰
+    </button>
+
+    <!-- Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar" aria-label="Table of contents">
+            <div class="sidebar-header">Contents</div>
+            <ul class="toc-list">
+                <li class="toc-item"><a href="#intro" class="toc-link">Introduction</a></li>
+                <li class="toc-item"><a href="#bleed-air" class="toc-link">Bleed Air System</a></li>
+                <li class="toc-item"><a href="#compressor-types" class="toc-link">Compressor Types</a></li>
+                <li class="toc-item"><a href="#centrifugal" class="toc-link">Centrifugal Compressor</a></li>
+                <li class="toc-item"><a href="#axial" class="toc-link">Axial Compressor</a></li>
+                <li class="toc-item"><a href="#blades" class="toc-link">Blade Construction</a></li>
+                <li class="toc-item"><a href="#igv" class="toc-link">Inlet Guide Vanes</a></li>
+                <li class="toc-item"><a href="#vsv" class="toc-link">Variable Stator Vanes</a></li>
+                <li class="toc-item"><a href="#stall-surge" class="toc-link">Stall & Surge</a></li>
+                <li class="toc-item"><a href="#airflow-control" class="toc-link">Airflow Control</a></li>
+                <li class="toc-item"><a href="#flashcards" class="toc-link">Flashcards</a></li>
+                <li class="toc-item"><a href="#quiz" class="toc-link">Self-Check Quiz</a></li>
+            </ul>
+
+            <!-- Study Checklist -->
+            <div class="checklist">
+                <div class="checklist-title">Study Checklist</div>
+                <div class="checklist-item" tabindex="0" role="checkbox" aria-checked="false">
+                    <div class="checklist-checkbox"></div>
+                    <span class="checklist-label">Compressor function</span>
+                </div>
+                <div class="checklist-item" tabindex="0" role="checkbox" aria-checked="false">
+                    <div class="checklist-checkbox"></div>
+                    <span class="checklist-label">Bleed air uses</span>
+                </div>
+                <div class="checklist-item" tabindex="0" role="checkbox" aria-checked="false">
+                    <div class="checklist-checkbox"></div>
+                    <span class="checklist-label">Centrifugal vs Axial</span>
+                </div>
+                <div class="checklist-item" tabindex="0" role="checkbox" aria-checked="false">
+                    <div class="checklist-checkbox"></div>
+                    <span class="checklist-label">Rotor & Stator roles</span>
+                </div>
+                <div class="checklist-item" tabindex="0" role="checkbox" aria-checked="false">
+                    <div class="checklist-checkbox"></div>
+                    <span class="checklist-label">Stall vs Surge</span>
+                </div>
+                <div class="checklist-item" tabindex="0" role="checkbox" aria-checked="false">
+                    <div class="checklist-checkbox"></div>
+                    <span class="checklist-label">Airflow control systems</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-title">
+                <div class="module-badge">Module 15.4</div>
+                <h1>Gas Turbine Compressors</h1>
+                <p>Comprehensive revision guide for aviation students</p>
+            </div>
+
+            <!-- Section 1: Introduction -->
+            <section class="section" id="intro">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">🔧</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Introduction to the Compressor Section</h2>
+                        <p class="section-subtitle">Understanding the core function of compressors</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Primary Function</div>
+                        <p>The <span class="term">compressor section</span> supplies compressed air to the combustion chamber and increases air pressure before combustion.</p>
+                    </div>
+
+                    <div class="focus-hide">
+                        <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Why Compression Is Necessary</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 0.75rem;">Compressed air enables:</p>
+                        <ul class="bullet-list">
+                            <li>Efficient fuel combustion</li>
+                            <li>Higher engine efficiency</li>
+                            <li>Greater thrust and power output</li>
+                        </ul>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Compressor supplies air to combustion chamber</li>
+                            <li>Increases pressure for efficient combustion</li>
+                            <li>Also provides bleed air for aircraft/engine systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Bleed Air System -->
+            <section class="section" id="bleed-air">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">💨</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Bleed Air System</h2>
+                        <p class="section-subtitle">Secondary uses of compressed air</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Definition</div>
+                        <p><span class="term">Bleed air</span> is high-pressure compressed air extracted from different compressor stages through small openings called <span class="term">bleed ports</span>.</p>
+                    </div>
+
+                    <div class="focus-hide">
+                        <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Stage Selection</h3>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Stage</th>
+                                    <th>Pressure</th>
+                                    <th>Temperature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Earlier stages</td>
+                                    <td>Lower</td>
+                                    <td>Lower</td>
+                                </tr>
+                                <tr>
+                                    <td>Later stages</td>
+                                    <td>Higher</td>
+                                    <td>Higher</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Common Uses of Bleed Air</h3>
+                    <div class="card-grid focus-hide">
+                        <div class="card">
+                            <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem;">🌡️ Cabin Pressurization</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Provides breathable pressurized air for passengers and crew</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem;">❄️ Heating & Cooling</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Used in air conditioning systems</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem;">🧊 De/Anti-Icing</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Hot bleed air prevents ice on wings, engine inlets, other surfaces</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem;">🔄 Engine Starting</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Pneumatic engine starting of turbine engines</p>
+                        </div>
+                    </div>
+
+                    <div class="memory-box">
+                        <div class="memory-header">🧠 Exam Tip</div>
+                        <p style="color: var(--text-secondary);">Bleed air is usually taken from <strong>high-pressure compressor stages</strong> because pressure and temperature are greatest there.</p>
+                    </div>
+
+                    <div class="focus-hide">
+                        <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Bleed Air Control</h3>
+                        <p style="color: var(--text-secondary);">Flow is controlled by <span class="term">bleed valves</span> (automatic or manual) that open or close airflow into the pneumatic system.</p>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Bleed air = compressed air from compressor stages</li>
+                            <li>Uses: pressurization, heating/cooling, anti-icing, engine starting</li>
+                            <li>Later stages = higher pressure & temperature</li>
+                            <li>Bleed valves control the flow</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Compressor Types -->
+            <section class="section" id="compressor-types">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">⚙️</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Compressor Types Overview</h2>
+                        <p class="section-subtitle">Two main types used in gas turbine engines</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Compressor Type</th>
+                                <th>Main Use</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="term">Centrifugal Flow</span></td>
+                                <td>Turboprop and turboshaft engines</td>
+                            </tr>
+                            <tr>
+                                <td><span class="term">Axial Flow</span></td>
+                                <td>Turbofan engines</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Centrifugal = air moves outward (smaller engines)</li>
+                            <li>Axial = air moves parallel to engine axis (turbofans)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Centrifugal Compressor -->
+            <section class="section" id="centrifugal">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">🌀</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Centrifugal Flow Compressor</h2>
+                        <p class="section-subtitle">Air accelerated outward by centrifugal force</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Operating Principle</div>
+                        <p>The centrifugal compressor accelerates air <strong>outward</strong> using centrifugal force.</p>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Main Components</h3>
+                    <div class="card-grid focus-hide">
+                        <div class="card">
+                            <h4 style="color: var(--accent-purple); margin-bottom: 0.5rem;">1. Impeller (Rotor)</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Rotating component that accelerates air outward</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-purple); margin-bottom: 0.5rem;">2. Diffuser (Stator)</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Slows the air and converts velocity into pressure</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-purple); margin-bottom: 0.5rem;">3. Compressor Manifold</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Collects compressed air and directs it to combustion chambers</p>
+                        </div>
+                    </div>
+
+                    <div class="memory-box">
+                        <div class="memory-header">🧠 Key Value</div>
+                        <p style="color: var(--text-secondary);">Pressure ratio per stage: approximately <strong>8:1</strong></p>
+                    </div>
+
+                    <div class="pros-cons focus-hide">
+                        <div class="pros">
+                            <div class="pros-title">✔️ Advantages</div>
+                            <ul class="bullet-list">
+                                <li>High pressure increase per stage</li>
+                                <li>Simple and robust design</li>
+                                <li>Good for smaller engines</li>
+                            </ul>
+                        </div>
+                        <div class="cons">
+                            <div class="cons-title">✘ Limitations</div>
+                            <ul class="bullet-list">
+                                <li>Larger frontal area</li>
+                                <li>Efficiency decreases with many stages</li>
+                                <li>Usually limited to 1-2 stages</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Air moves outward (centrifugal force)</li>
+                            <li>Components: Impeller → Diffuser → Manifold</li>
+                            <li>High pressure per stage (~8:1)</li>
+                            <li>Best for smaller engines (turboprop/turboshaft)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Axial Compressor -->
+            <section class="section" id="axial">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">➡️</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Axial Flow Compressor</h2>
+                        <p class="section-subtitle">Air flows parallel to engine axis</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Operating Principle</div>
+                        <p>The axial compressor compresses air while it flows <strong>parallel to the engine axis</strong>.</p>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Main Components</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Function</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="term">Rotor</span></td>
+                                <td>Rotating blades on shaft — accelerate air rearward</td>
+                            </tr>
+                            <tr>
+                                <td><span class="term">Stator</span></td>
+                                <td>Stationary vanes — convert velocity into pressure, direct airflow</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="focus-hide">
+                        <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Compression Process</h3>
+                        <p style="color: var(--text-secondary);">Each <span class="term">stage</span> = one rotor row + one stator row = one pressure stage</p>
+                        
+                        <div class="card" style="margin-top: 1rem;">
+                            <p style="color: var(--text-secondary);"><strong>Rotor function:</strong> Adds velocity energy to airflow</p>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;"><strong>Stator function:</strong> Reduces velocity, increases pressure, directs airflow to next stage</p>
+                        </div>
+                    </div>
+
+                    <div class="memory-box">
+                        <div class="memory-header">🧠 Key Values</div>
+                        <ul class="bullet-list">
+                            <li>Pressure ratio per stage: approximately <strong>1.25:1</strong></li>
+                            <li>Modern engines may use <strong>16+ stages</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Air flows parallel to engine axis</li>
+                            <li>Rotor accelerates, Stator converts velocity to pressure</li>
+                            <li>One stage = Rotor + Stator (~1.25:1 ratio)</li>
+                            <li>More stages = higher overall pressure ratio</li>
+                            <li>Used in most turbofan engines</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Blade Construction -->
+            <section class="section collapsed" id="blades">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="false">
+                    <div class="section-icon">🔩</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Compressor Blade Construction</h2>
+                        <p class="section-subtitle">Materials and attachment methods</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <h3 style="font-size: 1rem; margin-bottom: 0.75rem; color: var(--text-primary);">Blade Materials</h3>
+                    <ul class="bullet-list focus-hide">
+                        <li><strong>Stainless steel</strong> — common for rotor blades</li>
+                        <li><strong>Titanium</strong> — especially rear stages</li>
+                    </ul>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Blade Attachment Methods</h3>
+                    <ul class="bullet-list focus-hide">
+                        <li><strong>Bulb type</strong></li>
+                        <li><strong>Fir-tree type</strong></li>
+                    </ul>
+
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Blade Profiles</div>
+                        <p>Blade tips are often thinned using <span class="term">blade profiles</span> (cutouts) to reduce severe damage if blades contact the casing.</p>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Materials: Stainless steel, Titanium</li>
+                            <li>Attachments: Bulb type, Fir-tree type</li>
+                            <li>Thinned tips reduce casing contact damage</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Inlet Guide Vanes -->
+            <section class="section collapsed" id="igv">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="false">
+                    <div class="section-icon">🎯</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Inlet Guide Vanes (IGV)</h2>
+                        <p class="section-subtitle">Directing airflow into the first rotor stage</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Purpose</div>
+                        <p><span class="term">Inlet Guide Vanes</span> direct airflow into the first rotor stage and provide proper airflow angle ("whirl").</p>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Variable Inlet Guide Vanes (VIGV)</h3>
+                    <div class="focus-hide">
+                        <p style="color: var(--text-secondary); margin-bottom: 0.75rem;"><span class="term">VIGVs</span> automatically adjust angle based on:</p>
+                        <ul class="bullet-list">
+                            <li>RPM</li>
+                            <li>Ambient conditions</li>
+                        </ul>
+                        <p style="color: var(--text-secondary); margin-top: 0.75rem;"><strong>Purpose:</strong> Ensure airflow enters rotor at the most efficient angle of attack.</p>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>IGV = directs air into first rotor</li>
+                            <li>VIGV = variable, adjusts based on RPM & conditions</li>
+                            <li>Goal: optimal angle of attack</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Variable Stator Vanes -->
+            <section class="section collapsed" id="vsv">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="false">
+                    <div class="section-icon">🔄</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Variable Stator Vanes (VSV)</h2>
+                        <p class="section-subtitle">Adjusting airflow between compressor stages</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Function</div>
+                        <p><span class="term">Variable Stator Vanes</span> adjust airflow angle between compressor stages for optimized performance.</p>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">VIGV vs VSV</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>System</th>
+                                <th>Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="term">VIGV</span></td>
+                                <td>Before rotor blades (at inlet)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="term">VSV</span></td>
+                                <td>Behind rotor blades (between stages)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="memory-box focus-hide">
+                        <div class="memory-header">🧠 Control System</div>
+                        <p style="color: var(--text-secondary);">Modern VSV systems are often controlled by <span class="term">FADEC</span> (Full Authority Digital Engine Control).</p>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>VSV adjusts airflow between stages</li>
+                            <li>VIGV = before rotor, VSV = behind rotor</li>
+                            <li>Often FADEC-controlled</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9: Stall and Surge -->
+            <section class="section" id="stall-surge">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">⚠️</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Compressor Stall & Surge</h2>
+                        <p class="section-subtitle">Critical safety concepts for exam</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Blades as Airfoils</div>
+                        <p>Compressor blades act like <strong>aircraft wings</strong> — they can stall if angle of attack becomes excessive.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-header">⚠️ Critical Definitions</div>
+                        <p style="margin-bottom: 0.75rem;"><span class="term">Compressor Stall:</span> One or more compressor blades lose smooth airflow (local disruption).</p>
+                        <p><span class="term">Compressor Surge:</span> The <strong>entire compressor</strong> stalls (complete instability).</p>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Stall vs Surge</h3>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Condition</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="term">Stall</span></td>
+                                <td>Local airflow disruption</td>
+                            </tr>
+                            <tr>
+                                <td><span class="term">Surge</span></td>
+                                <td>Complete compressor instability</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="warning-box">
+                        <div class="warning-header">⚠️ Effects of Stall & Surge</div>
+                        <ul class="bullet-list">
+                            <li>Loud bangs</li>
+                            <li>Vibrations</li>
+                            <li>Flame from exhaust</li>
+                            <li>Loss of thrust</li>
+                            <li>Engine damage</li>
+                        </ul>
+                    </div>
+
+                    <div class="memory-box">
+                        <div class="memory-header">🧠 Remember</div>
+                        <p style="color: var(--text-secondary);"><strong>Surge is more severe than stall</strong> — it affects the entire compressor.</p>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Blades act like wings — can stall</li>
+                            <li>Stall = local disruption</li>
+                            <li>Surge = complete compressor stall (more severe)</li>
+                            <li>Symptoms: bangs, vibration, flame, thrust loss</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 10: Airflow Control Systems -->
+            <section class="section" id="airflow-control">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">🎛️</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Airflow Control Systems</h2>
+                        <p class="section-subtitle">Preventing stall and surge</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="key-concept">
+                        <div class="key-concept-header">💡 Purpose</div>
+                        <p>Airflow control systems prevent stall and surge while maintaining efficient compressor operation over a wide RPM range.</p>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Main Control Components</h3>
+                    <div class="card-grid focus-hide">
+                        <div class="card">
+                            <h4 style="color: var(--accent-green); margin-bottom: 0.5rem;">1. Bleed Valves</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Release excess air to reduce back pressure</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-green); margin-bottom: 0.5rem;">2. VIGV</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Variable Inlet Guide Vanes — adjust inlet airflow angle</p>
+                        </div>
+                        <div class="card">
+                            <h4 style="color: var(--accent-green); margin-bottom: 0.5rem;">3. VSV</h4>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">Variable Stator Vanes — optimize inter-stage airflow</p>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 1rem; margin: 1.25rem 0 0.75rem; color: var(--text-primary);">Bleed Valves & Stall Prevention</h3>
+                    <div class="focus-hide">
+                        <p style="color: var(--text-secondary); margin-bottom: 0.75rem;"><strong>Problem:</strong> High combustion chamber back pressure can cause compressor instability.</p>
+                        <p style="color: var(--text-secondary); margin-bottom: 0.75rem;"><strong>Solution:</strong> Bleed valves release excess compressor air → reduces rear-stage pressure → prevents front-stage stall.</p>
+                    </div>
+
+                    <div class="memory-box">
+                        <div class="memory-header">🧠 Bleed Valve Operation</div>
+                        <ul class="bullet-list">
+                            <li><strong>Open</strong> at idle RPM</li>
+                            <li><strong>Open</strong> during rapid acceleration</li>
+                            <li><strong>Closed</strong> during cruise RPM (airflow more stable)</li>
+                        </ul>
+                    </div>
+
+                    <div class="recap-box">
+                        <div class="recap-header">⚡ Quick Recap</div>
+                        <ul>
+                            <li>Three main systems: Bleed valves, VIGV, VSV</li>
+                            <li>Bleed valves release excess air to reduce back pressure</li>
+                            <li>Bleed valves: Open at idle/acceleration, Closed at cruise</li>
+                            <li>VIGV/VSV improve efficiency and reduce stall risk</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 11: Flashcards -->
+            <section class="section" id="flashcards">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">🃏</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Flashcards</h2>
+                        <p class="section-subtitle">Click to flip and test your knowledge</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="flashcard-container">
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">What is the primary function of the compressor section?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">Supply compressed air to the combustion chamber and increase air pressure before combustion</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">What is bleed air?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">High-pressure compressed air extracted from different compressor stages through bleed ports</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">What does the rotor do in an axial compressor?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">Accelerates air rearward (adds velocity energy to airflow)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">What does the stator do?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">Converts velocity into pressure and directs airflow to the next rotor stage</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">What is the difference between stall and surge?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">Stall = local airflow disruption<br>Surge = complete compressor instability (more severe)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">What are the three main components of a centrifugal compressor?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">1. Impeller (rotor)<br>2. Diffuser (stator)<br>3. Compressor manifold</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">When are bleed valves open?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">At idle RPM and during rapid acceleration (closed during cruise)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <div class="flashcard-label">Question</div>
+                                    <div class="flashcard-text">Where is VIGV positioned vs VSV?</div>
+                                    <div class="flashcard-hint">Click to reveal</div>
+                                </div>
+                                <div class="flashcard-back">
+                                    <div class="flashcard-label">Answer</div>
+                                    <div class="flashcard-text">VIGV = before rotor blades (at inlet)<br>VSV = behind rotor blades (between stages)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 12: Quiz -->
+            <section class="section" id="quiz">
+                <div class="section-header" tabindex="0" role="button" aria-expanded="true">
+                    <div class="section-icon">📝</div>
+                    <div class="section-title-group">
+                        <h2 class="section-title">Self-Check Quiz</h2>
+                        <p class="section-subtitle">Test your understanding</p>
+                    </div>
+                    <span class="section-toggle" aria-hidden="true">▼</span>
+                </div>
+                <div class="section-content">
+                    <div class="quiz-container" id="quizContainer">
+                        <!-- Question 1 -->
+                        <div class="quiz-question" data-question="1">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">1</span>
+                                <span>What is the primary function of the compressor section?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>To generate thrust directly</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>To supply compressed air to the combustion chamber</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>To cool the engine</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>To mix fuel with air</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="quiz-question" data-question="2">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">2</span>
+                                <span>Which compressor type is commonly used in turbofan engines?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Centrifugal flow compressor</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>Axial flow compressor</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Radial flow compressor</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Mixed flow compressor</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="quiz-question" data-question="3">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">3</span>
+                                <span>What is the approximate pressure ratio per stage in an axial compressor?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>8:1</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>4:1</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>1.25:1</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>2:1</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="quiz-question" data-question="4">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">4</span>
+                                <span>What is the difference between compressor stall and surge?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>They are the same condition</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Stall affects entire compressor, surge is local</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>Stall is local disruption, surge is complete compressor instability</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Surge only occurs at high altitude</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="quiz-question" data-question="5">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">5</span>
+                                <span>When are bleed valves typically CLOSED?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>At idle RPM</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>During rapid acceleration</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>During cruise RPM</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>At engine start</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 6 -->
+                        <div class="quiz-question" data-question="6">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">6</span>
+                                <span>What is the function of the stator in an axial compressor?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Accelerates airflow</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>Converts velocity into pressure and directs airflow</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Generates combustion</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Provides bleed air only</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 7 -->
+                        <div class="quiz-question" data-question="7">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">7</span>
+                                <span>Where are Variable Inlet Guide Vanes (VIGV) positioned?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>Before rotor blades (at inlet)</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>Behind rotor blades</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>In the combustion chamber</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>At the exhaust</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <!-- Question 8 -->
+                        <div class="quiz-question" data-question="8">
+                            <div class="quiz-question-text">
+                                <span class="quiz-number">8</span>
+                                <span>What is a compressor stage in an axial compressor?</span>
+                            </div>
+                            <div class="quiz-options">
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>One rotor row only</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="true">
+                                    <div class="quiz-radio"></div>
+                                    <span>One rotor row plus one stator row</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>One stator row only</span>
+                                </div>
+                                <div class="quiz-option" tabindex="0" role="radio" data-correct="false">
+                                    <div class="quiz-radio"></div>
+                                    <span>The entire compressor assembly</span>
+                                </div>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-controls">
+                        <button class="quiz-btn quiz-btn-primary" id="checkAnswersBtn">Check Answers</button>
+                        <button class="quiz-btn quiz-btn-secondary" id="resetQuizBtn">Reset Quiz</button>
+                    </div>
+
+                    <div class="quiz-score" id="quizScore">
+                        <div class="quiz-score-value" id="scoreValue">0/8</div>
+                        <div class="quiz-score-label">Questions Correct</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // DOM Elements
+        const progressBar = document.getElementById('progressBar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const focusModeBtn = document.getElementById('focusModeBtn');
+        const examModeBtn = document.getElementById('examModeBtn');
+        const expandAllBtn = document.getElementById('expandAllBtn');
+        const collapseAllBtn = document.getElementById('collapseAllBtn');
+        const sections = document.querySelectorAll('.section');
+        const tocLinks = document.querySelectorAll('.toc-link');
+        const checklistItems = document.querySelectorAll('.checklist-item');
+        const flashcards = document.querySelectorAll('.flashcard');
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        const checkAnswersBtn = document.getElementById('checkAnswersBtn');
+        const resetQuizBtn = document.getElementById('resetQuizBtn');
+        const quizScore = document.getElementById('quizScore');
+        const scoreValue = document.getElementById('scoreValue');
+
+        // Progress Bar
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            progressBar.style.width = `${Math.min(progress, 100)}%`;
+            progressBar.setAttribute('aria-valuenow', Math.round(progress));
+        }
+
+        window.addEventListener('scroll', updateProgressBar);
+
+        // Sidebar Toggle (Mobile)
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            const isOpen = sidebar.classList.contains('open');
+            sidebarToggle.textContent = isOpen ? '✕' : '☰';
+            sidebarToggle.setAttribute('aria-expanded', isOpen);
+        });
+
+        // Close sidebar when clicking a link (mobile)
+        tocLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('open');
+                    sidebarToggle.textContent = '☰';
+                }
+            });
+        });
+
+        // Active TOC Link
+        function updateActiveTocLink() {
+            const scrollPosition = window.scrollY + 150;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    tocLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveTocLink);
+
+        // Section Collapse/Expand
+        sections.forEach(section => {
+            const header = section.querySelector('.section-header');
+            const content = section.querySelector('.section-content');
+            
+            header.addEventListener('click', () => {
+                section.classList.toggle('collapsed');
+                const isExpanded = !section.classList.contains('collapsed');
+                header.setAttribute('aria-expanded', isExpanded);
+                
+                if (isExpanded) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                    content.style.opacity = '1';
+                } else {
+                    content.style.maxHeight = '0';
+                    content.style.opacity = '0';
+                }
+            });
+
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    header.click();
+                }
+            });
+
+            // Initialize expanded sections
+            if (!section.classList.contains('collapsed')) {
+                content.style.maxHeight = 'none';
+                content.style.opacity = '1';
+            }
+        });
+
+        // Expand All / Collapse All
+        expandAllBtn.addEventListener('click', () => {
+            sections.forEach(section => {
+                section.classList.remove('collapsed');
+                const header = section.querySelector('.section-header');
+                const content = section.querySelector('.section-content');
+                header.setAttribute('aria-expanded', 'true');
+                content.style.maxHeight = 'none';
+                content.style.opacity = '1';
+            });
+        });
+
+        collapseAllBtn.addEventListener('click', () => {
+            sections.forEach(section => {
+                section.classList.add('collapsed');
+                const header = section.querySelector('.section-header');
+                const content = section.querySelector('.section-content');
+                header.setAttribute('aria-expanded', 'false');
+                content.style.maxHeight = '0';
+                content.style.opacity = '0';
+            });
+        });
+
+        // Focus Mode
+        focusModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('focus-mode');
+            const isActive = document.body.classList.contains('focus-mode');
+            focusModeBtn.classList.toggle('active', isActive);
+            focusModeBtn.setAttribute('aria-pressed', isActive);
+            
+            // Disable exam mode if focus mode is enabled
+            if (isActive && document.body.classList.contains('exam-mode')) {
+                document.body.classList.remove('exam-mode');
+                examModeBtn.classList.remove('active');
+                examModeBtn.setAttribute('aria-pressed', 'false');
+            }
+        });
+
+        // Exam Mode
+        examModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('exam-mode');
+            const isActive = document.body.classList.contains('exam-mode');
+            examModeBtn.classList.toggle('active', isActive);
+            examModeBtn.setAttribute('aria-pressed', isActive);
+            
+            // Disable focus mode if exam mode is enabled
+            if (isActive && document.body.classList.contains('focus-mode')) {
+                document.body.classList.remove('focus-mode');
+                focusModeBtn.classList.remove('active');
+                focusModeBtn.setAttribute('aria-pressed', 'false');
+            }
+
+            // Expand all sections in exam mode
+            if (isActive) {
+                sections.forEach(section => {
+                    section.classList.remove('collapsed');
+                    const header = section.querySelector('.section-header');
+                    const content = section.querySelector('.section-content');
+                    header.setAttribute('aria-expanded', 'true');
+                    content.style.maxHeight = 'none';
+                    content.style.opacity = '1';
+                });
+            }
+        });
+
+        // Checklist
+        checklistItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('checked');
+                const isChecked = item.classList.contains('checked');
+                item.setAttribute('aria-checked', isChecked);
+            });
+
+            item.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    item.click();
+                }
+            });
+        });
+
+        // Flashcards
+        flashcards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+            });
+
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.classList.toggle('flipped');
+                }
+            });
+        });
+
+        // Quiz Logic
+        let selectedAnswers = {};
+
+        quizOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                if (option.classList.contains('disabled')) return;
+                
+                const question = option.closest('.quiz-question');
+                const questionNum = question.dataset.question;
+                
+                // Deselect other options in this question
+                question.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    opt.setAttribute('aria-checked', 'false');
+                });
+                
+                // Select this option
+                option.classList.add('selected');
+                option.setAttribute('aria-checked', 'true');
+                selectedAnswers[questionNum] = option;
+            });
+
+            option.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    option.click();
+                }
+            });
+        });
+
+        // Check Answers
+        checkAnswersBtn.addEventListener('click', () => {
+            let correct = 0;
+            const totalQuestions = document.querySelectorAll('.quiz-question').length;
+
+            document.querySelectorAll('.quiz-question').forEach(question => {
+                const questionNum = question.dataset.question;
+                const feedback = question.querySelector('.quiz-feedback');
+                const selectedOption = selectedAnswers[questionNum];
+
+                // Disable all options
+                question.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.add('disabled');
+                });
+
+                if (selectedOption) {
+                    const isCorrect = selectedOption.dataset.correct === 'true';
+                    
+                    if (isCorrect) {
+                        selectedOption.classList.add('correct');
+                        feedback.textContent = '✓ Correct!';
+                        feedback.className = 'quiz-feedback show correct';
+                        correct++;
+                    } else {
+                        selectedOption.classList.add('incorrect');
+                        feedback.textContent = '✗ Incorrect. Review this topic.';
+                        feedback.className = 'quiz-feedback show incorrect';
+                        
+                        // Show correct answer
+                        question.querySelectorAll('.quiz-option').forEach(opt => {
+                            if (opt.dataset.correct === 'true') {
+                                opt.classList.add('correct');
+                            }
+                        });
+                    }
+                } else {
+                    feedback.textContent = 'No answer selected.';
+                    feedback.className = 'quiz-feedback show incorrect';
+                    
+                    // Show correct answer
+                    question.querySelectorAll('.quiz-option').forEach(opt => {
+                        if (opt.dataset.correct === 'true') {
+                            opt.classList.add('correct');
+                        }
+                    });
+                }
+            });
+
+            // Show score
+            scoreValue.textContent = `${correct}/${totalQuestions}`;
+            quizScore.classList.add('show');
+        });
+
+        // Reset Quiz
+        resetQuizBtn.addEventListener('click', () => {
+            selectedAnswers = {};
+            
+            document.querySelectorAll('.quiz-question').forEach(question => {
+                const feedback = question.querySelector('.quiz-feedback');
+                feedback.className = 'quiz-feedback';
+                feedback.textContent = '';
+
+                question.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'disabled');
+                    opt.setAttribute('aria-checked', 'false');
+                });
+            });
+
+            quizScore.classList.remove('show');
+        });
+
+        // Initialize
+        updateProgressBar();
+        updateActiveTocLink();
+    </script>
+</body>
+</html>
