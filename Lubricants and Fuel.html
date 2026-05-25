@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>15.9 – Lubricants & Fuels | Aviation Revision</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:        #141820;
+      --bg-surface:     #1c2230;
+      --bg-card:        #222b3a;
+      --bg-card-hover:  #27334a;
+      --bg-sidebar:     #181f2d;
+      --accent-blue:    #4a9eff;
+      --accent-teal:    #2dd4bf;
+      --accent-amber:   #f59e0b;
+      --accent-red:     #f87171;
+      --accent-green:   #4ade80;
+      --accent-purple:  #a78bfa;
+      --text-primary:   #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted:     #64748b;
+      --border:         #2d3a50;
+      --border-focus:   #4a9eff;
+      --radius-sm:      6px;
+      --radius-md:      10px;
+      --radius-lg:      14px;
+      --shadow:         0 4px 24px rgba(0,0,0,0.35);
+      --transition:     0.22s ease;
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+
+    /* ===== TOP NAV ===== */
+    #topnav {
+      position: fixed;
+      top: 3px; left: 0; right: 0;
+      height: 56px;
+      background: rgba(20,24,32,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 900;
+      gap: 12px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .nav-brand .module-tag {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal));
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .nav-brand h1 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-mode {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .btn-mode:hover { background: var(--bg-card-hover); color: var(--text-primary); border-color: var(--accent-blue); }
+    .btn-mode:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+
+    .btn-mode.active {
+      background: var(--accent-blue);
+      color: #fff;
+      border-color: var(--accent-blue);
+    }
+
+    .btn-mode.exam-active {
+      background: var(--accent-amber);
+      color: #111;
+      border-color: var(--accent-amber);
+    }
+
+    #sidebar-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all var(--transition);
+    }
+
+    #sidebar-toggle:hover { color: var(--text-primary); border-color: var(--accent-blue); }
+
+    /* ===== LAYOUT ===== */
+    #layout {
+      display: flex;
+      margin-top: 59px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    #sidebar {
+      width: 248px;
+      min-width: 248px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      height: calc(100vh - 59px);
+      position: sticky;
+      top: 59px;
+      overflow-y: auto;
+      padding: 20px 0 40px;
+      transition: transform var(--transition);
+      z-index: 800;
+    }
+
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-track { background: transparent; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .sidebar-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 18px 10px;
+    }
+
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .toc-item:hover { color: var(--text-primary); background: rgba(74,158,255,0.06); border-left-color: var(--accent-blue); }
+    .toc-item.active { color: var(--accent-blue); border-left-color: var(--accent-blue); background: rgba(74,158,255,0.08); font-weight: 600; }
+
+    .toc-icon { font-size: 0.9rem; flex-shrink: 0; }
+
+    .sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 10px 18px; }
+
+    .toc-progress {
+      margin: 14px 18px 0;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .toc-progress-bar-wrap {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .toc-progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    #main {
+      flex: 1;
+      min-width: 0;
+      padding: 36px 40px 80px;
+      max-width: 900px;
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header {
+      margin-bottom: 40px;
+    }
+
+    .page-header .eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      margin-bottom: 8px;
+    }
+
+    .page-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .page-header p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 600px;
+    }
+
+    .header-tags {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .tag-blue  { border-color: var(--accent-blue);   color: var(--accent-blue);   background: rgba(74,158,255,0.1); }
+    .tag-teal  { border-color: var(--accent-teal);   color: var(--accent-teal);   background: rgba(45,212,191,0.1); }
+    .tag-amber { border-color: var(--accent-amber);  color: var(--accent-amber);  background: rgba(245,158,11,0.1); }
+
+    /* ===== CHECKLIST BANNER ===== */
+    #checklist-banner {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 36px;
+    }
+
+    #checklist-banner h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      cursor: pointer;
+      transition: all var(--transition);
+      user-select: none;
+    }
+
+    .check-item:hover { border-color: var(--accent-teal); background: rgba(45,212,191,0.05); }
+
+    .check-item input[type="checkbox"] { display: none; }
+
+    .check-box {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      border: 2px solid var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      color: #fff;
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+
+    .check-item.checked .check-box {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+
+    .check-item.checked .check-label { text-decoration: line-through; color: var(--text-muted); }
+
+    .check-label { font-size: 0.8rem; color: var(--text-secondary); }
+
+    /* ===== SECTION WRAPPER ===== */
+    .section {
+      margin-bottom: 48px;
+      scroll-margin-top: 72px;
+    }
+
+    /* ===== SECTION HEADER ===== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      cursor: pointer;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: background var(--transition);
+      user-select: none;
+    }
+
+    .section-header:hover { background: var(--bg-card-hover); }
+    .section-header:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+
+    .section-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .section-header p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .chevron {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+
+    .section-header[aria-expanded="false"] .chevron { transform: rotate(-90deg); }
+
+    .section-body {
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+    }
+
+    .section-body.collapsed { max-height: 0 !important; opacity: 0; }
+
+    /* ===== CARDS ===== */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      transition: all var(--transition);
+    }
+
+    .card:hover { background: var(--bg-card-hover); border-color: #3a4a60; transform: translateY(-1px); box-shadow: var(--shadow); }
+
+    .card-icon { font-size: 1.5rem; margin-bottom: 10px; }
+
+    .card h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* ===== CONTENT TEXT ===== */
+    .content-text {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .content-text strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ===== BULLET LIST ===== */
+    .bullet-list {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 16px;
+    }
+
+    .bullet-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(45,58,80,0.5);
+    }
+
+    .bullet-list li:last-child { border-bottom: none; }
+
+    .bullet-list li::before {
+      content: '▸';
+      color: var(--accent-blue);
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 0.75rem;
+    }
+
+    .bullet-list li strong { color: var(--text-primary); }
+
+    /* ===== TABLE ===== */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 0.83rem;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .data-table th {
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 10px 14px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(74,158,255,0.04); }
+
+    .td-highlight { color: var(--text-primary); font-weight: 600; }
+
+    /* ===== SPECIAL BOXES ===== */
+    .box {
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      border-left: 3px solid;
+      font-size: 0.84rem;
+    }
+
+    .box-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .box p, .box ul { color: inherit; }
+
+    .box-warning {
+      background: rgba(248,113,113,0.08);
+      border-color: var(--accent-red);
+      color: #fca5a5;
+    }
+
+    .box-warning .box-title { color: var(--accent-red); }
+
+    .box-concept {
+      background: rgba(74,158,255,0.08);
+      border-color: var(--accent-blue);
+      color: #93c5fd;
+    }
+
+    .box-concept .box-title { color: var(--accent-blue); }
+
+    .box-recap {
+      background: rgba(45,212,191,0.07);
+      border-color: var(--accent-teal);
+      color: #5eead4;
+    }
+
+    .box-recap .box-title { color: var(--accent-teal); }
+
+    .box-memory {
+      background: rgba(167,139,250,0.08);
+      border-color: var(--accent-purple);
+      color: #c4b5fd;
+    }
+
+    .box-memory .box-title { color: var(--accent-purple); }
+
+    .box-tip {
+      background: rgba(245,158,11,0.08);
+      border-color: var(--accent-amber);
+      color: #fcd34d;
+    }
+
+    .box-tip .box-title { color: var(--accent-amber); }
+
+    .box ul { padding-left: 0; list-style: none; }
+    .box ul li { padding: 3px 0; display: flex; align-items: flex-start; gap: 8px; }
+    .box ul li::before { content: '✔'; flex-shrink: 0; margin-top: 2px; font-size: 0.75rem; }
+
+    /* ===== PROPERTY PILLS ===== */
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .prop-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      transition: all var(--transition);
+    }
+
+    .prop-pill:hover { border-color: var(--accent-blue); background: var(--bg-card-hover); }
+
+    .prop-pill .prop-icon { font-size: 1.2rem; margin-bottom: 6px; }
+    .prop-pill .prop-name { font-size: 0.78rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .prop-pill .prop-desc { font-size: 0.74rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ===== FLASHCARDS ===== */
+    .flashcard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .flashcard {
+      height: 160px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .flashcard:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 3px; border-radius: var(--radius-md); }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease;
+    }
+
+    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .flashcard-front {
+      background: var(--bg-card);
+    }
+
+    .flashcard-back {
+      background: linear-gradient(135deg, #1a2640, #1e2d44);
+      border-color: var(--accent-blue);
+      transform: rotateY(180deg);
+    }
+
+    .fc-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .flashcard-front .fc-label { color: var(--text-muted); }
+    .flashcard-back .fc-label { color: var(--accent-teal); }
+
+    .fc-q {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+
+    .fc-a {
+      font-size: 0.82rem;
+      color: #93c5fd;
+      line-height: 1.5;
+    }
+
+    .fc-hint {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* ===== QUIZ ===== */
+    .quiz-wrap { margin-bottom: 20px; }
+
+    .quiz-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-q {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .quiz-q .q-num {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-teal));
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 3px;
+      margin-right: 8px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .quiz-opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      cursor: pointer;
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      transition: all var(--transition);
+      user-select: none;
+    }
+
+    .quiz-opt:hover { border-color: var(--accent-blue); color: var(--text-primary); background: rgba(74,158,255,0.05); }
+    .quiz-opt:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
+
+    .quiz-opt .opt-letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      font-size: 0.72rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+
+    .quiz-opt.correct {
+      background: rgba(74,222,128,0.1);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .quiz-opt.correct .opt-letter { background: var(--accent-green); border-color: var(--accent-green); color: #111; }
+
+    .quiz-opt.incorrect {
+      background: rgba(248,113,113,0.1);
+      border-color: var(--accent-red);
+      color: var(--accent-red);
+    }
+
+    .quiz-opt.incorrect .opt-letter { background: var(--accent-red); border-color: var(--accent-red); color: #fff; }
+
+    .quiz-opt.disabled { pointer-events: none; }
+
+    .quiz-feedback {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      display: none;
+    }
+
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.fb-correct { background: rgba(74,222,128,0.08); border: 1px solid var(--accent-green); color: var(--accent-green); }
+    .quiz-feedback.fb-incorrect { background: rgba(248,113,113,0.08); border: 1px solid var(--accent-red); color: #fca5a5; }
+
+    .quiz-reset-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .quiz-reset-btn:hover { border-color: var(--accent-amber); color: var(--accent-amber); }
+
+    /* ===== SOAP FLOW ===== */
+    .flow-steps {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .flow-step {
+      flex: 1;
+      min-width: 110px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 14px 12px;
+      text-align: center;
+      position: relative;
+      border-radius: 0;
+    }
+
+    .flow-step:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+    .flow-step:last-child  { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
+    .flow-step-icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .flow-step-title { font-size: 0.75rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .flow-step-desc  { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
+
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      font-size: 1rem;
+      color: var(--accent-blue);
+      padding: 0 4px;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    /* ===== FUEL CARDS ===== */
+    .fuel-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .fuel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 18px;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fuel-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .fuel-card.jeta::before  { background: var(--accent-blue); }
+    .fuel-card.jeta1::before { background: var(--accent-teal); }
+    .fuel-card.jetb::before  { background: var(--accent-amber); }
+
+    .fuel-card:hover { background: var(--bg-card-hover); transform: translateY(-2px); box-shadow: var(--shadow); }
+
+    .fuel-card .fuel-name {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .fuel-card.jeta  .fuel-name { color: var(--accent-blue); }
+    .fuel-card.jeta1 .fuel-name { color: var(--accent-teal); }
+    .fuel-card.jetb  .fuel-name { color: var(--accent-amber); }
+
+    .fuel-fp {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .fuel-fp span {
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .fuel-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .fuel-card ul li {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding: 3px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .fuel-card ul li::before { content: '·'; color: var(--text-muted); font-size: 1rem; line-height: 1; }
+
+    /* ===== ADDITIVE TABLE ===== */
+    .additive-row td:first-child { color: var(--text-primary); font-weight: 600; }
+
+    /* ===== FOCUS MODE ===== */
+    body.focus-mode .extra-text { display: none !important; }
+    body.focus-mode .section-body { max-height: none !important; opacity: 1 !important; }
+
+    /* ===== EXAM MODE ===== */
+    body.exam-mode .section { display: none !important; }
+    body.exam-mode .section.exam-visible { display: block !important; }
+    body.exam-mode .section-body { max-height: none !important; opacity: 1 !important; }
+
+    /* ===== GLOBAL CONTROLS ===== */
+    .global-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .g-btn {
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .g-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+    /* ===== RECAP SECTION ===== */
+    .recap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .recap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    .recap-item .recap-check { color: var(--accent-green); flex-shrink: 0; font-size: 0.9rem; }
+    .recap-item strong { color: var(--text-primary); }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ===== MOBILE OVERLAY ===== */
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 750;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      #main { padding: 24px 20px 60px; }
+
+      #sidebar {
+        position: fixed;
+        top: 59px; left: 0;
+        height: calc(100vh - 59px);
+        transform: translateX(-100%);
+        z-index: 800;
+      }
+
+      #sidebar.open { transform: translateX(0); }
+      #sidebar-overlay.visible { display: block; }
+      #sidebar-toggle { display: flex; }
+
+      .page-header h2 { font-size: 1.5rem; }
+
+      .flow-steps { gap: 6px; }
+      .flow-step { min-width: 80px; }
+      .flow-arrow { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      #main { padding: 18px 14px 60px; }
+      .card-grid { grid-template-columns: 1fr; }
+      .flashcard-grid { grid-template-columns: 1fr; }
+      .fuel-cards { grid-template-columns: 1fr; }
+      .recap-grid { grid-template-columns: 1fr; }
+      .nav-brand h1 { display: none; }
+      .btn-mode span { display: none; }
+    }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section { animation: fadeInUp 0.4s ease both; }
+
+    /* ===== SCORE BANNER ===== */
+    #score-banner {
+      display: none;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    #score-banner.show { display: flex; align-items: center; gap: 12px; }
+    #score-banner .score-num { font-size: 1.4rem; font-weight: 800; color: var(--accent-teal); }
+  </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+<!-- Top Navigation -->
+<nav id="topnav" role="navigation" aria-label="Top navigation">
+  <div class="nav-brand">
+    <button id="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="false">☰</button>
+    <span class="module-tag">Module 15.9</span>
+    <h1>Lubricants &amp; Fuels</h1>
+  </div>
+  <div class="nav-controls">
+    <button class="btn-mode" id="focus-toggle" aria-pressed="false" title="Show key points only">
+      🎯 <span>Focus Mode</span>
+    </button>
+    <button class="btn-mode" id="exam-toggle" aria-pressed="false" title="Exam mode: recaps, flashcards, and questions only">
+      📋 <span>Exam Mode</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Sidebar Overlay (mobile) -->
+<div id="sidebar-overlay" role="presentation"></div>
+
+<!-- Layout -->
+<div id="layout">
+
+  <!-- Sidebar -->
+  <aside id="sidebar" role="complementary" aria-label="Table of contents">
+    <div class="sidebar-label">Contents</div>
+
+    <a class="toc-item" data-target="sec-intro" href="#sec-intro" tabindex="0">
+      <span class="toc-icon">🔬</span> Introduction
+    </a>
+    <a class="toc-item" data-target="sec-properties" href="#sec-properties" tabindex="0">
+      <span class="toc-icon">⚗️</span> Oil Properties
+    </a>
+    <a class="toc-item" data-target="sec-synthetic" href="#sec-synthetic" tabindex="0">
+      <span class="toc-icon">🧪</span> Synthetic Oils
+    </a>
+    <a class="toc-item" data-target="sec-typeii" href="#sec-typeii" tabindex="0">
+      <span class="toc-icon">📋</span> Type II Oil Characteristics
+    </a>
+    <a class="toc-item" data-target="sec-soap" href="#sec-soap" tabindex="0">
+      <span class="toc-icon">🔍</span> SOAP Analysis
+    </a>
+    <a class="toc-item" data-target="sec-fuels-intro" href="#sec-fuels-intro" tabindex="0">
+      <span class="toc-icon">⛽</span> Turbine Fuels
+    </a>
+    <a class="toc-item" data-target="sec-volatility" href="#sec-volatility" tabindex="0">
+      <span class="toc-icon">💨</span> Fuel Volatility
+    </a>
+    <a class="toc-item" data-target="sec-fueltypes" href="#sec-fueltypes" tabindex="0">
+      <span class="toc-icon">🛢️</span> Fuel Types
+    </a>
+    <a class="toc-item" data-target="sec-additives" href="#sec-additives" tabindex="0">
+      <span class="toc-icon">🧫</span> Fuel Additives
+    </a>
+    <a class="toc-item" data-target="sec-identification" href="#sec-identification" tabindex="0">
+      <span class="toc-icon">🏷️</span> Fuel Identification
+    </a>
+    <a class="toc-item" data-target="sec-flashcards" href="#sec-flashcards" tabindex="0">
+      <span class="toc-icon">🃏</span> Flashcards
+    </a>
+    <a class="toc-item" data-target="sec-quiz" href="#sec-quiz" tabindex="0">
+      <span class="toc-icon">🧪</span> Self-Check Quiz
+    </a>
+    <a class="toc-item" data-target="sec-recap" href="#sec-recap" tabindex="0">
+      <span class="toc-icon">⚡</span> Quick Recap
+    </a>
+
+    <hr class="sidebar-divider" />
+    <div class="toc-progress">
+      Reading progress
+      <div class="toc-progress-bar-wrap">
+        <div class="toc-progress-bar-fill" id="toc-fill"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main id="main" role="main">
+
+    <!-- Page Header -->
+    <header class="page-header">
+      <div class="eyebrow">EASA Part-66 · Module 15.9</div>
+      <h2>Lubricants, Oil Analysis &amp; Turbine Engine Fuels</h2>
+      <p>Concise revision material for aviation maintenance engineering students.</p>
+      <div class="header-tags">
+        <span class="tag tag-blue">Turbine Oils</span>
+        <span class="tag tag-teal">SOAP Analysis</span>
+        <span class="tag tag-amber">Jet Fuels</span>
+      </div>
+    </header>
+
+    <!-- Topic Checklist -->
+    <div id="checklist-banner">
+      <h3>📌 Topic Completion Tracker</h3>
+      <div class="checklist-grid" id="checklist-grid">
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">Oil Properties</span>
+        </label>
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">Synthetic Oils</span>
+        </label>
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">Type II Characteristics</span>
+        </label>
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">SOAP Analysis</span>
+        </label>
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">Fuel Volatility</span>
+        </label>
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">Jet A / A-1 / B Differences</span>
+        </label>
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">Fuel Additives</span>
+        </label>
+        <label class="check-item" tabindex="0">
+          <input type="checkbox" />
+          <span class="check-box">✓</span>
+          <span class="check-label">Fuel Identification</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Global Controls -->
+    <div class="global-controls">
+      <button class="g-btn" id="expand-all">Expand All</button>
+      <button class="g-btn" id="collapse-all">Collapse All</button>
+    </div>
+
+    <!-- ===================== SECTION 1: INTRODUCTION ===================== -->
+    <section class="section" id="sec-intro">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-intro">
+        <div class="section-header-left">
+          <span class="section-icon">🔬</span>
+          <div>
+            <h2>Introduction to Turbine Engine Lubricants</h2>
+            <p>Why turbine engines demand specialist oils</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-intro">
+        <div style="padding-top:12px;">
+          <p class="content-text">
+            Gas turbine engines operate under <strong>extreme conditions</strong> — high temperatures, high rotational speeds, and heavy bearing loads. These conditions demand oils that go far beyond what standard mineral oils can offer.
+          </p>
+
+          <div class="card-grid extra-text">
+            <div class="card">
+              <div class="card-icon">🌡️</div>
+              <h4>High Temperatures</h4>
+              <p>Engine components reach temperatures that would cause conventional oils to break down rapidly.</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">⚙️</div>
+              <h4>High Rotational Speeds</h4>
+              <p>Bearings spin at very high RPM, requiring oil that flows freely under all conditions.</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">⚖️</div>
+              <h4>Heavy Bearing Loads</h4>
+              <p>Despite using antifriction bearings (ball &amp; roller), load-carrying ability is still critical.</p>
+            </div>
+          </div>
+
+          <div class="box box-concept">
+            <div class="box-title">💡 Key Concept</div>
+            <p>Turbine engines use primarily <strong>ball bearings and roller bearings</strong> (antifriction bearings). This allows the use of <strong>lower viscosity oils</strong> compared to reciprocating engines — but the oil must still be specially formulated synthetic oil.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 2: OIL PROPERTIES ===================== -->
+    <section class="section" id="sec-properties">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-properties">
+        <div class="section-header-left">
+          <span class="section-icon">⚗️</span>
+          <div>
+            <h2>Required Oil Properties</h2>
+            <p>Six critical characteristics turbine oil must possess</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-properties">
+        <div style="padding-top:12px;">
+
+          <div class="prop-grid">
+            <div class="prop-pill">
+              <div class="prop-icon">💧</div>
+              <div class="prop-name">Proper Viscosity</div>
+              <div class="prop-desc">Thick enough for load-carrying, thin enough for free flow and easy lubrication</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🚫</div>
+              <div class="prop-name">Low Volatility</div>
+              <div class="prop-desc">Resists evaporation at high temperatures and high altitudes</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🫧</div>
+              <div class="prop-name">Anti-Foaming</div>
+              <div class="prop-desc">Foam reduces lubrication effectiveness — oil must resist foam formation</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🔩</div>
+              <div class="prop-name">Seal Compatibility</div>
+              <div class="prop-desc">Must not damage natural rubber or synthetic seals</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🧹</div>
+              <div class="prop-name">Low Carbon Formation</div>
+              <div class="prop-desc">Minimises carbon deposits, varnish, and lacquer buildup</div>
+            </div>
+          </div>
+
+          <div class="box box-concept">
+            <div class="box-title">💡 Viscosity Dual Requirement</div>
+            <p>There is an inherent tension in oil viscosity requirements:</p>
+            <table class="data-table" style="margin-top:10px;">
+              <thead>
+                <tr><th>Requirement</th><th>Purpose</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="td-highlight">High viscosity</td><td>Load-carrying ability</td></tr>
+                <tr><td class="td-highlight">Low viscosity</td><td>Good flow and lubrication at all temperatures</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box box-warning">
+            <div class="box-title">⚠️ Why These Properties Matter</div>
+            <p>Failure to meet any of these requirements risks <strong>bearing damage, seal degradation, carbon buildup, or oil starvation</strong> — any of which can lead to engine failure.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 3: SYNTHETIC OILS ===================== -->
+    <section class="section" id="sec-synthetic">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-synthetic">
+        <div class="section-header-left">
+          <span class="section-icon">🧪</span>
+          <div>
+            <h2>Synthetic Turbine Oils</h2>
+            <p>Why synthetic is the only choice for modern turbines</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-synthetic">
+        <div style="padding-top:12px;">
+
+          <p class="content-text extra-text">
+            Modern turbine engines exclusively use <strong>synthetic oils</strong>, which are specially developed for high-temperature turbine operation. They significantly outperform mineral-based oils in turbine environments.
+          </p>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-icon">🧱</div>
+              <h4>Reduced Deposit Formation</h4>
+              <p>Produce less coke and lacquer compared to mineral oils, keeping the engine cleaner.</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🛡️</div>
+              <h4>High-Temperature Performance</h4>
+              <p>Resist thermal breakdown and evaporation even at extreme operating temperatures.</p>
+            </div>
+          </div>
+
+          <div class="box box-tip">
+            <div class="box-title">📝 Exam Tip</div>
+            <p>Synthetic turbine oils are preferred because they <strong>resist high-temperature breakdown</strong> and <strong>reduce deposit formation</strong> — two key advantages over mineral oils.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 4: TYPE II OIL ===================== -->
+    <section class="section" id="sec-typeii">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-typeii">
+        <div class="section-header-left">
+          <span class="section-icon">📋</span>
+          <div>
+            <h2>Type II Oil Characteristics</h2>
+            <p>The standard classification and its key properties</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body collapsed" id="body-typeii">
+        <div style="padding-top:12px;">
+
+          <div class="box box-concept">
+            <div class="box-title">💡 Type II Classification</div>
+            <p>Most turbine oils are classified as <strong>Type II turbine oils</strong>. These contain additives providing: thermal protection, oxidation resistance, load-carrying ability, and low-temperature flow.</p>
+          </div>
+
+          <div class="prop-grid">
+            <div class="prop-pill">
+              <div class="prop-icon">💨</div>
+              <div class="prop-name">Vapour Phase Deposit Resistance</div>
+              <div class="prop-desc">Minimises carbon deposits that form from oil vapours in hot zones</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🏋️</div>
+              <div class="prop-name">Load Carrying Ability</div>
+              <div class="prop-desc">Provides adequate lubrication under heavy bearing loads</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">✨</div>
+              <div class="prop-name">Cleanliness</div>
+              <div class="prop-desc">Reduces sludge formation and internal contamination</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🧱</div>
+              <div class="prop-name">Bulk Stability</div>
+              <div class="prop-desc">Resists physical change and chemical breakdown, especially from oxidation</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🤝</div>
+              <div class="prop-name">Compatibility</div>
+              <div class="prop-desc">Same-spec oils can technically mix, though mixing brands is discouraged</div>
+            </div>
+            <div class="prop-pill">
+              <div class="prop-icon">🔒</div>
+              <div class="prop-name">Seal Wear Protection</div>
+              <div class="prop-desc">Protects carbon seals and seal contact surfaces from wear</div>
+            </div>
+          </div>
+
+          <div class="box box-warning extra-text">
+            <div class="box-title">⚠️ Signs of Oil Oxidation</div>
+            <p>Oxidised oil may show <strong>increased viscosity</strong> and <strong>increased acidity</strong> — both indicators that oil condition is degrading and a change may be necessary.</p>
+          </div>
+
+          <div class="box box-memory">
+            <div class="box-title">🧠 Memory Aid — Type II Properties</div>
+            <p><strong>V-L-C-B-C-S</strong> → <strong>V</strong>apour resistance · <strong>L</strong>oad carrying · <strong>C</strong>leanliness · <strong>B</strong>ulk stability · <strong>C</strong>ompatibility · <strong>S</strong>eal protection</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 5: SOAP ===================== -->
+    <section class="section" id="sec-soap">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-soap">
+        <div class="section-header-left">
+          <span class="section-icon">🔍</span>
+          <div>
+            <h2>Spectrometric Oil Analysis Programme (SOAP)</h2>
+            <p>Early detection of engine wear through oil sampling</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-soap">
+        <div style="padding-top:12px;">
+
+          <div class="box box-concept">
+            <div class="box-title">💡 What is SOAP?</div>
+            <p>SOAP is a condition monitoring programme that detects <strong>early engine wear</strong> by analysing metallic particles suspended in oil samples. Results are measured in <strong>Parts Per Million (PPM)</strong>.</p>
+          </div>
+
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-step-icon">⚙️</div>
+              <div class="flow-step-title">Engine Operates</div>
+              <div class="flow-step-desc">Tiny metal particles enter the oil</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon">🛢️</div>
+              <div class="flow-step-title">Particles Suspend</div>
+              <div class="flow-step-desc">Remain suspended in the oil</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon">🧫</div>
+              <div class="flow-step-title">Sample Taken</div>
+              <div class="flow-step-desc">Oil sample extracted for analysis</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon">📊</div>
+              <div class="flow-step-title">Analysis (PPM)</div>
+              <div class="flow-step-desc">Metallic elements &amp; contaminants measured</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+              <div class="flow-step-icon">🔔</div>
+              <div class="flow-step-title">Trend Compared</div>
+              <div class="flow-step-desc">Current vs. previous samples reviewed</div>
+            </div>
+          </div>
+
+          <ul class="bullet-list extra-text">
+            <li>An increase in certain metals may indicate <strong>bearing wear, gear wear, or component failure</strong></li>
+            <li>Maintenance personnel compare <strong>current metal levels with previous samples</strong> — trend analysis is key</li>
+            <li>A sudden spike in wear metals may trigger <strong>inspection or component replacement</strong></li>
+          </ul>
+
+          <div class="box box-recap">
+            <div class="box-title">⚡ SOAP Benefits</div>
+            <ul>
+              <li>Early fault detection before failure occurs</li>
+              <li>Prevents major engine failures</li>
+              <li>Improves maintenance planning</li>
+              <li>Increases overall engine reliability</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 6: TURBINE FUELS INTRO ===================== -->
+    <section class="section" id="sec-fuels-intro">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-fuels-intro">
+        <div class="section-header-left">
+          <span class="section-icon">⛽</span>
+          <div>
+            <h2>Turbine Engine Fuels — Overview</h2>
+            <p>Characteristics of jet fuel and how it differs from AVGAS</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-fuels-intro">
+        <div style="padding-top:12px;">
+
+          <div class="box box-warning">
+            <div class="box-title">⚠️ Critical Safety Warning</div>
+            <p>Jet fuel must <strong>NEVER</strong> be mixed with AVGAS or used in reciprocating aircraft engines. Incorrect fuelling can cause engine damage or engine failure.</p>
+          </div>
+
+          <p class="content-text extra-text">
+            Turbine engines use <strong>jet fuel</strong> — a hydrocarbon-based fuel similar to kerosene. It is fundamentally different from AVGAS (used in piston engines) in its physical and chemical properties.
+          </p>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Jet Fuel</th>
+                <th>AVGAS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-highlight">Volatility</td>
+                <td>Lower</td>
+                <td>Higher</td>
+              </tr>
+              <tr>
+                <td class="td-highlight">Boiling Point</td>
+                <td>Higher</td>
+                <td>Lower</td>
+              </tr>
+              <tr>
+                <td class="td-highlight">Viscosity</td>
+                <td>Higher</td>
+                <td>Lower</td>
+              </tr>
+              <tr>
+                <td class="td-highlight">Hydrocarbon Molecules</td>
+                <td>Larger (more carbon atoms)</td>
+                <td>Smaller</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 7: FUEL VOLATILITY ===================== -->
+    <section class="section" id="sec-volatility">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-volatility">
+        <div class="section-header-left">
+          <span class="section-icon">💨</span>
+          <div>
+            <h2>Fuel Volatility</h2>
+            <p>The balancing act between evaporation and startability</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body collapsed" id="body-volatility">
+        <div style="padding-top:12px;">
+
+          <div class="box box-concept">
+            <div class="box-title">💡 Definition</div>
+            <p><strong>Volatility</strong> = how easily a fuel evaporates. It affects engine starting, vapour lock resistance, and cold-weather operation.</p>
+          </div>
+
+          <div class="card-grid extra-text">
+            <div class="card">
+              <div class="card-icon">🔒</div>
+              <h4>Low Volatility Needed For:</h4>
+              <p>✔ Reduced evaporation losses<br />✔ Reduced vapour lock risk</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🚀</div>
+              <h4>Higher Volatility Needed For:</h4>
+              <p>✔ Easy engine starting<br />✔ Better cold-weather operation</p>
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr><th>Fuel Type</th><th>Vapour Pressure</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="td-highlight">AVGAS</td><td>~7 psi</td></tr>
+              <tr><td class="td-highlight">Jet A</td><td>~0.125 psi</td></tr>
+              <tr><td class="td-highlight">Jet B</td><td>~2–3 psi</td></tr>
+            </tbody>
+          </table>
+
+          <div class="box box-tip">
+            <div class="box-title">📝 Exam Note</div>
+            <p>Jet A has very low volatility (low vapour pressure). Jet B has higher volatility than Jet A — this is why Jet B performs better in very cold climates (easier cold-weather starting).</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 8: FUEL TYPES ===================== -->
+    <section class="section" id="sec-fueltypes">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-fueltypes">
+        <div class="section-header-left">
+          <span class="section-icon">🛢️</span>
+          <div>
+            <h2>Types of Turbine Fuel</h2>
+            <p>Jet A, Jet A-1, and Jet B — differences at a glance</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-fueltypes">
+        <div style="padding-top:12px;">
+
+          <div class="fuel-cards">
+            <div class="fuel-card jeta">
+              <div class="fuel-name">Jet A</div>
+              <div class="fuel-fp">Freezing Point: <span>−40°C</span></div>
+              <ul>
+                <li>Most common fuel in continental USA</li>
+                <li>Kerosene-based</li>
+                <li>Low volatility</li>
+              </ul>
+            </div>
+            <div class="fuel-card jeta1">
+              <div class="fuel-name">Jet A-1</div>
+              <div class="fuel-fp">Freezing Point: <span>−47°C</span></div>
+              <ul>
+                <li>Most widely used fuel worldwide</li>
+                <li>Similar to Jet A</li>
+                <li>Better cold-weather capability</li>
+              </ul>
+            </div>
+            <div class="fuel-card jetb">
+              <div class="fuel-name">Jet B</div>
+              <div class="fuel-fp">Freezing Point: <span>−50°C</span></div>
+              <ul>
+                <li>Blend of kerosene and gasoline</li>
+                <li>Higher volatility</li>
+                <li>Used in Alaska &amp; Canada</li>
+              </ul>
+            </div>
+          </div>
+
+          <table class="data-table extra-text">
+            <thead>
+              <tr><th>Fuel Type</th><th>Freezing Point</th><th>Main Feature</th><th>Primary Use</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-highlight">Jet A</td>
+                <td>−40°C</td>
+                <td>Common US fuel, kerosene-based</td>
+                <td>Continental USA</td>
+              </tr>
+              <tr>
+                <td class="td-highlight">Jet A-1</td>
+                <td>−47°C</td>
+                <td>Better low-temperature performance</td>
+                <td>Worldwide standard</td>
+              </tr>
+              <tr>
+                <td class="td-highlight">Jet B</td>
+                <td>−50°C</td>
+                <td>Kerosene/gasoline blend, higher volatility</td>
+                <td>Very cold climates (Alaska, Canada)</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="box box-memory">
+            <div class="box-title">🧠 Memory Aid — Freezing Points</div>
+            <p>Cold gets <strong>colder</strong> as you go: Jet A (−40°C) → Jet A-1 (−47°C) → Jet B (−50°C). Jet B is the most cold-weather capable.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 9: FUEL ADDITIVES ===================== -->
+    <section class="section" id="sec-additives">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-additives">
+        <div class="section-header-left">
+          <span class="section-icon">🧫</span>
+          <div>
+            <h2>Fuel Additives</h2>
+            <p>What additives are used and why</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body collapsed" id="body-additives">
+        <div style="padding-top:12px;">
+
+          <table class="data-table additive-row">
+            <thead>
+              <tr><th>Problem Prevented</th><th>Additive Type</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Corrosion</td>
+                <td>Corrosion inhibitors</td>
+              </tr>
+              <tr>
+                <td>Fuel oxidation</td>
+                <td>Oxidation inhibitors</td>
+              </tr>
+              <tr>
+                <td>Ice formation</td>
+                <td>Anti-icing additives</td>
+              </tr>
+              <tr>
+                <td>Bacteria / microbial growth</td>
+                <td>Biocides</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="box box-concept extra-text">
+            <div class="box-title">💡 Why Additives Matter</div>
+            <p>Without additives, jet fuel is susceptible to corrosion, degradation, ice crystal formation (which can block fuel filters), and microbial contamination in fuel tanks — all of which are safety-critical concerns.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 10: FUEL IDENTIFICATION ===================== -->
+    <section class="section" id="sec-identification">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-identification">
+        <div class="section-header-left">
+          <span class="section-icon">🏷️</span>
+          <div>
+            <h2>Fuel Identification</h2>
+            <p>How to distinguish fuels and why it is safety-critical</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-identification">
+        <div style="padding-top:12px;">
+
+          <div class="box box-warning">
+            <div class="box-title">⚠️ Safety Rule</div>
+            <p>Never release an aircraft for flight with <strong>unknown fuel onboard</strong>. Using the wrong fuel can damage engines, cause engine failure, and create major safety hazards.</p>
+          </div>
+
+          <ul class="bullet-list">
+            <li><strong>Jet fuel appearance:</strong> Colourless or straw-coloured — no dyes added</li>
+            <li><strong>AVGAS appearance:</strong> Contains coloured dyes — helps distinguish it from jet fuel</li>
+            <li><strong>Jet fuel nozzles:</strong> Larger than AVGAS fillers — a physical design feature to help prevent misfuelling</li>
+            <li><strong>Fuel systems:</strong> Use colour-coded labels, markings, and fuel cap identifiers</li>
+          </ul>
+
+          <div class="box box-memory">
+            <div class="box-title">🧠 Quick Rule</div>
+            <p>Jet fuel = <strong>clear or straw</strong>. AVGAS = <strong>coloured (dyed)</strong>. When in doubt — do not fuel.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 11: FLASHCARDS ===================== -->
+    <section class="section exam-visible" id="sec-flashcards">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-flashcards">
+        <div class="section-header-left">
+          <span class="section-icon">🃏</span>
+          <div>
+            <h2>Flashcards</h2>
+            <p>Click a card to reveal the answer</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-flashcards">
+        <div style="padding-top:12px;">
+          <div class="flashcard-grid">
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Why do turbine engines use synthetic oil?">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">Why do turbine engines require synthetic oils?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">They resist high-temperature breakdown, resist evaporation, and produce less coke and lacquer (deposit formation) than mineral oils.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What does SOAP stand for and what does it do?">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">What does SOAP stand for and what is its purpose?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">Spectrometric Oil Analysis Programme. It monitors engine condition by detecting metallic wear particles suspended in oil — results measured in PPM.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Freezing points of Jet A, Jet A-1, Jet B">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">What are the freezing points of Jet A, Jet A-1, and Jet B?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">Jet A: −40°C · Jet A-1: −47°C · Jet B: −50°C</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What does an increase in wear metals in SOAP indicate?">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">What does a sudden increase in wear metals in an oil sample indicate?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">It may indicate bearing wear, gear wear, or component failure — potentially triggering inspection or component replacement.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: How does jet fuel differ from AVGAS in volatility?">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">How does jet fuel volatility compare to AVGAS?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">Jet fuel has lower volatility (lower vapour pressure) than AVGAS. AVGAS ~7 psi vs Jet A ~0.125 psi.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Why is Jet B used in cold climates?">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">Why is Jet B used in very cold climates (Alaska, Canada)?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">Jet B is a kerosene/gasoline blend with higher volatility and a lower freezing point (−50°C), providing better cold-weather starting and operation.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: How is jet fuel identified visually?">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">How is jet fuel distinguished visually from AVGAS?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">Jet fuel is colourless or straw-coloured (no dye). AVGAS contains coloured dyes. Jet fuel nozzles are also larger than AVGAS fillers.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What are signs of oil oxidation?">
+              <div class="flashcard-inner">
+                <div class="flashcard-front">
+                  <div class="fc-label">Question</div>
+                  <div class="fc-q">What are the signs of oil oxidation in turbine oils?</div>
+                  <div class="fc-hint">click to reveal</div>
+                </div>
+                <div class="flashcard-back">
+                  <div class="fc-label">Answer</div>
+                  <div class="fc-a">Increased viscosity and increased acidity — both indicate oil condition is degrading.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 12: QUIZ ===================== -->
+    <section class="section exam-visible" id="sec-quiz">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-quiz">
+        <div class="section-header-left">
+          <span class="section-icon">🧪</span>
+          <div>
+            <h2>Self-Check Quiz</h2>
+            <p>Test your knowledge — immediate feedback provided</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-quiz">
+        <div style="padding-top:12px;">
+
+          <div id="score-banner">
+            <span class="score-num" id="score-display">0/0</span>
+            <span>Quiz complete! Review any incorrect answers above.</span>
+          </div>
+
+          <div class="quiz-wrap" id="quiz-container">
+
+            <!-- Q1 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q1</span> What type of bearings do turbine engines primarily use?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> Plain journal bearings</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">B</span> Ball and roller bearings (antifriction)</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">C</span> Sleeve bearings</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">D</span> Fluid film bearings</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q2</span> What does SOAP measure to detect engine wear?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> Oil pressure in PSI</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">B</span> Oil temperature in °C</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">C</span> Metallic particles in PPM</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">D</span> Oil pH level</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q3</span> Which fuel has the lowest vapour pressure?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> AVGAS</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">B</span> Jet A</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">C</span> Jet B</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">D</span> All fuels have the same vapour pressure</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q4</span> What is the freezing point of Jet A-1?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> −40°C</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">B</span> −47°C</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">C</span> −50°C</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">D</span> −35°C</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q5</span> Why is Jet B commonly used in Alaska and Canada?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> It has a higher energy content per kilogram</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">B</span> It is cheaper to produce in those regions</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">C</span> It has higher volatility and a lower freezing point for cold-weather operation</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">D</span> It is the only fuel available in remote areas</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q6</span> What does oxidised turbine oil typically show?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> Decreased viscosity and lighter colour</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">B</span> Increased viscosity and increased acidity</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">C</span> Reduced metallic particle content</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">D</span> Increased foam and lower temperature</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q7</span> How does jet fuel appear visually?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> Blue or green due to added dyes</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">B</span> Red to distinguish from AVGAS</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">C</span> Colourless or straw-coloured</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">D</span> Dark amber, similar to engine oil</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="quiz-item" data-answered="false">
+              <div class="quiz-q"><span class="q-num">Q8</span> Which additive type prevents ice crystal formation in jet fuel?</div>
+              <div class="quiz-options">
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">A</span> Biocides</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">B</span> Oxidation inhibitors</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="false"><span class="opt-letter">C</span> Corrosion inhibitors</div>
+                <div class="quiz-opt" tabindex="0" role="button" data-correct="true"><span class="opt-letter">D</span> Anti-icing additives</div>
+              </div>
+              <div class="quiz-feedback"></div>
+            </div>
+
+          </div>
+
+          <button class="quiz-reset-btn" id="quiz-reset-btn">↺ Reset Quiz</button>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECTION 13: RECAP ===================== -->
+    <section class="section exam-visible" id="sec-recap">
+      <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-recap">
+        <div class="section-header-left">
+          <span class="section-icon">⚡</span>
+          <div>
+            <h2>Quick Recap</h2>
+            <p>Everything you need — condensed for last-minute revision</p>
+          </div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="section-body" id="body-recap">
+        <div style="padding-top:12px;">
+
+          <div class="box box-recap" style="margin-bottom:18px;">
+            <div class="box-title">⚡ Turbine Engine Oils — Core Points</div>
+            <ul>
+              <li>Turbine engines use <strong>synthetic oils</strong> — not mineral</li>
+              <li>Oil must resist heat, oxidation, and foam formation</li>
+              <li>Must not damage natural rubber or synthetic seals</li>
+              <li>Must minimise carbon, varnish, and lacquer deposits</li>
+              <li>Turbine engines use ball and roller (antifriction) bearings → allows lower viscosity oil</li>
+            </ul>
+          </div>
+
+          <div class="box box-recap" style="margin-bottom:18px;">
+            <div class="box-title">⚡ Type II Oils &amp; Oxidation</div>
+            <ul>
+              <li>Type II oils contain additives for thermal protection, oxidation resistance, load carrying, and cold-flow</li>
+              <li>Oxidised oil shows increased viscosity and increased acidity</li>
+              <li>Mixing oil brands is technically possible (same spec) but is generally discouraged</li>
+            </ul>
+          </div>
+
+          <div class="box box-recap" style="margin-bottom:18px;">
+            <div class="box-title">⚡ SOAP Analysis</div>
+            <ul>
+              <li>Detects metallic wear particles in oil — measured in PPM</li>
+              <li>Compare current sample vs. previous samples — trend analysis is key</li>
+              <li>Sudden increase in wear metals → inspect or replace components</li>
+            </ul>
+          </div>
+
+          <div class="box box-recap" style="margin-bottom:18px;">
+            <div class="box-title">⚡ Jet Fuels — Core Points</div>
+            <ul>
+              <li>Jet fuel = kerosene-based, higher viscosity, lower volatility than AVGAS</li>
+              <li>Jet A-1 (−47°C) has lower freezing point than Jet A (−40°C)</li>
+              <li>Jet B (−50°C) = kerosene/gasoline blend → cold climates (Alaska, Canada)</li>
+              <li>Jet fuel = colourless or straw-coloured (no dye)</li>
+              <li>AVGAS = coloured dyes for identification</li>
+              <li>Jet fuel nozzles are larger than AVGAS fillers (misfuelling prevention)</li>
+            </ul>
+          </div>
+
+          <div class="box box-warning">
+            <div class="box-title">⚠️ Non-Negotiable Safety Rules</div>
+            <ul>
+              <li>Never mix jet fuel with AVGAS</li>
+              <li>Never use jet fuel in reciprocating engines</li>
+              <li>Never release an aircraft with unknown fuel onboard</li>
+            </ul>
+          </div>
+
+          <div class="recap-grid">
+            <div class="recap-item"><span class="recap-check">✔</span> <span>Turbine engines use <strong>synthetic oil</strong></span></div>
+            <div class="recap-item"><span class="recap-check">✔</span> <span>Oil must resist <strong>heat, oxidation, foaming</strong></span></div>
+            <div class="recap-item"><span class="recap-check">✔</span> <span>SOAP detects <strong>metal particles in PPM</strong></span></div>
+            <div class="recap-item"><span class="recap-check">✔</span> <span>Jet fuel has <strong>lower volatility</strong> than AVGAS</span></div>
+            <div class="recap-item"><span class="recap-check">✔</span> <span>Jet A-1 has <strong>lower freezing point</strong> than Jet A</span></div>
+            <div class="recap-item"><span class="recap-check">✔</span> <span>Jet B is for <strong>very cold climates</strong></span></div>
+            <div class="recap-item"><span class="recap-check">✔</span> <span>Jet fuel is <strong>colourless or straw-coloured</strong></span></div>
+            <div class="recap-item"><span class="recap-check">✔</span> <span>Wrong fuel can cause <strong>engine failure</strong></span></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // ===========================
+  // PROGRESS BAR
+  // ===========================
+  const progressBar = document.getElementById('progress-bar');
+  const tocFill = document.getElementById('toc-fill');
+
+  function updateProgress() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+    progressBar.style.width = pct + '%';
+    progressBar.setAttribute('aria-valuenow', pct);
+    tocFill.style.width = pct + '%';
+  }
+
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // ===========================
+  // SIDEBAR TOGGLE (MOBILE)
+  // ===========================
+  const sidebarEl = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+  function openSidebar() {
+    sidebarEl.classList.add('open');
+    sidebarOverlay.classList.add('visible');
+    sidebarToggle.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeSidebar() {
+    sidebarEl.classList.remove('open');
+    sidebarOverlay.classList.remove('visible');
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  sidebarToggle.addEventListener('click', () => {
+    if (sidebarEl.classList.contains('open')) closeSidebar();
+    else openSidebar();
+  });
+
+  sidebarOverlay.addEventListener('click', closeSidebar);
+
+  // ===========================
+  // COLLAPSIBLE SECTIONS
+  // ===========================
+  function getSectionBody(header) {
+    return document.getElementById(header.getAttribute('aria-controls'));
+  }
+
+  function expandSection(header) {
+    const body = getSectionBody(header);
+    if (!body) return;
+    body.classList.remove('collapsed');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    body.style.opacity = '1';
+    header.setAttribute('aria-expanded', 'true');
+    // Re-measure after images/fonts load
+    setTimeout(() => { body.style.maxHeight = body.scrollHeight + 'px'; }, 300);
+  }
+
+  function collapseSection(header) {
+    const body = getSectionBody(header);
+    if (!body) return;
+    body.style.maxHeight = body.scrollHeight + 'px';
+    requestAnimationFrame(() => {
+      body.classList.add('collapsed');
+      body.style.maxHeight = '0';
+      body.style.opacity = '0';
+    });
+    header.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleSection(header) {
+    const expanded = header.getAttribute('aria-expanded') === 'true';
+    if (expanded) collapseSection(header);
+    else expandSection(header);
+  }
+
+  // Initialize sections
+  document.querySelectorAll('.section-header').forEach(header => {
+    const body = getSectionBody(header);
+    if (!body) return;
+
+    if (header.getAttribute('aria-expanded') === 'true') {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      body.style.opacity = '1';
+    } else {
+      body.style.maxHeight = '0';
+      body.style.opacity = '0';
+    }
+
+    header.addEventListener('click', () => toggleSection(header));
+    header.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSection(header); }
+    });
+  });
+
+  // ===========================
+  // EXPAND / COLLAPSE ALL
+  // ===========================
+  document.getElementById('expand-all').addEventListener('click', () => {
+    document.querySelectorAll('.section-header').forEach(h => {
+      if (h.getAttribute('aria-expanded') !== 'true') expandSection(h);
+    });
+  });
+
+  document.getElementById('collapse-all').addEventListener('click', () => {
+    document.querySelectorAll('.section-header').forEach(h => {
+      if (h.getAttribute('aria-expanded') === 'true') collapseSection(h);
+    });
+  });
+
+  // ===========================
+  // FOCUS MODE
+  // ===========================
+  const focusToggle = document.getElementById('focus-toggle');
+  let focusActive = false;
+
+  focusToggle.addEventListener('click', () => {
+    focusActive = !focusActive;
+    document.body.classList.toggle('focus-mode', focusActive);
+    focusToggle.classList.toggle('active', focusActive);
+    focusToggle.setAttribute('aria-pressed', focusActive.toString());
+
+    if (focusActive) {
+      // Expand all sections in focus mode
+      document.querySelectorAll('.section-header').forEach(h => expandSection(h));
+    }
+  });
+
+  // ===========================
+  // EXAM MODE
+  // ===========================
+  const examToggle = document.getElementById('exam-toggle');
+  let examActive = false;
+
+  examToggle.addEventListener('click', () => {
+    examActive = !examActive;
+    document.body.classList.toggle('exam-mode', examActive);
+    examToggle.classList.toggle('exam-active', examActive);
+    examToggle.setAttribute('aria-pressed', examActive.toString());
+
+    if (examActive) {
+      // Expand all visible sections
+      document.querySelectorAll('.section.exam-visible .section-header').forEach(h => expandSection(h));
+      // Disable focus mode if on
+      if (focusActive) {
+        focusActive = false;
+        document.body.classList.remove('focus-mode');
+        focusToggle.classList.remove('active');
+        focusToggle.setAttribute('aria-pressed', 'false');
+      }
+    }
+  });
+
+  // ===========================
+  // FLASHCARDS
+  // ===========================
+  document.querySelectorAll('.flashcard').forEach(card => {
+    function flipCard() {
+      card.classList.toggle('flipped');
+    }
+    card.addEventListener('click', flipCard);
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipCard(); }
+    });
+  });
+
+  // ===========================
+  // QUIZ LOGIC
+  // ===========================
+  let quizScore = 0;
+  let quizAnswered = 0;
+  const totalQuestions = document.querySelectorAll('.quiz-item').length;
+
+  function initQuiz() {
+    quizScore = 0;
+    quizAnswered = 0;
+    document.getElementById('score-banner').classList.remove('show');
+
+    document.querySelectorAll('.quiz-item').forEach(item => {
+      item.setAttribute('data-answered', 'false');
+      const feedback = item.querySelector('.quiz-feedback');
+      feedback.className = 'quiz-feedback';
+      feedback.textContent = '';
+
+      item.querySelectorAll('.quiz-opt').forEach(opt => {
+        opt.classList.remove('correct', 'incorrect', 'disabled');
+      });
+    });
+  }
+
+  document.querySelectorAll('.quiz-item').forEach(item => {
+    const opts = item.querySelectorAll('.quiz-opt');
+    const feedback = item.querySelector('.quiz-feedback');
+
+    function handleAnswer(opt) {
+      if (item.getAttribute('data-answered') === 'true') return;
+      item.setAttribute('data-answered', 'true');
+
+      const isCorrect = opt.getAttribute('data-correct') === 'true';
+
+      // Mark all options
+      opts.forEach(o => {
+        o.classList.add('disabled');
+        if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+      });
+
+      if (!isCorrect) {
+        opt.classList.add('incorrect');
+      }
+
+      // Feedback
+      if (isCorrect) {
+        feedback.className = 'quiz-feedback fb-correct show';
+        feedback.textContent = '✔ Correct!';
+        quizScore++;
+      } else {
+        feedback.className = 'quiz-feedback fb-incorrect show';
+        const correctOpt = item.querySelector('[data-correct="true"]');
+        feedback.textContent = '✘ Incorrect. The correct answer was: ' + correctOpt.textContent.trim();
+      }
+
+      quizAnswered++;
+
+      if (quizAnswered === totalQuestions) {
+        const banner = document.getElementById('score-banner');
+        document.getElementById('score-display').textContent = quizScore + '/' + totalQuestions;
+        banner.classList.add('show');
+      }
+    }
+
+    opts.forEach(opt => {
+      opt.addEventListener('click', () => handleAnswer(opt));
+      opt.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleAnswer(opt); }
+      });
+    });
+  });
+
+  document.getElementById('quiz-reset-btn').addEventListener('click', initQuiz);
+
+  // ===========================
+  // CHECKLIST
+  // ===========================
+  document.querySelectorAll('.check-item').forEach(item => {
+    function toggle() {
+      item.classList.toggle('checked');
+    }
+    item.addEventListener('click', toggle);
+    item.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+
+  // ===========================
+  // ACTIVE TOC HIGHLIGHT
+  // ===========================
+  const sections = document.querySelectorAll('.section');
+  const tocItems = document.querySelectorAll('.toc-item');
+
+  const observerOpts = { rootMargin: '-20% 0px -70% 0px', threshold: 0 };
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        tocItems.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('data-target') === id);
+        });
+      }
+    });
+  }, observerOpts);
+
+  sections.forEach(sec => observer.observe(sec));
+
+  // TOC click: close sidebar on mobile
+  tocItems.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth < 900) closeSidebar();
+      // Ensure target section is expanded
+      const targetId = link.getAttribute('data-target');
+      const targetSec = document.getElementById(targetId);
+      if (targetSec) {
+        const header = targetSec.querySelector('.section-header');
+        if (header && header.getAttribute('aria-expanded') !== 'true') {
+          expandSection(header);
+        }
+      }
+    });
+  });
+
+  // ===========================
+  // RE-MEASURE ON WINDOW RESIZE
+  // ===========================
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.section-header').forEach(header => {
+      if (header.getAttribute('aria-expanded') === 'true') {
+        const body = getSectionBody(header);
+        if (body) body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // ===========================
+  // INITIAL SETUP
+  // ===========================
+  updateProgress();
+</script>
+</body>
+</html>
