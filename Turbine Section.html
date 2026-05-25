@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15.6 – Turbine Section | Aviation Revision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #1a1d23;
+    --bg-secondary: #22262e;
+    --bg-card: #272b34;
+    --bg-card-hover: #2e323c;
+    --bg-sidebar: #1e2128;
+    --border-color: #363b46;
+    --border-light: #2e333d;
+    --text-primary: #e4e6eb;
+    --text-secondary: #a8adb8;
+    --text-muted: #6e7585;
+    --accent-blue: #5b9cf5;
+    --accent-blue-dim: #3d6db3;
+    --accent-green: #5ec490;
+    --accent-green-dim: rgba(94, 196, 144, 0.12);
+    --accent-amber: #e8a84c;
+    --accent-amber-dim: rgba(232, 168, 76, 0.12);
+    --accent-red: #e06070;
+    --accent-red-dim: rgba(224, 96, 112, 0.12);
+    --accent-purple: #a78bfa;
+    --accent-purple-dim: rgba(167, 139, 250, 0.12);
+    --accent-cyan: #5ec4d4;
+    --accent-cyan-dim: rgba(94, 196, 212, 0.12);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.2);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.3);
+    --transition: 0.2s ease;
+  }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── Progress Bar ── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+    z-index: 1000; transition: width 0.1s linear; width: 0%;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    position: fixed; top: 3px; left: 0; right: 0; z-index: 900;
+    background: rgba(26, 29, 35, 0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 24px; display: flex; align-items: center;
+    justify-content: space-between; gap: 12px; height: 56px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-title {
+    font-weight: 600; font-size: 15px; color: var(--text-primary);
+    white-space: nowrap;
+  }
+  .topbar-subtitle {
+    font-size: 12px; color: var(--text-muted);
+    display: none;
+  }
+  @media(min-width:768px) { .topbar-subtitle { display: inline; } }
+  .topbar-actions { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+
+  .btn {
+    padding: 6px 14px; border-radius: var(--radius-sm);
+    font-size: 12.5px; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--border-color); background: var(--bg-card);
+    color: var(--text-secondary); transition: var(--transition);
+    white-space: nowrap; font-family: inherit;
+  }
+  .btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+  .btn:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+  .btn.active {
+    background: var(--accent-blue); color: #fff;
+    border-color: var(--accent-blue);
+  }
+  .btn-icon {
+    padding: 6px 8px; font-size: 16px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: fixed; top: 59px; left: 0; bottom: 0;
+    width: 260px; background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto; z-index: 800; padding: 20px 0;
+    transition: transform 0.3s ease;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+  .sidebar-header {
+    padding: 0 20px 14px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--text-muted); font-weight: 600;
+  }
+  .sidebar a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 20px; text-decoration: none;
+    color: var(--text-secondary); font-size: 13.5px;
+    transition: var(--transition); border-left: 2px solid transparent;
+  }
+  .sidebar a:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+  .sidebar a.active {
+    color: var(--accent-blue); border-left-color: var(--accent-blue);
+    background: rgba(91,156,245,0.06);
+  }
+  .sidebar a:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: -2px; }
+  .sidebar a .nav-num {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    min-width: 18px;
+  }
+
+  /* Checklist in sidebar */
+  .sidebar-checklist { padding: 16px 20px; border-top: 1px solid var(--border-color); margin-top: 12px; }
+  .sidebar-checklist h4 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-muted); margin-bottom: 10px; font-weight: 600;
+  }
+  .check-item {
+    display: flex; align-items: center; gap: 8px; padding: 5px 0;
+    font-size: 13px; color: var(--text-secondary); cursor: pointer;
+    user-select: none;
+  }
+  .check-item input[type="checkbox"] {
+    accent-color: var(--accent-green); width: 14px; height: 14px;
+    cursor: pointer;
+  }
+  .check-item.done { color: var(--text-muted); text-decoration: line-through; }
+
+  /* ── Mobile sidebar ── */
+  @media(max-width:1023px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); box-shadow: var(--shadow-lg); }
+  }
+
+  /* ── Main Content ── */
+  .main {
+    margin-left: 260px; padding: 80px 40px 60px;
+    max-width: 900px;
+  }
+  @media(max-width:1023px) { .main { margin-left: 0; padding: 76px 20px 60px; } }
+  @media(min-width:1400px) { .main { margin-left: 300px; } }
+
+  /* ── Hero ── */
+  .hero {
+    margin-bottom: 48px; padding: 36px;
+    background: linear-gradient(135deg, rgba(91,156,245,0.08), rgba(167,139,250,0.06));
+    border: 1px solid rgba(91,156,245,0.15); border-radius: 14px;
+  }
+  .hero-module {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--accent-blue); font-weight: 600; margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 28px; font-weight: 700; margin-bottom: 10px;
+    line-height: 1.3; color: #fff;
+  }
+  .hero p { color: var(--text-secondary); font-size: 14.5px; max-width: 600px; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 44px; }
+  .section-anchor { display: block; position: relative; top: -80px; visibility: hidden; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 20px; cursor: pointer; padding: 14px 18px;
+    background: var(--bg-secondary); border: 1px solid var(--border-color);
+    border-radius: var(--radius); transition: var(--transition);
+    user-select: none;
+  }
+  .section-header:hover { border-color: var(--accent-blue-dim); }
+  .section-header:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+  .section-num {
+    font-size: 11px; font-weight: 700; color: var(--accent-blue);
+    background: rgba(91,156,245,0.1); padding: 4px 10px;
+    border-radius: var(--radius-sm); white-space: nowrap;
+  }
+  .section-title-wrap { flex: 1; }
+  .section-title {
+    font-size: 17px; font-weight: 600; color: var(--text-primary);
+    line-height: 1.4;
+  }
+  .section-desc {
+    font-size: 12.5px; color: var(--text-muted); margin-top: 2px;
+  }
+  .section-toggle {
+    font-size: 18px; color: var(--text-muted); transition: transform 0.3s;
+  }
+  .section-header[aria-expanded="false"] .section-toggle { transform: rotate(-90deg); }
+
+  .section-body {
+    padding: 0 4px; overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+  }
+  .section-body.collapsed { max-height: 0 !important; opacity: 0; pointer-events: none; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: var(--radius); padding: 20px 22px;
+    margin-bottom: 16px; transition: var(--transition);
+  }
+  .card:hover { border-color: var(--border-light); }
+  .card h3 {
+    font-size: 15px; font-weight: 600; margin-bottom: 10px;
+    color: var(--text-primary);
+  }
+  .card p, .card li {
+    font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+  }
+  .card ul { list-style: none; padding: 0; }
+  .card ul li { padding: 4px 0 4px 18px; position: relative; }
+  .card ul li::before {
+    content: '›'; position: absolute; left: 0; color: var(--accent-blue);
+    font-weight: 700;
+  }
+
+  /* ── Key Term ── */
+  .key-term {
+    color: var(--accent-cyan); font-weight: 600;
+  }
+
+  /* ── Info Boxes ── */
+  .info-box {
+    border-radius: var(--radius); padding: 16px 20px;
+    margin-bottom: 16px; border-left: 3px solid;
+    font-size: 13.5px;
+  }
+  .info-box .box-title {
+    font-weight: 600; font-size: 13px; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .info-box ul { list-style: none; padding: 0; margin: 6px 0 0; }
+  .info-box ul li { padding: 2px 0; }
+
+  .box-recap {
+    background: var(--accent-green-dim); border-color: var(--accent-green);
+    color: var(--accent-green);
+  }
+  .box-warning {
+    background: var(--accent-red-dim); border-color: var(--accent-red);
+    color: var(--accent-red);
+  }
+  .box-concept {
+    background: var(--accent-purple-dim); border-color: var(--accent-purple);
+    color: var(--accent-purple);
+  }
+  .box-tip {
+    background: var(--accent-amber-dim); border-color: var(--accent-amber);
+    color: var(--accent-amber);
+  }
+  .box-memory {
+    background: var(--accent-cyan-dim); border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; margin-bottom: 16px; border-radius: var(--radius); }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13.5px; background: var(--bg-card);
+  }
+  th {
+    background: var(--bg-secondary); color: var(--accent-blue);
+    font-weight: 600; text-align: left; padding: 10px 16px;
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  td {
+    padding: 10px 16px; border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ── Flashcards ── */
+  .flashcard-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px; margin-bottom: 16px;
+  }
+  .flashcard {
+    perspective: 800px; height: 170px; cursor: pointer;
+  }
+  .flashcard:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; border-radius: var(--radius); }
+  .flashcard-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.5s; transform-style: preserve-3d;
+  }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+  .flashcard-front, .flashcard-back {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: var(--radius); padding: 20px;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    border: 1px solid var(--border-color);
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+  }
+  .flashcard-front .fc-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--accent-blue); margin-bottom: 10px; font-weight: 600;
+  }
+  .flashcard-front .fc-question {
+    font-size: 14px; color: var(--text-primary); font-weight: 500;
+    line-height: 1.5;
+  }
+  .flashcard-front .fc-hint {
+    font-size: 11px; color: var(--text-muted); margin-top: 12px;
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, rgba(91,156,245,0.08), var(--bg-card));
+    transform: rotateY(180deg);
+  }
+  .flashcard-back .fc-answer {
+    font-size: 14px; color: var(--accent-green); font-weight: 500;
+    line-height: 1.6;
+  }
+
+  /* ── Quiz ── */
+  .quiz-block { margin-bottom: 16px; }
+  .quiz-question {
+    background: var(--bg-card); border: 1px solid var(--border-color);
+    border-radius: var(--radius); padding: 20px 22px; margin-bottom: 12px;
+  }
+  .quiz-question .q-text {
+    font-size: 14.5px; font-weight: 500; margin-bottom: 14px;
+    color: var(--text-primary); line-height: 1.6;
+  }
+  .quiz-question .q-num {
+    font-size: 11px; font-weight: 700; color: var(--accent-purple);
+    margin-bottom: 6px; display: block;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color); cursor: pointer;
+    transition: var(--transition); font-size: 13.5px;
+    color: var(--text-secondary); background: transparent;
+    text-align: left; font-family: inherit; width: 100%;
+  }
+  .quiz-opt:hover { border-color: var(--accent-blue-dim); color: var(--text-primary); }
+  .quiz-opt:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+  .quiz-opt .opt-letter {
+    font-weight: 600; font-size: 12px; color: var(--text-muted);
+    min-width: 20px; text-align: center;
+  }
+  .quiz-opt.correct {
+    border-color: var(--accent-green); background: var(--accent-green-dim);
+    color: var(--accent-green);
+  }
+  .quiz-opt.incorrect {
+    border-color: var(--accent-red); background: var(--accent-red-dim);
+    color: var(--accent-red);
+  }
+  .quiz-opt.disabled { pointer-events: none; }
+  .quiz-feedback {
+    font-size: 13px; padding: 8px 14px; border-radius: var(--radius-sm);
+    margin-top: 10px; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--accent-green-dim); color: var(--accent-green); }
+  .quiz-feedback.incorrect-fb { background: var(--accent-red-dim); color: var(--accent-red); }
+
+  .quiz-controls {
+    display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;
+    align-items: center;
+  }
+  .quiz-score {
+    font-size: 13.5px; color: var(--text-secondary);
+    margin-left: auto;
+  }
+
+  /* ── Focus Mode ── */
+  body.focus-mode .extra-detail { display: none; }
+  body.focus-mode .section-desc { display: none; }
+
+  /* ── Exam Mode ── */
+  body.exam-mode .section { display: none; }
+  body.exam-mode .section.exam-visible { display: block; }
+  body.exam-mode .section.exam-visible .section-body { max-height: none !important; opacity: 1; pointer-events: all; }
+  body.exam-mode .extra-detail { display: none; }
+
+  /* ── Overlay for mobile sidebar ── */
+  .sidebar-overlay {
+    display: none; position: fixed; inset: 0; z-index: 799;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+  }
+  .sidebar-overlay.active { display: block; }
+
+  /* ── Responsive ── */
+  @media(max-width: 500px) {
+    .topbar-actions .btn:not(.btn-icon) span.btn-label { display: none; }
+    .hero h1 { font-size: 22px; }
+    .flashcard-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* Print-friendly */
+  @media print {
+    .topbar, .sidebar, #progress-bar { display: none !important; }
+    .main { margin: 0; padding: 20px; }
+    .section-body { max-height: none !important; opacity: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="btn btn-icon" id="sidebar-toggle" aria-label="Toggle navigation">☰</button>
+    <span class="topbar-title">15.6 – Turbine Section</span>
+    <span class="topbar-subtitle">Gas Turbine Engines</span>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn" id="btn-expand-all" title="Expand / Collapse All"><span class="btn-label">Expand All</span><span class="btn-icon-only" style="display:none">⊞</span></button>
+    <button class="btn" id="btn-focus" title="Focus Mode – show key points only"><span class="btn-label">Focus</span><span class="btn-icon-only" style="display:none">◉</span></button>
+    <button class="btn" id="btn-exam" title="Exam Mode – Recaps, Quizzes & Flashcards only"><span class="btn-label">Exam</span><span class="btn-icon-only" style="display:none">📝</span></button>
+  </div>
+</header>
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar" id="sidebar" aria-label="Table of Contents">
+  <div class="sidebar-header">Contents</div>
+  <a href="#sec-intro"><span class="nav-num">01</span> Introduction</a>
+  <a href="#sec-purpose"><span class="nav-num">02</span> Purpose & Energy</a>
+  <a href="#sec-types"><span class="nav-num">03</span> Turbine Types</a>
+  <a href="#sec-axial"><span class="nav-num">04</span> Axial Flow Turbine</a>
+  <a href="#sec-radial"><span class="nav-num">05</span> Radial Inflow Turbine</a>
+  <a href="#sec-components"><span class="nav-num">06</span> Main Components</a>
+  <a href="#sec-rotor"><span class="nav-num">07</span> Rotor Assembly</a>
+  <a href="#sec-forces"><span class="nav-num">08</span> Forces on Blades</a>
+  <a href="#sec-attachment"><span class="nav-num">09</span> Blade Attachment</a>
+  <a href="#sec-shaft"><span class="nav-num">10</span> Shaft & Couplings</a>
+  <a href="#sec-materials"><span class="nav-num">11</span> Materials & Creep</a>
+  <a href="#sec-recap"><span class="nav-num">⚡</span> Quick Recap</a>
+  <a href="#sec-flashcards"><span class="nav-num">🔁</span> Flashcards</a>
+  <a href="#sec-quiz"><span class="nav-num">🧪</span> Self-Check Quiz</a>
+
+  <div class="sidebar-checklist">
+    <h4>Study Checklist</h4>
+    <label class="check-item"><input type="checkbox"> Turbine function</label>
+    <label class="check-item"><input type="checkbox"> Axial vs Radial</label>
+    <label class="check-item"><input type="checkbox"> NGV purpose</label>
+    <label class="check-item"><input type="checkbox"> Blade forces</label>
+    <label class="check-item"><input type="checkbox"> Fir-tree roots</label>
+    <label class="check-item"><input type="checkbox"> Creep definition</label>
+    <label class="check-item"><input type="checkbox"> Shaft connections</label>
+    <label class="check-item"><input type="checkbox"> Quiz completed</label>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-module">Module 15.6</div>
+    <h1>Turbine Section</h1>
+    <p>A focused revision guide covering the turbine section of gas turbine engines — function, types, components, blade design, materials, and creep.</p>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 1 ═══════════════════════════ -->
+  <div class="section" id="sec-intro-wrap">
+    <span class="section-anchor" id="sec-intro"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" data-target="body-intro">
+      <span class="section-num">01</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Introduction to the Turbine Section</div>
+        <div class="section-desc">What the turbine does and why it matters</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" id="body-intro">
+      <div class="card">
+        <h3>Main Function</h3>
+        <p>The turbine section is one of the most critical parts of a gas turbine engine. It <span class="key-term">extracts energy from hot exhaust gases</span> and converts it into <span class="key-term">mechanical energy</span>.</p>
+        <div class="extra-detail" style="margin-top:12px">
+          <p>This mechanical energy is used to:</p>
+          <ul>
+            <li>Drive the compressor</li>
+            <li>Power engine accessories</li>
+            <li>Drive fans, propellers, or shafts</li>
+          </ul>
+        </div>
+      </div>
+      <div class="info-box box-concept">
+        <div class="box-title">💡 Key Concept</div>
+        The turbine converts <strong>kinetic energy → mechanical energy</strong>.
+      </div>
+      <div class="card extra-detail">
+        <h3>Turbine Location</h3>
+        <p>The turbine section is located <span class="key-term">directly behind the combustion chamber</span>. Hot combustion gases flow from the combustion chamber, through the nozzle guide vanes, and across the turbine blades.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 2 ═══════════════════════════ -->
+  <div class="section" id="sec-purpose-wrap">
+    <span class="section-anchor" id="sec-purpose"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" data-target="body-purpose">
+      <span class="section-num">02</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Purpose & Energy Absorption</div>
+        <div class="section-desc">How much energy the turbine absorbs and what drives its load</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" id="body-purpose">
+      <div class="card">
+        <h3>Gas Generator Turbine</h3>
+        <p>The gas generator turbine's primary role is to <span class="key-term">drive the compressor section</span>.</p>
+        <p style="margin-top:8px">It absorbs approximately <span class="key-term" style="color:var(--accent-amber);font-size:16px;font-weight:700;">60%–70%</span> of the exhaust gas energy.</p>
+      </div>
+      <div class="card extra-detail">
+        <h3>Remaining Energy</h3>
+        <p>The energy not used by the gas generator turbine may drive:</p>
+        <ul>
+          <li>Fan systems</li>
+          <li>Propellers</li>
+          <li>Helicopter rotor shafts</li>
+          <li>Additional turbine stages</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What Determines Turbine Load?</h3>
+        <ul>
+          <li>Compressor size and type</li>
+          <li>Number of accessories</li>
+          <li>Fan or propeller load</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 3 ═══════════════════════════ -->
+  <div class="section" id="sec-types-wrap">
+    <span class="section-anchor" id="sec-types"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" data-target="body-types">
+      <span class="section-num">03</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Turbine Types</div>
+        <div class="section-desc">Axial flow vs radial inflow — overview</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" id="body-types">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Turbine Type</th><th>Common Use</th></tr></thead>
+          <tbody>
+            <tr><td><span class="key-term">Axial Flow Turbine</span></td><td>Large engines</td></tr>
+            <tr><td><span class="key-term">Radial Inflow Turbine</span></td><td>Small engines</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box box-tip">
+        <div class="box-title">💡 Exam Tip</div>
+        Axial turbines are preferred for large modern aircraft engines because they handle high mass airflow efficiently.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 4 ═══════════════════════════ -->
+  <div class="section" id="sec-axial-wrap">
+    <span class="section-anchor" id="sec-axial"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" data-target="body-axial">
+      <span class="section-num">04</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Axial Flow Turbine</div>
+        <div class="section-desc">Components, operation, and blade types</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body collapsed" id="body-axial">
+      <div class="card">
+        <h3>Main Components</h3>
+        <ul>
+          <li><span class="key-term">Turbine rotors</span> (wheels)</li>
+          <li><span class="key-term">Stationary vanes</span> (nozzle guide vanes)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>How It Works</h3>
+        <p>Hot gases flow <span class="key-term">parallel to the engine axis</span>, pass through nozzle guide vanes, strike the turbine blades, and cause turbine rotation.</p>
+      </div>
+      <div class="card">
+        <h3>Turbine Blade Types</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">
+          <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+            <strong style="color:var(--accent-blue);font-size:13px">1. Impulse Blades</strong>
+            <p style="margin-top:6px;font-size:13px;color:var(--text-secondary)">Gas pressure drops mainly in the <strong>nozzle</strong>. The blade changes gas direction.</p>
+          </div>
+          <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+            <strong style="color:var(--accent-purple);font-size:13px">2. Reaction Blades</strong>
+            <p style="margin-top:6px;font-size:13px;color:var(--text-secondary)">Pressure drops across <strong>both</strong> the nozzle and the rotor blades.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Nozzle Guide Vanes (NGV)</h3>
+        <p>These stationary vanes:</p>
+        <ul>
+          <li><span class="key-term">Direct gases</span> onto turbine blades at the correct angle</li>
+          <li><span class="key-term">Increase gas velocity</span> by forming small nozzle passages</li>
+          <li>Control gas angle and speed to improve turbine efficiency</li>
+        </ul>
+      </div>
+      <div class="info-box box-concept">
+        <div class="box-title">💡 Key Concept</div>
+        NGVs convert <strong>pressure energy into velocity</strong> — they accelerate the gas before it hits the blades.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 5 ═══════════════════════════ -->
+  <div class="section" id="sec-radial-wrap">
+    <span class="section-anchor" id="sec-radial"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" data-target="body-radial">
+      <span class="section-num">05</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Radial Inflow Turbine</div>
+        <div class="section-desc">Simple, strong, and used in smaller engines</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body collapsed" id="body-radial">
+      <div class="card">
+        <h3>Characteristics</h3>
+        <p>The radial inflow turbine is <span class="key-term">simple, strong, inexpensive, and easy to manufacture</span>.</p>
+      </div>
+      <div class="card">
+        <h3>Operating Principle</h3>
+        <p>Hot gases enter <span class="key-term">radially from the outside</span>, strike the turbine wheel blades, and <span class="key-term">exit axially</span>.</p>
+      </div>
+      <div class="card extra-detail">
+        <h3>Applications</h3>
+        <ul>
+          <li>Small gas turbine engines</li>
+          <li>APUs (Auxiliary Power Units)</li>
+          <li>Small turboprop engines</li>
+        </ul>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th>Radial Turbine</th><th>Axial Turbine</th></tr></thead>
+          <tbody>
+            <tr><td>Engine Size</td><td>Small engines</td><td>Large engines</td></tr>
+            <tr><td>Mass Flow</td><td>Lower</td><td>Higher</td></tr>
+            <tr><td>Efficiency</td><td>Lower</td><td>Higher</td></tr>
+            <tr><td>Manufacturing</td><td>Easier</td><td>More difficult</td></tr>
+            <tr><td>Cost</td><td>Lower</td><td>Higher</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 6 ═══════════════════════════ -->
+  <div class="section" id="sec-components-wrap">
+    <span class="section-anchor" id="sec-components"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" data-target="body-components">
+      <span class="section-num">06</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Main Turbine Components</div>
+        <div class="section-desc">Stator and rotor sections explained</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body collapsed" id="body-components">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+        <div class="card" style="margin-bottom:0">
+          <h3 style="color:var(--accent-blue)">Stator Section</h3>
+          <p><strong>Includes:</strong> Nozzle guide vanes, inlet guide vanes</p>
+          <p style="margin-top:8px"><strong>Function:</strong> Directs gas flow and <span class="key-term">converts pressure into velocity</span>.</p>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <h3 style="color:var(--accent-purple)">Rotor Section</h3>
+          <p><strong>Includes:</strong> Turbine blades, turbine disk, turbine shaft</p>
+          <p style="margin-top:8px"><strong>Function:</strong> <span class="key-term">Extracts energy</span> from exhaust gases and rotates the shaft.</p>
+        </div>
+      </div>
+      <div class="info-box box-memory">
+        <div class="box-title">🧠 Memory Aid</div>
+        <strong>S</strong>tator = <strong>S</strong>tationary = directs flow &nbsp;|&nbsp; <strong>R</strong>otor = <strong>R</strong>otates = extracts energy
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 7 ═══════════════════════════ -->
+  <div class="section" id="sec-rotor-wrap">
+    <span class="section-anchor" id="sec-rotor"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" data-target="body-rotor">
+      <span class="section-num">07</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Turbine Rotor Assembly</div>
+        <div class="section-desc">Disk, blades, and shaft</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body collapsed" id="body-rotor">
+      <div class="card">
+        <h3>Turbine Wheel</h3>
+        <p>The turbine wheel consists of a <span class="key-term">turbine disk</span> with attached <span class="key-term">turbine blades</span>.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+        <div class="card" style="margin-bottom:0">
+          <h3>Turbine Disk</h3>
+          <ul>
+            <li>Supports the blades</li>
+            <li>Transfers power to the shaft</li>
+          </ul>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <h3>Turbine Shaft</h3>
+          <ul>
+            <li>Connects turbine to compressor</li>
+            <li>Transmits rotational energy</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 8 ═══════════════════════════ -->
+  <div class="section" id="sec-forces-wrap">
+    <span class="section-anchor" id="sec-forces"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" data-target="body-forces">
+      <span class="section-num">08</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Forces Acting on Turbine Blades</div>
+        <div class="section-desc">Extreme temperature and centrifugal stress</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body collapsed" id="body-forces">
+      <div class="card">
+        <h3>Operating Conditions</h3>
+        <p>Turbine blades operate under:</p>
+        <ul>
+          <li><span class="key-term">Extremely high temperature</span></li>
+          <li><span class="key-term">Very high rotational speed</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Centrifugal Loads</h3>
+        <p>High rotational speed creates <span class="key-term">severe centrifugal force</span> on the blades.</p>
+      </div>
+      <div class="card">
+        <h3>Temperature Effects</h3>
+        <p>High temperature <span class="key-term">weakens blade materials</span> and increases stress on components.</p>
+      </div>
+      <div class="info-box box-warning">
+        <div class="box-title">⚠️ Safety Critical</div>
+        Engine speed and temperature must remain <strong>within limits</strong> to prevent turbine failure and maintain safe operation.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 9 ═══════════════════════════ -->
+  <div class="section" id="sec-attachment-wrap">
+    <span class="section-anchor" id="sec-attachment"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" data-target="body-attachment">
+      <span class="section-num">09</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Blade Attachment Methods</div>
+        <div class="section-desc">Fir-tree roots and retention techniques</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body collapsed" id="body-attachment">
+      <div class="card">
+        <h3>Fir-Tree Root Design</h3>
+        <p>The most common and reliable blade attachment method.</p>
+        <p style="margin-top:8px"><strong>Advantages:</strong></p>
+        <ul>
+          <li>Strong attachment</li>
+          <li>Handles thermal expansion well</li>
+          <li>Resists centrifugal loads</li>
+        </ul>
+      </div>
+      <div class="info-box box-concept">
+        <div class="box-title">💡 Key Concept</div>
+        The <strong>fir-tree root</strong> is the standard turbine blade attachment — it accommodates thermal growth and withstands centrifugal force.
+      </div>
+      <div class="card extra-detail">
+        <h3>Blade Retention Methods</h3>
+        <p>Blades may be further secured using:</p>
+        <ul>
+          <li>Peening</li>
+          <li>Welding</li>
+          <li>Lock tabs</li>
+          <li>Riveting</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 10 ═══════════════════════════ -->
+  <div class="section" id="sec-shaft-wrap">
+    <span class="section-anchor" id="sec-shaft"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" data-target="body-shaft">
+      <span class="section-num">10</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Shaft & Coupling Methods</div>
+        <div class="section-desc">How the shaft connects to the disk and compressor</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body collapsed" id="body-shaft">
+      <div class="card">
+        <h3>Shaft-to-Disk Connection</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">
+          <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+            <strong style="color:var(--accent-blue);font-size:13px">Welding</strong>
+            <p style="margin-top:6px;font-size:13px;color:var(--text-secondary)">Shaft welded directly to disk.</p>
+          </div>
+          <div style="padding:14px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:1px solid var(--border-color)">
+            <strong style="color:var(--accent-green);font-size:13px">Bolting ✔ Preferred</strong>
+            <p style="margin-top:6px;font-size:13px;color:var(--text-secondary)">Shaft hub bolted to disk. Easier maintenance and replacement.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Compressor-to-Turbine Connection</h3>
+        <p>The turbine shaft connects to the compressor using a <span class="key-term">splined coupling</span>.</p>
+        <p class="extra-detail" style="margin-top:8px"><strong>Purpose:</strong> Transfers rotational power and allows alignment between shafts.</p>
+      </div>
+      <div class="table-wrap extra-detail">
+        <table>
+          <thead><tr><th>Compressor Type</th><th>Common Coupling Method</th></tr></thead>
+          <tbody>
+            <tr><td>Centrifugal compressor engines</td><td>Splined coupling</td></tr>
+            <tr><td>Axial compressor engines</td><td>Various methods</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ SECTION 11 ═══════════════════════════ -->
+  <div class="section" id="sec-materials-wrap">
+    <span class="section-anchor" id="sec-materials"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" data-target="body-materials">
+      <span class="section-num">11</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Blade Materials & Creep</div>
+        <div class="section-desc">Critical concept: how heat causes permanent deformation</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" id="body-materials">
+      <div class="card">
+        <h3>Material Requirements</h3>
+        <p>Turbine blades require materials that can withstand:</p>
+        <ul>
+          <li>High temperatures</li>
+          <li>High stress</li>
+          <li>Creep</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:var(--accent-red);border-width:1px">
+        <h3 style="color:var(--accent-red)">Creep — Definition</h3>
+        <p><span class="key-term">Creep</span> is the <strong>slow, permanent deformation</strong> of material caused by prolonged heat and stress.</p>
+        <div style="margin-top:12px">
+          <p><strong>Consequences of creep:</strong></p>
+          <ul>
+            <li>Blade elongation</li>
+            <li>Distortion</li>
+            <li>Reduced efficiency</li>
+            <li>Blade failure</li>
+          </ul>
+        </div>
+      </div>
+      <div class="info-box box-warning">
+        <div class="box-title">⚠️ Critical Principle</div>
+        Creep <strong>increases as temperature increases</strong>.
+      </div>
+      <div class="info-box box-tip">
+        <div class="box-title">💡 Exam Tip</div>
+        Turbine blade creep is caused by prolonged exposure to <strong>high temperature</strong> and <strong>centrifugal stress</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ QUICK RECAP ═══════════════════════════ -->
+  <div class="section exam-visible" id="sec-recap-wrap">
+    <span class="section-anchor" id="sec-recap"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" data-target="body-recap">
+      <span class="section-num">⚡</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Quick Recap</div>
+        <div class="section-desc">All key points in one place</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" id="body-recap">
+      <div class="info-box box-recap">
+        <div class="box-title">⚡ Quick Recap</div>
+        <ul>
+          <li>✔ Turbine section is located directly behind the combustion chamber</li>
+          <li>✔ Turbine drives the compressor and accessories</li>
+          <li>✔ Gas generator turbine absorbs ~60%–70% of exhaust gas energy</li>
+          <li>✔ Axial turbines — used in large engines, higher efficiency, high mass flow</li>
+          <li>✔ Radial turbines — simpler, cheaper, used in small engines/APUs</li>
+          <li>✔ Nozzle guide vanes direct and accelerate hot gases onto blades</li>
+          <li>✔ Impulse blades: pressure drop in nozzle | Reaction blades: pressure drop in nozzle + rotor</li>
+          <li>✔ Turbine blades face extreme temperature and centrifugal stress</li>
+          <li>✔ Fir-tree roots are the most common blade attachment method</li>
+          <li>✔ Bolting is preferred for shaft-to-disk connection (easier maintenance)</li>
+          <li>✔ Splined coupling connects the turbine shaft to the compressor</li>
+          <li>✔ Creep = slow permanent deformation from heat + stress; increases with temperature</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ FLASHCARDS ═══════════════════════════ -->
+  <div class="section exam-visible" id="sec-flashcards-wrap">
+    <span class="section-anchor" id="sec-flashcards"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" data-target="body-flashcards">
+      <span class="section-num">🔁</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Flashcards</div>
+        <div class="section-desc">Click or press Enter to flip</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" id="body-flashcards">
+      <div class="flashcard-grid">
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What does the turbine convert?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">What energy conversion does the turbine perform?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">Kinetic energy → Mechanical energy</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: How much energy absorbed?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">How much exhaust gas energy does the gas generator turbine absorb?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">Approximately 60%–70%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What is creep?">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">What is creep in turbine blades?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">Slow, permanent deformation caused by prolonged heat and centrifugal stress</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Fir-tree root">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">What is the most common turbine blade attachment?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">Fir-tree root design — strong, handles thermal expansion and centrifugal loads</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: NGV function">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">What do nozzle guide vanes do?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">Direct gases onto blades, increase velocity, and control gas angle to improve efficiency</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Axial vs Radial">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">Why are axial turbines preferred for large engines?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">They handle high mass airflow efficiently and offer higher efficiency</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Radial turbine gas flow">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">How do gases flow through a radial inflow turbine?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">Enter radially from the outside, strike the blades, and exit axially</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Impulse vs Reaction">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="fc-label">Flashcard</div>
+              <div class="fc-question">Impulse vs Reaction blades — where does pressure drop?</div>
+              <div class="fc-hint">tap to reveal</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="fc-answer">Impulse: mainly in nozzle<br>Reaction: across both nozzle and rotor blades</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════ QUIZ ═══════════════════════════ -->
+  <div class="section exam-visible" id="sec-quiz-wrap">
+    <span class="section-anchor" id="sec-quiz"></span>
+    <div class="section-header" role="button" tabindex="0" aria-expanded="true" data-target="body-quiz">
+      <span class="section-num">🧪</span>
+      <div class="section-title-wrap">
+        <div class="section-title">Self-Check Quiz</div>
+        <div class="section-desc">Test your knowledge — 10 questions</div>
+      </div>
+      <span class="section-toggle">▼</span>
+    </div>
+    <div class="section-body" id="body-quiz">
+      <div class="quiz-block" id="quiz-container">
+
+        <!-- Q1 -->
+        <div class="quiz-question" data-question="1">
+          <span class="q-num">Question 1</span>
+          <div class="q-text">What is the main function of the turbine section?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> Compress incoming air</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">B</span> Extract energy from hot exhaust gases and convert it to mechanical energy</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">C</span> Ignite the fuel-air mixture</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> Regulate fuel flow</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="quiz-question" data-question="2">
+          <span class="q-num">Question 2</span>
+          <div class="q-text">How much exhaust gas energy is typically absorbed by the gas generator turbine?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> 30%–40%</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">B</span> 45%–55%</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">C</span> 60%–70%</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> 80%–90%</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="quiz-question" data-question="3">
+          <span class="q-num">Question 3</span>
+          <div class="q-text">Which turbine type is preferred for large modern aircraft engines?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> Radial inflow turbine</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">B</span> Axial flow turbine</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">C</span> Centrifugal turbine</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> Mixed flow turbine</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="quiz-question" data-question="4">
+          <span class="q-num">Question 4</span>
+          <div class="q-text">What is the function of nozzle guide vanes (NGVs)?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> Cool the turbine blades</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">B</span> Reduce engine noise</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">C</span> Direct gases onto turbine blades and increase gas velocity</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> Lubricate the turbine shaft</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="quiz-question" data-question="5">
+          <span class="q-num">Question 5</span>
+          <div class="q-text">What is creep in turbine blades?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> Sudden cracking of the blade</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">B</span> Slow permanent deformation caused by prolonged heat and stress</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">C</span> Vibration-induced fatigue</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> Erosion from sand particles</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="quiz-question" data-question="6">
+          <span class="q-num">Question 6</span>
+          <div class="q-text">What is the most common turbine blade attachment method?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> Dovetail root</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">B</span> Fir-tree root design</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">C</span> Bulb root</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> Pin attachment</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="quiz-question" data-question="7">
+          <span class="q-num">Question 7</span>
+          <div class="q-text">Where is the turbine section located in a gas turbine engine?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> In front of the compressor</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">B</span> Inside the combustion chamber</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">C</span> Directly behind the combustion chamber</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> At the engine inlet</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="quiz-question" data-question="8">
+          <span class="q-num">Question 8</span>
+          <div class="q-text">Why is bolting preferred over welding for shaft-to-disk connection?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> It is lighter</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">B</span> It allows easier maintenance and replacement</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">C</span> It provides better heat insulation</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> It reduces vibrations</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="quiz-question" data-question="9">
+          <span class="q-num">Question 9</span>
+          <div class="q-text">In an impulse turbine blade, where does the gas pressure drop mainly occur?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">A</span> In the nozzle</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">B</span> Across the rotor blades</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">C</span> In the combustion chamber</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> In the exhaust section</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="quiz-question" data-question="10">
+          <span class="q-num">Question 10</span>
+          <div class="q-text">How do hot gases flow through a radial inflow turbine?</div>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">A</span> Enter axially, exit radially</button>
+            <button class="quiz-opt" data-correct="true"><span class="opt-letter">B</span> Enter radially from the outside, exit axially</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">C</span> Enter and exit radially</button>
+            <button class="quiz-opt" data-correct="false"><span class="opt-letter">D</span> Enter and exit axially</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+      </div>
+
+      <div class="quiz-controls">
+        <button class="btn" id="quiz-reset">Reset Quiz</button>
+        <div class="quiz-score" id="quiz-score">Score: 0 / 10</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Progress Bar ──
+  const progressBar = document.getElementById('progress-bar');
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+
+  // ── Sidebar Toggle (mobile) ──
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    sidebarOverlay.classList.remove('active');
+  }
+  sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sidebarOverlay.classList.toggle('active');
+  });
+  sidebarOverlay.addEventListener('click', closeSidebar);
+
+  // Close sidebar on nav click (mobile)
+  sidebar.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth < 1024) closeSidebar();
+    });
+  });
+
+  // ── Active Nav Highlight ──
+  const navLinks = sidebar.querySelectorAll('a[href^="#sec-"]');
+  const sectionAnchors = document.querySelectorAll('.section-anchor');
+  function updateActiveNav() {
+    let current = '';
+    sectionAnchors.forEach(anchor => {
+      const rect = anchor.parentElement.getBoundingClientRect();
+      if (rect.top <= 120) current = anchor.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  }
+  window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+  // ── Collapsible Sections ──
+  const sectionHeaders = document.querySelectorAll('.section-header');
+  sectionHeaders.forEach(header => {
+    const targetId = header.getAttribute('data-target');
+    const body = document.getElementById(targetId);
+    if (!body) return;
+
+    // Set initial state
+    const isExpanded = header.getAttribute('aria-expanded') === 'true';
+    if (!isExpanded) {
+      body.classList.add('collapsed');
+    } else {
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+
+    function toggle() {
+      const expanded = header.getAttribute('aria-expanded') === 'true';
+      if (expanded) {
+        body.style.maxHeight = body.scrollHeight + 'px';
+        requestAnimationFrame(() => {
+          body.classList.add('collapsed');
+          body.style.maxHeight = '0px';
+        });
+        header.setAttribute('aria-expanded', 'false');
+      } else {
+        body.classList.remove('collapsed');
+        body.style.maxHeight = body.scrollHeight + 'px';
+        header.setAttribute('aria-expanded', 'true');
+        setTimeout(() => { body.style.maxHeight = 'none'; }, 350);
+      }
+    }
+
+    header.addEventListener('click', toggle);
+    header.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+
+  // ── Expand / Collapse All ──
+  const btnExpandAll = document.getElementById('btn-expand-all');
+  let allExpanded = false;
+  btnExpandAll.addEventListener('click', () => {
+    allExpanded = !allExpanded;
+    sectionHeaders.forEach(header => {
+      const targetId = header.getAttribute('data-target');
+      const body = document.getElementById(targetId);
+      if (!body) return;
+      if (allExpanded) {
+        body.classList.remove('collapsed');
+        body.style.maxHeight = 'none';
+        header.setAttribute('aria-expanded', 'true');
+      } else {
+        body.classList.add('collapsed');
+        body.style.maxHeight = '0px';
+        header.setAttribute('aria-expanded', 'false');
+      }
+    });
+    btnExpandAll.querySelector('.btn-label').textContent = allExpanded ? 'Collapse All' : 'Expand All';
+    btnExpandAll.classList.toggle('active', allExpanded);
+  });
+
+  // ── Focus Mode ──
+  const btnFocus = document.getElementById('btn-focus');
+  btnFocus.addEventListener('click', () => {
+    document.body.classList.toggle('focus-mode');
+    btnFocus.classList.toggle('active');
+    // If entering focus mode, exit exam mode
+    if (document.body.classList.contains('focus-mode')) {
+      document.body.classList.remove('exam-mode');
+      btnExam.classList.remove('active');
+    }
+  });
+
+  // ── Exam Mode ──
+  const btnExam = document.getElementById('btn-exam');
+  btnExam.addEventListener('click', () => {
+    document.body.classList.toggle('exam-mode');
+    btnExam.classList.toggle('active');
+    // If entering exam mode, exit focus mode
+    if (document.body.classList.contains('exam-mode')) {
+      document.body.classList.remove('focus-mode');
+      btnFocus.classList.remove('active');
+    }
+  });
+
+  // ── Flashcards ──
+  document.querySelectorAll('.flashcard').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.classList.toggle('flipped');
+      }
+    });
+  });
+
+  // ── Quiz Logic ──
+  let score = 0;
+  let answered = 0;
+  const totalQuestions = document.querySelectorAll('.quiz-question').length;
+  const scoreDisplay = document.getElementById('quiz-score');
+
+  document.querySelectorAll('.quiz-question').forEach(question => {
+    const options = question.querySelectorAll('.quiz-opt');
+    const feedback = question.querySelector('.quiz-feedback');
+
+    options.forEach(opt => {
+      opt.addEventListener('click', () => {
+        // Prevent re-answering
+        if (question.dataset.answered === 'true') return;
+        question.dataset.answered = 'true';
+        answered++;
+
+        const isCorrect = opt.getAttribute('data-correct') === 'true';
+
+        // Disable all options
+        options.forEach(o => o.classList.add('disabled'));
+
+        if (isCorrect) {
+          opt.classList.add('correct');
+          score++;
+          feedback.textContent = '✓ Correct!';
+          feedback.className = 'quiz-feedback show correct-fb';
+        } else {
+          opt.classList.add('incorrect');
+          // Show correct answer
+          options.forEach(o => {
+            if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+          });
+          feedback.textContent = '✗ Incorrect — see the correct answer highlighted above.';
+          feedback.className = 'quiz-feedback show incorrect-fb';
+        }
+
+        scoreDisplay.textContent = 'Score: ' + score + ' / ' + totalQuestions;
+      });
+    });
+  });
+
+  // Quiz Reset
+  document.getElementById('quiz-reset').addEventListener('click', () => {
+    score = 0;
+    answered = 0;
+    scoreDisplay.textContent = 'Score: 0 / ' + totalQuestions;
+    document.querySelectorAll('.quiz-question').forEach(q => {
+      q.dataset.answered = 'false';
+      q.querySelectorAll('.quiz-opt').forEach(o => {
+        o.classList.remove('correct', 'incorrect', 'disabled');
+      });
+      const fb = q.querySelector('.quiz-feedback');
+      fb.className = 'quiz-feedback';
+      fb.textContent = '';
+    });
+  });
+
+  // ── Checklist Persistence ──
+  const checkItems = document.querySelectorAll('.check-item');
+  const storageKey = 'turbine-checklist';
+  function loadChecklist() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      checkItems.forEach((item, i) => {
+        const cb = item.querySelector('input');
+        if (saved[i]) { cb.checked = true; item.classList.add('done'); }
+      });
+    } catch(e) {}
+  }
+  function saveChecklist() {
+    const states = [];
+    checkItems.forEach(item => {
+      states.push(item.querySelector('input').checked);
+    });
+    try { localStorage.setItem(storageKey, JSON.stringify(states)); } catch(e) {}
+  }
+  checkItems.forEach(item => {
+    item.querySelector('input').addEventListener('change', () => {
+      item.classList.toggle('done', item.querySelector('input').checked);
+      saveChecklist();
+    });
+  });
+  loadChecklist();
+
+  // ── Recalculate max-height after images/fonts load ──
+  window.addEventListener('load', () => {
+    sectionHeaders.forEach(header => {
+      if (header.getAttribute('aria-expanded') === 'true') {
+        const body = document.getElementById(header.getAttribute('data-target'));
+        if (body) body.style.maxHeight = 'none';
+      }
+    });
+    updateProgress();
+    updateActiveNav();
+  });
+
+})();
+</script>
+
+</body>
+</html>
