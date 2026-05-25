@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bearings & Seals — Aviation Revision</title>
+<style>
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:         #1a1d23;
+    --bg2:        #21252e;
+    --bg3:        #272c37;
+    --card:       #2a2f3d;
+    --card2:      #313749;
+    --border:     #383f52;
+    --accent:     #4f8ef7;
+    --accent2:    #6ee7b7;
+    --warn:       #f59e0b;
+    --danger:     #f87171;
+    --muted:      #8b95aa;
+    --text:       #dce4f0;
+    --text-hi:    #ffffff;
+    --radius:     12px;
+    --radius-sm:  8px;
+    --transition: 0.25s ease;
+    --sidebar-w:  260px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 15.5px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    z-index: 9999;
+    transition: width 0.1s linear;
+  }
+
+  /* ── TOP NAV ── */
+  #topnav {
+    position: fixed; top: 3px; left: 0; right: 0; height: 54px;
+    background: rgba(26,29,35,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 20px;
+    z-index: 900;
+    gap: 12px;
+  }
+  #topnav .brand {
+    font-size: 13px; font-weight: 700; letter-spacing: .05em;
+    color: var(--accent); text-transform: uppercase; flex: 1;
+  }
+  #topnav .brand span { color: var(--muted); font-weight: 400; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 12.5px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--border); background: var(--card);
+    color: var(--text); transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--card2); border-color: var(--accent); color: var(--text-hi); }
+  .btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.active:hover { background: #3a78e0; }
+  .btn svg { width:14px; height:14px; flex-shrink:0; }
+
+  #sidebar-toggle {
+    display: none; background: none; border: none;
+    color: var(--text); cursor: pointer; padding: 6px;
+  }
+  #sidebar-toggle svg { width:22px; height:22px; }
+
+  /* ── LAYOUT ── */
+  #layout {
+    display: flex;
+    padding-top: 57px;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    position: fixed; top: 57px; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 800;
+    padding: 20px 0 40px;
+    transition: transform var(--transition);
+  }
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-track { background: transparent; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .sidebar-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--muted);
+    padding: 12px 20px 6px;
+  }
+
+  .toc-link {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 20px; color: var(--muted);
+    text-decoration: none; font-size: 13px;
+    border-left: 3px solid transparent;
+    transition: all var(--transition);
+  }
+  .toc-link:hover { color: var(--text); background: var(--bg3); }
+  .toc-link.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,142,247,.07); }
+  .toc-link .icon { font-size: 15px; flex-shrink:0; }
+
+  .sidebar-divider { height: 1px; background: var(--border); margin: 10px 16px; }
+
+  /* Checklist in sidebar */
+  .sidebar-checklist { padding: 8px 16px; }
+  .check-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; font-size: 12.5px; color: var(--muted);
+    cursor: pointer; user-select: none;
+    transition: color var(--transition);
+  }
+  .check-item:hover { color: var(--text); }
+  .check-item input[type=checkbox] {
+    width:15px; height:15px; accent-color: var(--accent2); cursor: pointer; flex-shrink:0;
+  }
+  .check-item.done { color: var(--accent2); text-decoration: line-through; }
+
+  /* ── MAIN ── */
+  #main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 36px 28px 80px;
+    max-width: 900px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #1e2d4a 0%, #1e2935 50%, #1f2a2a 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 36px;
+    margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '✈️';
+    position: absolute; right: 30px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px; opacity: 0.08;
+  }
+  .hero .tag {
+    display: inline-block;
+    background: rgba(79,142,247,.15); color: var(--accent);
+    border: 1px solid rgba(79,142,247,.3);
+    border-radius: 20px; font-size: 11.5px; font-weight: 700;
+    letter-spacing: .06em; padding: 3px 12px; margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .hero h1 { font-size: 28px; font-weight: 800; color: var(--text-hi); margin-bottom: 8px; line-height: 1.3; }
+  .hero p { color: var(--muted); font-size: 14px; max-width: 520px; }
+  .hero .meta { display: flex; gap: 18px; margin-top: 18px; flex-wrap: wrap; }
+  .hero .meta-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--muted);
+  }
+  .hero .meta-item .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent2);
+  }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 28px; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition);
+  }
+  .section-header:hover { background: var(--card2); }
+  .section-header:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .section-header .sec-icon { font-size: 20px; flex-shrink: 0; }
+  .section-header .sec-title { flex: 1; }
+  .section-header .sec-title h2 { font-size: 16px; font-weight: 700; color: var(--text-hi); }
+  .section-header .sec-title p { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+  .section-header .chevron {
+    color: var(--muted); transition: transform var(--transition); flex-shrink:0;
+  }
+  .section-header[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+  .section-body {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 20px;
+    display: none;
+  }
+  .section-body.open { display: block; }
+
+  /* ── CARDS GRID ── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 14px 0; }
+
+  .card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+  }
+  .card .card-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .card .card-title { font-size: 14.5px; font-weight: 700; color: var(--text-hi); margin-bottom: 6px; }
+  .card ul { padding-left: 16px; }
+  .card ul li { font-size: 13.5px; margin-bottom: 4px; color: var(--text); }
+
+  .card.blue .card-label { color: var(--accent); }
+  .card.blue { border-top: 3px solid var(--accent); }
+  .card.green .card-label { color: var(--accent2); }
+  .card.green { border-top: 3px solid var(--accent2); }
+  .card.amber .card-label { color: var(--warn); }
+  .card.amber { border-top: 3px solid var(--warn); }
+  .card.red .card-label { color: var(--danger); }
+  .card.red { border-top: 3px solid var(--danger); }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 14px 0; }
+  .compare-table th {
+    background: var(--bg3); color: var(--accent);
+    padding: 10px 14px; text-align: left;
+    border-bottom: 2px solid var(--border);
+    font-size: 12px; font-weight: 700; letter-spacing:.05em; text-transform: uppercase;
+  }
+  .compare-table td {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: var(--bg3); }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 16px; border-radius: var(--radius-sm);
+    margin: 14px 0; font-size: 13.5px;
+  }
+  .callout .ico { font-size: 18px; flex-shrink:0; margin-top: 1px; }
+  .callout.info    { background: rgba(79,142,247,.1);  border-left: 3px solid var(--accent); }
+  .callout.success { background: rgba(110,231,183,.1); border-left: 3px solid var(--accent2); }
+  .callout.warn    { background: rgba(245,158,11,.1);  border-left: 3px solid var(--warn); }
+  .callout.danger  { background: rgba(248,113,113,.1); border-left: 3px solid var(--danger); }
+  .callout.memory  { background: rgba(167,139,250,.1); border-left: 3px solid #a78bfa; }
+  .callout strong  { display: block; margin-bottom: 4px; color: var(--text-hi); font-size: 13px; }
+
+  /* ── BULLETS ── */
+  .bullet-list { padding-left: 0; list-style: none; margin: 10px 0; }
+  .bullet-list li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 5px 0; font-size: 14px; color: var(--text);
+    border-bottom: 1px solid rgba(56,63,82,.4);
+  }
+  .bullet-list li:last-child { border-bottom: none; }
+  .bullet-list li::before { content: '›'; color: var(--accent); font-weight: 700; flex-shrink:0; margin-top:1px; }
+
+  /* ── KEY TERM ── */
+  .term {
+    display: inline; background: rgba(79,142,247,.15);
+    color: var(--accent); border-radius: 4px;
+    padding: 1px 6px; font-weight: 600; font-size: .93em;
+  }
+  .term-g { background: rgba(110,231,183,.15); color: var(--accent2); }
+  .term-a { background: rgba(245,158,11,.15); color: var(--warn); }
+  .term-r { background: rgba(248,113,113,.15); color: var(--danger); }
+
+  /* ── RECAP BOX ── */
+  .recap {
+    background: linear-gradient(135deg, rgba(79,142,247,.08), rgba(110,231,183,.06));
+    border: 1px solid rgba(79,142,247,.25);
+    border-radius: var(--radius-sm);
+    padding: 16px 18px; margin: 18px 0;
+  }
+  .recap .recap-title {
+    font-size: 11px; font-weight: 700; letter-spacing:.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+  }
+  .recap ul { padding-left: 16px; }
+  .recap ul li { font-size: 13.5px; margin-bottom: 5px; color: var(--text); }
+  .recap ul li strong { color: var(--text-hi); }
+
+  /* ── FLASHCARDS ── */
+  .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin: 14px 0; }
+
+  .flashcard {
+    height: 150px; perspective: 900px; cursor: pointer;
+  }
+  .flashcard-inner {
+    width: 100%; height: 100%;
+    position: relative; transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    border-radius: var(--radius-sm);
+  }
+  .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+
+  .flashcard-front, .flashcard-back {
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius-sm);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 16px; text-align: center;
+    border: 1px solid var(--border);
+  }
+  .flashcard-front {
+    background: var(--card);
+    color: var(--text-hi); font-size: 14px; font-weight: 600;
+  }
+  .flashcard-front .q-label {
+    font-size: 10px; font-weight: 700; letter-spacing:.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, #1e3a2a, #1a2e38);
+    transform: rotateY(180deg);
+    color: var(--accent2); font-size: 13px; font-weight: 600;
+    border-color: rgba(110,231,183,.3);
+  }
+  .flashcard-back .a-label {
+    font-size: 10px; font-weight: 700; letter-spacing:.1em;
+    text-transform: uppercase; color: var(--accent2); margin-bottom: 8px; opacity:.7;
+  }
+  .flashcard .hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 18px; margin: 12px 0;
+  }
+  .quiz-card .q-num {
+    font-size: 10.5px; font-weight: 700; letter-spacing:.1em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+  }
+  .quiz-card .q-text { font-size: 14.5px; font-weight: 600; color: var(--text-hi); margin-bottom: 14px; }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--card);
+    cursor: pointer; font-size: 13.5px; color: var(--text);
+    transition: all var(--transition);
+    text-align: left; width: 100%;
+  }
+  .quiz-option:hover:not(:disabled) { border-color: var(--accent); color: var(--text-hi); background: var(--card2); }
+  .quiz-option:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .quiz-option .opt-letter {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--bg); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; font-weight: 700; flex-shrink:0;
+    transition: all var(--transition);
+  }
+  .quiz-option.correct { border-color: var(--accent2); background: rgba(110,231,183,.1); color: var(--accent2); }
+  .quiz-option.correct .opt-letter { background: var(--accent2); color: #000; border-color: var(--accent2); }
+  .quiz-option.wrong   { border-color: var(--danger);  background: rgba(248,113,113,.1); color: var(--danger); }
+  .quiz-option.wrong .opt-letter { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .quiz-option:disabled { cursor: default; }
+
+  .quiz-feedback {
+    margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-sm);
+    font-size: 13px; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(110,231,183,.1); color: var(--accent2); border: 1px solid rgba(110,231,183,.2); }
+  .quiz-feedback.wrong   { background: rgba(248,113,113,.1); color: var(--danger);  border: 1px solid rgba(248,113,113,.2); }
+
+  .quiz-reset {
+    margin-top: 12px; font-size: 12.5px; color: var(--muted);
+    cursor: pointer; background: none; border: none;
+    text-decoration: underline; text-underline-offset: 3px;
+    padding: 0; display: none;
+  }
+  .quiz-reset:hover { color: var(--text); }
+  .quiz-reset.show { display: inline-block; }
+
+  /* ── FOCUS / EXAM MODE ── */
+  body.focus-mode .extra-text { display: none !important; }
+  body.focus-mode .section-body { background: var(--bg2); }
+
+  body.exam-mode .section { display: none !important; }
+  body.exam-mode .section.exam-visible { display: block !important; }
+
+  /* ── FOCUS TAG ── */
+  .extra-text { /* default visible */ }
+
+  /* ── DIVIDER ── */
+  .content-divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+  /* ── SUB-HEADING ── */
+  .sub-heading {
+    font-size: 13px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing:.08em;
+    margin: 16px 0 8px;
+  }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  }
+  .badge-blue  { background: rgba(79,142,247,.15); color: var(--accent); }
+  .badge-green { background: rgba(110,231,183,.15); color: var(--accent2); }
+
+  /* ── SCORE SUMMARY ── */
+  #score-bar {
+    position: fixed; bottom: 0; left: var(--sidebar-w); right: 0;
+    background: rgba(26,29,35,.95); backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border);
+    padding: 10px 28px;
+    display: flex; align-items: center; gap: 16px;
+    font-size: 13px; color: var(--muted);
+    z-index: 700;
+  }
+  #score-bar strong { color: var(--text-hi); }
+  #score-bar .score-pill {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 14px; font-size: 12.5px;
+    font-weight: 700; color: var(--accent2);
+  }
+
+  /* ── OVERLAY (mobile sidebar) ── */
+  #sidebar-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 799;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    :root { --sidebar-w: 0px; }
+    #sidebar {
+      width: 260px;
+      transform: translateX(-100%);
+    }
+    #sidebar.open { transform: translateX(0); }
+    #sidebar-overlay.open { display: block; }
+    #main { margin-left: 0; padding: 24px 16px 80px; }
+    #sidebar-toggle { display: flex; }
+    #score-bar { left: 0; }
+    .hero h1 { font-size: 22px; }
+    .hero { padding: 28px 22px; }
+    .cards { grid-template-columns: 1fr; }
+    .flashcard-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .flashcard-grid { grid-template-columns: 1fr; }
+    #topnav .btn { font-size: 11.5px; padding: 5px 10px; }
+  }
+
+  /* ── FOCUS RING ── */
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* mode transition */
+  .section, .section-body, .callout, .card, .quiz-card, .flashcard { transition: opacity .2s ease; }
+  body.exam-mode .section.exam-visible { opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+
+<!-- Top Nav -->
+<nav id="topnav" aria-label="Top navigation">
+  <button id="sidebar-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="3" y1="6"  x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+
+  <div class="brand">✈️ EASA Part-66 &nbsp;<span>Bearings &amp; Seals</span></div>
+
+  <button class="btn" id="btn-expand-all">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+    Expand All
+  </button>
+
+  <button class="btn" id="btn-focus">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M20.188 10.934a8 8 0 010 2.132M3.812 13.066a8 8 0 010-2.132M15.174 4.68A8 8 0 0112 4a8 8 0 00-3.174.68M15.174 19.32A8 8 0 0012 20a8 8 0 01-3.174-.68"/></svg>
+    Focus Mode
+  </button>
+
+  <button class="btn" id="btn-exam">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+    Exam Mode
+  </button>
+</nav>
+
+<!-- Sidebar overlay (mobile) -->
+<div id="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- Sidebar -->
+<aside id="sidebar" aria-label="Table of contents">
+  <div class="sidebar-label">Contents</div>
+
+  <a href="#s1"  class="toc-link" data-section="s1"><span class="icon">⚙️</span> Purpose of Bearings</a>
+  <a href="#s2"  class="toc-link" data-section="s2"><span class="icon">🔩</span> Bearing Types</a>
+  <a href="#s3"  class="toc-link" data-section="s3"><span class="icon">⚖️</span> Ball vs Roller</a>
+  <a href="#s4"  class="toc-link" data-section="s4"><span class="icon">🔄</span> Antifriction Bearings</a>
+  <a href="#s5"  class="toc-link" data-section="s5"><span class="icon">🏗️</span> Mounting &amp; Support</a>
+  <a href="#s6"  class="toc-link" data-section="s6"><span class="icon">🔒</span> Seals – Overview</a>
+  <a href="#s7"  class="toc-link" data-section="s7"><span class="icon">🌀</span> Seal Types</a>
+  <a href="#s8"  class="toc-link" data-section="s8"><span class="icon">⬛</span> Carbon Seals</a>
+  <a href="#s9"  class="toc-link" data-section="s9"><span class="icon">🃏</span> Flashcards</a>
+  <a href="#s10" class="toc-link" data-section="s10"><span class="icon">🧪</span> Self-Check Quiz</a>
+
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">Study Progress</div>
+  <div class="sidebar-checklist">
+    <label class="check-item"><input type="checkbox" data-check="c1"> Purpose of bearings</label>
+    <label class="check-item"><input type="checkbox" data-check="c2"> Bearing types</label>
+    <label class="check-item"><input type="checkbox" data-check="c3"> Ball vs roller loads</label>
+    <label class="check-item"><input type="checkbox" data-check="c4"> Antifriction advantages</label>
+    <label class="check-item"><input type="checkbox" data-check="c5"> Mounting &amp; support</label>
+    <label class="check-item"><input type="checkbox" data-check="c6"> Seal principles</label>
+    <label class="check-item"><input type="checkbox" data-check="c7"> Labyrinth &amp; Helical</label>
+    <label class="check-item"><input type="checkbox" data-check="c8"> Carbon seals</label>
+    <label class="check-item"><input type="checkbox" data-check="c9"> Flashcards reviewed</label>
+    <label class="check-item"><input type="checkbox" data-check="c10"> Quiz completed</label>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main id="main">
+
+  <!-- Hero -->
+  <header class="hero" id="top">
+    <div class="tag">Turbine Engines · EASA Part-66</div>
+    <h1>Bearings &amp; Seals</h1>
+    <p>Precision revision guide for exam preparation — covering load types, bearing selection, seal principles, and system design.</p>
+    <div class="meta">
+      <div class="meta-item"><div class="dot"></div> 8 Core Topics</div>
+      <div class="meta-item"><div class="dot" style="background:var(--warn)"></div> 10 Flashcards</div>
+      <div class="meta-item"><div class="dot" style="background:var(--danger)"></div> 5 Quiz Questions</div>
+    </div>
+  </header>
+
+  <!-- ── SECTION 1 ── Purpose of Bearings -->
+  <div class="section" id="s1">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-s1">
+      <span class="sec-icon">⚙️</span>
+      <div class="sec-title">
+        <h2>Purpose of Bearings</h2>
+        <p>Why turbine engines need bearings and what drives the quantity required</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body open" id="body-s1">
+
+      <div class="callout info">
+        <span class="ico">💡</span>
+        <div>
+          <strong>Core Function</strong>
+          Bearings <span class="term">support the main engine rotor</span>, maintain <span class="term">shaft alignment</span>, and enable smooth, continuous rotation under demanding conditions.
+        </div>
+      </div>
+
+      <div class="sub-heading">What determines how many bearings are needed?</div>
+      <div class="cards">
+        <div class="card blue">
+          <div class="card-label">Primary Factors</div>
+          <div class="card-title">Rotor Characteristics</div>
+          <ul>
+            <li>Rotor <strong>length</strong></li>
+            <li>Rotor <strong>weight</strong></li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-label">Design Factor</div>
+          <div class="card-title">Compressor Type</div>
+          <ul>
+            <li>Multi-spool designs require <strong>more bearing support</strong></li>
+            <li>A two-spool compressor increases bearing count</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 2 ── Types of Bearings -->
+  <div class="section" id="s2">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-s2">
+      <span class="sec-icon">🔩</span>
+      <div class="sec-title">
+        <h2>Types of Bearings Used</h2>
+        <p>Minimum arrangement per shaft and when additional support is required</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body open" id="body-s2">
+
+      <div class="callout success">
+        <span class="ico">✅</span>
+        <div>
+          <strong>Minimum Arrangement — Per Shaft</strong>
+          Each turbine engine shaft typically requires a minimum of <span class="term-g">one ball bearing</span> and <span class="term-g">one roller bearing</span>.
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card blue">
+          <div class="card-label">Ball Bearing</div>
+          <div class="card-title">Radial + Axial Loads</div>
+          <ul>
+            <li>Handles <strong>both</strong> radial and axial (thrust) loads</li>
+            <li>Positioned to absorb thrust</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-label">Roller Bearing</div>
+          <div class="card-title">Radial Loads Only</div>
+          <ul>
+            <li>Handles <strong>radial loads only</strong></li>
+            <li>Larger contact area — better load distribution</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout warn extra-text">
+        <span class="ico">⚠️</span>
+        <div>
+          <strong>Additional Roller Bearings May Be Required When:</strong>
+          The shaft is <span class="term-a">long</span> or subject to significant <span class="term-a">vibration</span>.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 3 ── Ball vs Roller -->
+  <div class="section" id="s3">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-s3">
+      <span class="sec-icon">⚖️</span>
+      <div class="sec-title">
+        <h2>Ball vs Roller — Comparison</h2>
+        <p>Load handling capabilities — a critical exam distinction</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body open" id="body-s3">
+
+      <table class="compare-table" aria-label="Ball vs Roller bearing comparison">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>🔵 Ball Bearing</th>
+            <th>🟠 Roller Bearing</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Radial Load</strong></td>
+            <td><span class="term-g">✓ Yes</span></td>
+            <td><span class="term-g">✓ Yes</span></td>
+          </tr>
+          <tr>
+            <td><strong>Axial (Thrust) Load</strong></td>
+            <td><span class="term-g">✓ Yes</span></td>
+            <td><span class="term-r">✗ No</span></td>
+          </tr>
+          <tr>
+            <td><strong>Contact Area</strong></td>
+            <td>Point contact</td>
+            <td>Line contact — larger area</td>
+          </tr>
+          <tr>
+            <td><strong>Primary Role</strong></td>
+            <td>Thrust &amp; radial support</td>
+            <td>Radial support only</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout memory">
+        <span class="ico">🧠</span>
+        <div>
+          <strong>Memory Aid — "BALL does ALL"</strong>
+          Ball bearings handle <em>all</em> load directions: both radial and axial.<br>
+          Roller bearings handle only <em>radial</em> — think "rolls along a surface."
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 4 ── Antifriction Bearings -->
+  <div class="section" id="s4">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-s4">
+      <span class="sec-icon">🔄</span>
+      <div class="sec-title">
+        <h2>Antifriction Bearings</h2>
+        <p>Why they are the preferred choice — advantages and critical limitations</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body" id="body-s4">
+
+      <div class="callout info">
+        <span class="ico">💡</span>
+        <div>
+          <strong>Definition</strong>
+          Bearings designed to <span class="term">reduce friction</span> between moving parts through rolling elements (balls or rollers) rather than sliding contact.
+        </div>
+      </div>
+
+      <div class="sub-heading">Advantages</div>
+      <ul class="bullet-list extra-text">
+        <li>Low rotational resistance</li>
+        <li>Accurate alignment of rotating parts</li>
+        <li>Cost-effective</li>
+        <li>Easy to replace</li>
+        <li>Can handle short-term overloads</li>
+        <li>Simple to cool, lubricate, and maintain</li>
+        <li>Support both radial and axial loads</li>
+        <li>Good resistance to high temperatures</li>
+      </ul>
+
+      <div class="cards" style="margin-top:14px;">
+        <div class="card blue">
+          <div class="card-label">Advantages Summary</div>
+          <div class="card-title">Why They Are Preferred</div>
+          <ul>
+            <li>Low friction resistance</li>
+            <li>Accurate alignment</li>
+            <li>Easy maintenance</li>
+            <li>Handle radial + axial loads</li>
+          </ul>
+        </div>
+        <div class="card red">
+          <div class="card-label">⚠️ Disadvantages</div>
+          <div class="card-title">Critical Limitations</div>
+          <ul>
+            <li>Vulnerable to <strong>foreign matter</strong></li>
+            <li>Tend to fail <strong>without appreciable warning</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <span class="ico">🚨</span>
+        <div>
+          <strong>Safety-Critical Note</strong>
+          Antifriction bearings may fail <span class="term-r">without appreciable warning</span>. This makes monitoring, filtration, and scheduled inspection essential.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 5 ── Mounting & Support -->
+  <div class="section" id="s5">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-s5">
+      <span class="sec-icon">🏗️</span>
+      <div class="sec-title">
+        <h2>Bearing Mounting &amp; Support</h2>
+        <p>Housing design, shaft journals, securing methods, and self-aligning bearings</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body" id="body-s5">
+
+      <div class="cards">
+        <div class="card blue">
+          <div class="card-label">Housing</div>
+          <div class="card-title">Bearing Housing</div>
+          <ul>
+            <li>Must be <strong>strong</strong></li>
+            <li>Must support all rotor loads</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-label">Shaft Interface</div>
+          <div class="card-title">Journal</div>
+          <ul>
+            <li>Bearing runs on a <strong>machined journal</strong> on the shaft</li>
+            <li>Precision surface for smooth contact</li>
+          </ul>
+        </div>
+        <div class="card amber">
+          <div class="card-label">Retention</div>
+          <div class="card-title">Securing Method</div>
+          <ul>
+            <li>Held using <strong>snap rings</strong></li>
+            <li>Or other locking devices</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sub-heading">Self-Aligning Bearings</div>
+      <div class="callout success extra-text">
+        <span class="ico">🔄</span>
+        <div>
+          <strong>Self-Aligning Design</strong>
+          Mounted in a <span class="term-g">spherical seat</span>, these bearings allow slight shaft movement without inducing stress — important for accommodating thermal expansion and shaft deflection.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 6 ── Seals Overview -->
+  <div class="section" id="s6">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-s6">
+      <span class="sec-icon">🔒</span>
+      <div class="sec-title">
+        <h2>Seals — Overview &amp; Location</h2>
+        <p>Why seals are essential and where they are installed</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body" id="body-s6">
+
+      <div class="callout info">
+        <span class="ico">💡</span>
+        <div>
+          <strong>Purpose of Seals</strong>
+          Prevent <span class="term">oil leakage</span> and ensure proper lubrication delivery to bearings and rotating components.
+        </div>
+      </div>
+
+      <div class="sub-heading">Location &amp; Design</div>
+      <ul class="bullet-list extra-text">
+        <li>Seals are installed in the <strong>bearing housing</strong></li>
+        <li>The shaft provides a matching surface called <span class="term">"Lands"</span></li>
+        <li>Lands fit closely with seals to reduce oil leakage</li>
+      </ul>
+
+      <div class="cards" style="margin-top:14px;">
+        <div class="card blue">
+          <div class="card-label">Location</div>
+          <div class="card-title">Bearing Housing</div>
+          <ul>
+            <li>Seals sit within the bearing housing</li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-label">Shaft Interface</div>
+          <div class="card-title">"Lands" Surface</div>
+          <ul>
+            <li>Matching surface on shaft</li>
+            <li>Close fit reduces oil leakage</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 7 ── Seal Types -->
+  <div class="section" id="s7">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-s7">
+      <span class="sec-icon">🌀</span>
+      <div class="sec-title">
+        <h2>Types of Oil Seals</h2>
+        <p>Labyrinth, helical, and their working principles — exam favourite</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body" id="body-s7">
+
+      <div class="cards">
+        <div class="card amber">
+          <div class="card-label">🟡 Type 1</div>
+          <div class="card-title">Labyrinth Seal</div>
+          <ul>
+            <li>Uses <strong>pressurized air</strong></li>
+            <li>Minimizes leakage through <strong>controlled pathways</strong></li>
+            <li>Method: <em>Pressure-based</em></li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-label">🟢 Type 2</div>
+          <div class="card-title">Helical (Thread) Seal</div>
+          <ul>
+            <li>Uses <strong>reverse threading</strong></li>
+            <li>Directs oil <strong>back inward</strong> to prevent leakage</li>
+            <li>Method: <em>Mechanical redirection</em></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sub-heading">Side-by-Side Comparison</div>
+      <table class="compare-table" aria-label="Seal type comparison">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>🟡 Labyrinth Seal</th>
+            <th>🟢 Helical Seal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Working Principle</strong></td>
+            <td>Air pressure</td>
+            <td>Reverse thread</td>
+          </tr>
+          <tr>
+            <td><strong>Leakage Control</strong></td>
+            <td>Pressure-based</td>
+            <td>Mechanical redirection</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout memory">
+        <span class="ico">🧠</span>
+        <div>
+          <strong>Memory Aid</strong>
+          <strong>L</strong>abyrinth = air <strong>L</strong>ock (pressure pathway).<br>
+          <strong>H</strong>elical = reverse <strong>H</strong>anded thread redirects oil inward.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 8 ── Carbon Seals -->
+  <div class="section" id="s8">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-s8">
+      <span class="sec-icon">⬛</span>
+      <div class="sec-title">
+        <h2>Carbon Seals</h2>
+        <p>Modern high-performance seals used in turbine engines</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body" id="body-s8">
+
+      <div class="cards">
+        <div class="card blue">
+          <div class="card-label">Material</div>
+          <div class="card-title">Carbon Construction</div>
+          <ul>
+            <li>Made from <strong>carbon material</strong></li>
+            <li>Used in <strong>modern engines</strong></li>
+          </ul>
+        </div>
+        <div class="card green">
+          <div class="card-label">Mechanism</div>
+          <div class="card-title">Spring-Loaded Design</div>
+          <ul>
+            <li>Spring-loaded — similar to carbon brushes in electric motors</li>
+            <li>Presses against a surface to create a tight seal</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout warn extra-text">
+        <span class="ico">⚠️</span>
+        <div>
+          <strong>What Carbon Seals Prevent</strong>
+          They stop oil from escaping into the <span class="term-a">compressor airflow</span> or the <span class="term-a">turbine section</span> — both of which would create serious operational issues.
+        </div>
+      </div>
+
+      <div class="recap">
+        <div class="recap-title">⚡ Quick Recap — All Seal Types</div>
+        <ul>
+          <li><strong>Labyrinth:</strong> uses pressurized air through controlled pathways</li>
+          <li><strong>Helical:</strong> uses reverse threading to redirect oil inward</li>
+          <li><strong>Carbon:</strong> spring-loaded, presses against a surface for a tight seal</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 9 ── Flashcards (exam-visible) -->
+  <div class="section exam-visible" id="s9">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-s9">
+      <span class="sec-icon">🃏</span>
+      <div class="sec-title">
+        <h2>Flashcards</h2>
+        <p>Click a card to reveal the answer — use keyboard ↵ / Space too</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body" id="body-s9">
+
+      <div class="flashcard-grid">
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What loads does a ball bearing handle?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              What loads does a <strong>ball bearing</strong> handle?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              Radial <em>and</em> Axial (thrust) loads
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What loads does a roller bearing handle?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              What loads does a <strong>roller bearing</strong> handle?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              Radial loads <em>only</em>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Name two primary factors that determine bearing count" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              Name two primary factors that determine bearing count.
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              Rotor <strong>length</strong> and rotor <strong>weight</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: How does a labyrinth seal work?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              How does a <strong>labyrinth seal</strong> work?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              Uses <strong>pressurized air</strong> through controlled pathways to minimise leakage
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: How does a helical seal work?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              How does a <strong>helical (thread) seal</strong> work?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              Uses <strong>reverse threading</strong> to direct oil back inward — mechanical redirection
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Name the two key disadvantages of antifriction bearings" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              Two key <strong>disadvantages</strong> of antifriction bearings?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              Vulnerable to <strong>foreign matter</strong> &amp; tend to fail <strong>without warning</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What is a self-aligning bearing mounted in?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              What is a <strong>self-aligning bearing</strong> mounted in?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              A <strong>spherical seat</strong> — allows slight shaft movement without stress
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: What is the matching shaft surface for a seal called?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              What is the matching shaft surface for a seal called?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              <strong>"Lands"</strong> — fits closely with seals to reduce oil leakage
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: How are carbon seals held in contact?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              How are <strong>carbon seals</strong> held in contact with the sealing surface?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              They are <strong>spring-loaded</strong>, pressing against the surface to create a tight seal
+            </div>
+          </div>
+        </div>
+
+        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Minimum bearing arrangement per shaft?" aria-pressed="false">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <div class="q-label">Question</div>
+              Minimum bearing arrangement <strong>per shaft</strong> in a turbine engine?
+              <div class="hint">Click to flip</div>
+            </div>
+            <div class="flashcard-back">
+              <div class="a-label">Answer</div>
+              <strong>1 Ball bearing</strong> + <strong>1 Roller bearing</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout info" style="margin-top:16px;">
+        <span class="ico">💡</span>
+        <div>All 10 cards reviewed? Tick the flashcard item in the progress checklist on the left!</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── SECTION 10 ── Quiz (exam-visible) -->
+  <div class="section exam-visible" id="s10">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="false" aria-controls="body-s10">
+      <span class="sec-icon">🧪</span>
+      <div class="sec-title">
+        <h2>Self-Check Quiz</h2>
+        <p>5 exam-style questions with instant feedback</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body" id="body-s10">
+
+      <!-- Q1 -->
+      <div class="quiz-card" data-quiz="q1">
+        <div class="q-num">Question 1 of 5</div>
+        <div class="q-text">Which type of bearing is capable of handling both radial and axial (thrust) loads?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">A</span> Roller bearing
+          </button>
+          <button class="quiz-option" data-correct="true">
+            <span class="opt-letter">B</span> Ball bearing
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">C</span> Plain bearing
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">D</span> Thrust washer
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-reset">↩ Try again</button>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-card" data-quiz="q2">
+        <div class="q-num">Question 2 of 5</div>
+        <div class="q-text">What are the two PRIMARY factors that determine the number of bearings required in a turbine engine?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">A</span> RPM and temperature
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">B</span> Fuel type and compressor ratio
+          </button>
+          <button class="quiz-option" data-correct="true">
+            <span class="opt-letter">C</span> Rotor length and rotor weight
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">D</span> Oil viscosity and shaft diameter
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-reset">↩ Try again</button>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-card" data-quiz="q3">
+        <div class="q-num">Question 3 of 5</div>
+        <div class="q-text">A helical (thread) seal prevents oil leakage by which method?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">A</span> Using pressurized air to block oil flow
+          </button>
+          <button class="quiz-option" data-correct="true">
+            <span class="opt-letter">B</span> Using reverse threading to redirect oil inward
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">C</span> A spring-loaded carbon surface pressing against the shaft
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">D</span> An O-ring compressed around the shaft journal
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-reset">↩ Try again</button>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-card" data-quiz="q4">
+        <div class="q-num">Question 4 of 5</div>
+        <div class="q-text">Which of the following is a known disadvantage of antifriction bearings?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">A</span> They cannot support radial loads
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">B</span> They require complex cooling systems
+          </button>
+          <button class="quiz-option" data-correct="true">
+            <span class="opt-letter">C</span> They tend to fail without appreciable warning
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">D</span> They have high rotational resistance
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-reset">↩ Try again</button>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-card" data-quiz="q5">
+        <div class="q-num">Question 5 of 5</div>
+        <div class="q-text">Carbon seals in turbine engines are described as being similar in design to which component?</div>
+        <div class="quiz-options">
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">A</span> Fuel injectors
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">B</span> Hydraulic pistons
+          </button>
+          <button class="quiz-option" data-correct="true">
+            <span class="opt-letter">C</span> Carbon brushes in electric motors
+          </button>
+          <button class="quiz-option" data-correct="false">
+            <span class="opt-letter">D</span> Labyrinth seal pathways
+          </button>
+        </div>
+        <div class="quiz-feedback"></div>
+        <button class="quiz-reset">↩ Try again</button>
+      </div>
+
+      <!-- Score summary -->
+      <div id="quiz-summary" style="display:none;" class="recap">
+        <div class="recap-title">🎯 Quiz Complete</div>
+        <div id="quiz-summary-text" style="font-size:14px; color:var(--text);"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Global Recap (exam-visible) -->
+  <div class="section exam-visible" id="s-recap" style="margin-top:0;">
+    <div class="section-header" tabindex="0" role="button" aria-expanded="true" aria-controls="body-recap">
+      <span class="sec-icon">⚡</span>
+      <div class="sec-title">
+        <h2>Quick Recap — Exam Focus</h2>
+        <p>Everything you must know, at a glance</p>
+      </div>
+      <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="section-body open" id="body-recap">
+      <div class="recap">
+        <div class="recap-title">⚡ Bearings</div>
+        <ul>
+          <li>Bearings <strong>support and stabilize the rotor system</strong></li>
+          <li><strong>Ball bearings</strong> → radial + axial loads</li>
+          <li><strong>Roller bearings</strong> → radial loads only</li>
+          <li>Minimum per shaft: <strong>1 ball + 1 roller</strong></li>
+          <li>Bearing count driven by: <strong>rotor length &amp; weight</strong></li>
+          <li>Antifriction bearings: preferred for efficiency — but fail <strong>without warning</strong></li>
+          <li>Self-aligning bearings sit in a <strong>spherical seat</strong></li>
+        </ul>
+      </div>
+      <div class="recap">
+        <div class="recap-title">⚡ Seals</div>
+        <ul>
+          <li>Seals <strong>prevent oil leakage</strong> and maintain system efficiency</li>
+          <li><strong>Labyrinth:</strong> pressure-based (air)</li>
+          <li><strong>Helical:</strong> mechanical redirection (reverse thread)</li>
+          <li><strong>Carbon:</strong> spring-loaded, modern, high-performance</li>
+          <li>Seal surface on shaft = <strong>"Lands"</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Score Bar -->
+<footer id="score-bar" aria-live="polite">
+  <span>Quiz Score:</span>
+  <span class="score-pill" id="score-pill">0 / 5</span>
+  <span id="score-msg" style="color:var(--muted);">Answer questions above</span>
+</footer>
+
+<script>
+// ── PROGRESS BAR ──────────────────────────────────────────────
+const progressBar = document.getElementById('progress-bar');
+function updateProgress() {
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docH > 0 ? (scrollTop / docH) * 100 : 0;
+  progressBar.style.width = pct + '%';
+  progressBar.setAttribute('aria-valuenow', Math.round(pct));
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+
+// ── COLLAPSIBLE SECTIONS ──────────────────────────────────────
+function initCollapsibles() {
+  document.querySelectorAll('.section-header').forEach(header => {
+    const bodyId = header.getAttribute('aria-controls');
+    const body = document.getElementById(bodyId);
+    if (!body) return;
+
+    const toggle = (force) => {
+      const isOpen = force !== undefined ? force : header.getAttribute('aria-expanded') !== 'true';
+      header.setAttribute('aria-expanded', isOpen);
+      body.classList.toggle('open', isOpen);
+    };
+
+    header.addEventListener('click', () => toggle());
+    header.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+}
+initCollapsibles();
+
+// ── EXPAND / COLLAPSE ALL ─────────────────────────────────────
+let allExpanded = false;
+document.getElementById('btn-expand-all').addEventListener('click', function () {
+  allExpanded = !allExpanded;
+  document.querySelectorAll('.section-header').forEach(h => {
+    const bodyId = h.getAttribute('aria-controls');
+    const body = document.getElementById(bodyId);
+    if (!body) return;
+    h.setAttribute('aria-expanded', allExpanded);
+    body.classList.toggle('open', allExpanded);
+  });
+  this.textContent = allExpanded ? '🗜 Collapse All' : '🔓 Expand All';
+});
+
+// ── FOCUS MODE ────────────────────────────────────────────────
+const btnFocus = document.getElementById('btn-focus');
+let focusActive = false;
+btnFocus.addEventListener('click', function () {
+  focusActive = !focusActive;
+  document.body.classList.toggle('focus-mode', focusActive);
+  this.classList.toggle('active', focusActive);
+  this.innerHTML = focusActive
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="3"/><path d="M20.188 10.934a8 8 0 010 2.132M3.812 13.066a8 8 0 010-2.132"/></svg> Exit Focus'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="3"/><path d="M20.188 10.934a8 8 0 010 2.132M3.812 13.066a8 8 0 010-2.132"/></svg> Focus Mode';
+});
+
+// ── EXAM MODE ─────────────────────────────────────────────────
+const btnExam = document.getElementById('btn-exam');
+let examActive = false;
+btnExam.addEventListener('click', function () {
+  examActive = !examActive;
+  document.body.classList.toggle('exam-mode', examActive);
+  this.classList.toggle('active', examActive);
+
+  if (examActive) {
+    // Auto-open exam-visible sections
+    document.querySelectorAll('.section.exam-visible .section-header').forEach(h => {
+      const bodyId = h.getAttribute('aria-controls');
+      const body = document.getElementById(bodyId);
+      if (body) { h.setAttribute('aria-expanded', true); body.classList.add('open'); }
+    });
+    this.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg> Exit Exam Mode';
+  } else {
+    this.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg> Exam Mode';
+  }
+});
+
+// ── FLASHCARDS ────────────────────────────────────────────────
+document.querySelectorAll('.flashcard').forEach(card => {
+  const flip = () => {
+    const flipped = card.classList.toggle('flipped');
+    card.setAttribute('aria-pressed', flipped);
+  };
+  card.addEventListener('click', flip);
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+  });
+});
+
+// ── QUIZ ──────────────────────────────────────────────────────
+let correctCount = 0;
+let answeredCount = 0;
+const totalQuestions = 5;
+
+const feedbackMessages = {
+  correct: ['Correct! Well done.', 'Exactly right!', 'Spot on!', 'That\'s correct!', 'Great recall!'],
+  wrong: ['Incorrect — review this topic.', 'Not quite — check your notes.', 'Wrong answer — revisit the material.', 'Incorrect — try again after reviewing.', 'Not right — study this area again.']
+};
+const rand = arr => arr[Math.floor(Math.random() * arr.length)];
+
+function updateScoreBar() {
+  document.getElementById('score-pill').textContent = `${correctCount} / ${answeredCount}`;
+  const pct = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+  const msgs = {
+    high: ['Excellent performance!', 'Outstanding!'],
+    mid: ['Good progress — keep going.', 'Nearly there!'],
+    low: ['Review flagged topics.', 'More revision needed.']
+  };
+  const cat = pct >= 80 ? 'high' : pct >= 50 ? 'mid' : 'low';
+  if (answeredCount > 0) document.getElementById('score-msg').textContent = rand(msgs[cat]);
+
+  if (answeredCount === totalQuestions) {
+    const summary = document.getElementById('quiz-summary');
+    const text = document.getElementById('quiz-summary-text');
+    summary.style.display = 'block';
+    text.innerHTML = `You scored <strong style="color:var(--accent2)">${correctCount} out of ${totalQuestions}</strong>. ${correctCount === totalQuestions ? 'Perfect score! Excellent exam readiness.' : correctCount >= 3 ? 'Good performance — review any missed questions.' : 'Review bearings & seals material and try again.'}`;
+  }
+}
+
+document.querySelectorAll('.quiz-card').forEach(card => {
+  const options = card.querySelectorAll('.quiz-option');
+  const feedback = card.querySelector('.quiz-feedback');
+  const resetBtn = card.querySelector('.quiz-reset');
+  let answered = false;
+
+  options.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (answered) return;
+      answered = true;
+      const isCorrect = opt.dataset.correct === 'true';
+
+      // Mark selected
+      opt.classList.add(isCorrect ? 'correct' : 'wrong');
+
+      // Reveal correct answer if wrong
+      if (!isCorrect) {
+        options.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); });
+      }
+
+      // Disable all
+      options.forEach(o => o.disabled = true);
+
+      // Feedback
+      feedback.textContent = isCorrect ? rand(feedbackMessages.correct) : rand(feedbackMessages.wrong);
+      feedback.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+
+      // Score
+      if (isCorrect) correctCount++;
+      answeredCount++;
+      updateScoreBar();
+
+      resetBtn.classList.add('show');
+    });
+
+    opt.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opt.click(); }
+    });
+  });
+
+  resetBtn.addEventListener('click', () => {
+    answered = false;
+    options.forEach(o => {
+      o.classList.remove('correct', 'wrong');
+      o.disabled = false;
+    });
+    feedback.className = 'quiz-feedback';
+    feedback.textContent = '';
+    resetBtn.classList.remove('show');
+
+    // Adjust score
+    answeredCount = Math.max(0, answeredCount - 1);
+    // Note: we can't easily subtract correct/wrong without tracking, so just reset display
+    document.getElementById('score-pill').textContent = `${correctCount} / ${answeredCount}`;
+    if (answeredCount === 0) document.getElementById('score-msg').textContent = 'Answer questions above';
+    document.getElementById('quiz-summary').style.display = 'none';
+  });
+});
+
+// ── SIDEBAR TOGGLE (MOBILE) ───────────────────────────────────
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebar-overlay');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  overlay.classList.add('open');
+  overlay.removeAttribute('aria-hidden');
+  sidebarToggle.setAttribute('aria-expanded', 'true');
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+  sidebarToggle.setAttribute('aria-expanded', 'false');
+}
+
+sidebarToggle.addEventListener('click', () => {
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+overlay.addEventListener('click', closeSidebar);
+
+// ── TABLE OF CONTENTS — ACTIVE LINK ──────────────────────────
+const tocLinks = document.querySelectorAll('.toc-link');
+const sections = document.querySelectorAll('.section[id]');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(l => l.classList.toggle('active', l.dataset.section === id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// ── CHECKLIST PERSISTENCE ─────────────────────────────────────
+document.querySelectorAll('.check-item input[type=checkbox]').forEach(cb => {
+  const key = 'check_' + cb.dataset.check;
+  cb.checked = localStorage.getItem(key) === 'true';
+  cb.closest('.check-item').classList.toggle('done', cb.checked);
+
+  cb.addEventListener('change', () => {
+    localStorage.setItem(key, cb.checked);
+    cb.closest('.check-item').classList.toggle('done', cb.checked);
+  });
+});
+
+// ── CLOSE SIDEBAR ON LINK CLICK (MOBILE) ─────────────────────
+tocLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 768) closeSidebar();
+  });
+});
+</script>
+</body>
+</html>
