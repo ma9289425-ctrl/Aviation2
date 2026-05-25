@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15.7 Exhaust Section | Aviation Revision</title>
+    <style>
+        :root {
+            --bg-primary: #1a1d23;
+            --bg-secondary: #22262e;
+            --bg-card: #282c34;
+            --bg-hover: #2d323b;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b0b3b8;
+            --text-muted: #8a8d91;
+            --accent-blue: #4a9eff;
+            --accent-green: #4ade80;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --accent-purple: #a78bfa;
+            --accent-cyan: #22d3ee;
+            --border-color: #3a3f4b;
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-title .icon {
+            font-size: 1.5rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .header-title span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        /* Mode Controls */
+        .mode-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .mode-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .mode-btn.active {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .mode-btn:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .sidebar-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.6rem 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: rgba(74, 158, 255, 0.15);
+            color: var(--accent-blue);
+        }
+
+        /* Checklist */
+        .checklist {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .checklist-item input {
+            accent-color: var(--accent-green);
+            width: 16px;
+            height: 16px;
+        }
+
+        .checklist-item.checked span {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .checklist-progress {
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .section-header:hover {
+            background: var(--bg-hover);
+        }
+
+        .section-header[aria-expanded="true"] {
+            border-bottom-color: var(--border-color);
+        }
+
+        .section-header:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: -2px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title .num {
+            background: var(--accent-blue);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .section-title h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .section-toggle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .section-header[aria-expanded="true"] .section-toggle {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .section-content.show {
+            display: block;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .info-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card p, .info-card ul {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .info-card ul {
+            padding-left: 1.25rem;
+        }
+
+        .info-card li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Key Term */
+        .key-term {
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        /* Highlight Boxes */
+        .highlight-box {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-sm);
+            margin: 1rem 0;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .highlight-box .icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .highlight-box.concept {
+            background: rgba(74, 158, 255, 0.1);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .highlight-box.warning {
+            background: rgba(251, 146, 60, 0.1);
+            border-left: 3px solid var(--accent-orange);
+        }
+
+        .highlight-box.danger {
+            background: rgba(248, 113, 113, 0.1);
+            border-left: 3px solid var(--accent-red);
+        }
+
+        .highlight-box.tip {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .highlight-box.memory {
+            background: rgba(167, 139, 250, 0.1);
+            border-left: 3px solid var(--accent-purple);
+        }
+
+        .highlight-box h5 {
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .highlight-box p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-primary);
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        tr:hover td {
+            background: var(--bg-hover);
+        }
+
+        /* Recap Box */
+        .recap-box {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(34, 211, 238, 0.1));
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .recap-box h4 {
+            color: var(--accent-cyan);
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recap-box ul {
+            padding-left: 1.25rem;
+        }
+
+        .recap-box li {
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .recap-box li::marker {
+            color: var(--accent-green);
+        }
+
+        /* Bullets */
+        .bullet-list {
+            padding-left: 1.25rem;
+        }
+
+        .bullet-list li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .bullet-list li::marker {
+            color: var(--accent-blue);
+        }
+
+        /* Flashcards */
+        .flashcards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .flashcard {
+            perspective: 1000px;
+            height: 180px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+            border: 1px solid var(--border-color);
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.2), rgba(34, 211, 238, 0.2));
+            border: 1px solid var(--accent-blue);
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front p {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .flashcard-back p {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .flashcard-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.75rem;
+        }
+
+        .flashcard:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        /* Quiz */
+        .quiz-container {
+            margin: 1rem 0;
+        }
+
+        .quiz-question {
+            background: var(--bg-primary);
+            border-radius: var(--radius-sm);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .quiz-question h4 {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .quiz-option {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .quiz-option:hover:not(.selected) {
+            background: var(--bg-hover);
+            border-color: var(--accent-blue);
+        }
+
+        .quiz-option.selected.correct {
+            background: rgba(74, 222, 128, 0.15);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .quiz-option.selected.incorrect {
+            background: rgba(248, 113, 113, 0.15);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .quiz-option.show-correct {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: var(--accent-green);
+        }
+
+        .quiz-option:focus {
+            outline: 2px solid var(--accent-blue);
+            outline-offset: 2px;
+        }
+
+        .quiz-feedback {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--accent-green);
+        }
+
+        .quiz-feedback.incorrect {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--accent-red);
+        }
+
+        .quiz-reset {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .quiz-reset:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .quiz-score {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        /* Focus Mode Styles */
+        body.focus-mode .detail-text,
+        body.focus-mode .section-desc {
+            display: none;
+        }
+
+        body.focus-mode .info-card p:not(.key-point),
+        body.focus-mode .bullet-list li:not(.key-point) {
+            opacity: 0.4;
+            font-size: 0.85rem;
+        }
+
+        /* Exam Mode Styles */
+        body.exam-mode .section:not(.exam-content) {
+            display: none;
+        }
+
+        body.exam-mode .detail-text,
+        body.exam-mode .section-desc,
+        body.exam-mode .info-card,
+        body.exam-mode .table-wrapper,
+        body.exam-mode .highlight-box:not(.exam-show) {
+            display: none;
+        }
+
+        /* Mobile Sidebar Toggle */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: var(--accent-blue);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow);
+            z-index: 100;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                padding: 1rem;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -300px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 200;
+                padding: 1rem;
+                background: var(--bg-primary);
+                transition: left 0.3s ease;
+                overflow-y: auto;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 150;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .mode-controls {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .mode-btn {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flashcards-container {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                padding: 1rem;
+            }
+
+            .section-content {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-content.show {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <span class="icon">✈️</span>
+                <h1>15.7 – Exhaust Section</h1>
+                <span>Gas Turbine Engines</span>
+            </div>
+            <div class="mode-controls">
+                <button class="mode-btn" id="focusModeBtn" aria-pressed="false">
+                    🎯 Focus Mode
+                </button>
+                <button class="mode-btn" id="examModeBtn" aria-pressed="false">
+                    📝 Exam Mode
+                </button>
+                <button class="mode-btn" id="expandAllBtn">
+                    📂 Expand All
+                </button>
+                <button class="mode-btn" id="collapseAllBtn">
+                    📁 Collapse All
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-title">📑 Contents</div>
+                <nav>
+                    <a href="#intro" class="nav-link">Introduction</a>
+                    <a href="#components" class="nav-link">Main Components</a>
+                    <a href="#exhaust-cone" class="nav-link">Exhaust Cone</a>
+                    <a href="#cone-construction" class="nav-link">Cone Construction</a>
+                    <a href="#radial-struts" class="nav-link">Radial Struts</a>
+                    <a href="#inner-cone" class="nav-link">Inner Cone</a>
+                    <a href="#tailpipe" class="nav-link">Tailpipe</a>
+                    <a href="#insulation" class="nav-link">Insulation</a>
+                    <a href="#nozzles" class="nav-link">Exhaust Nozzles</a>
+                    <a href="#variable-nozzle" class="nav-link">Variable Area Nozzle</a>
+                    <a href="#thrust-reversers" class="nav-link">Thrust Reversers</a>
+                    <a href="#thrust-vectoring" class="nav-link">Thrust Vectoring</a>
+                    <a href="#quiz" class="nav-link">Self-Check Quiz</a>
+                    <a href="#flashcards" class="nav-link">Flashcards</a>
+                </nav>
+
+                <div class="checklist">
+                    <div class="sidebar-title">✓ Study Checklist</div>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-topic="intro">
+                        <span>Exhaust Section Purpose</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-topic="components">
+                        <span>Main Components</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-topic="cone">
+                        <span>Exhaust Cone Function</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-topic="struts">
+                        <span>Radial Struts</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-topic="nozzles">
+                        <span>Nozzle Types</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-topic="reversers">
+                        <span>Thrust Reversers</span>
+                    </label>
+                    <label class="checklist-item">
+                        <input type="checkbox" data-topic="vectoring">
+                        <span>Thrust Vectoring</span>
+                    </label>
+                    <div class="checklist-progress" id="checklistProgress">0/7 completed</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Section 1: Introduction -->
+            <section class="section" id="intro">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="intro-content">
+                    <div class="section-title">
+                        <span class="num">1</span>
+                        <h2>Introduction to the Exhaust Section</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="intro-content">
+                    <p class="section-desc">Understanding the final section of a gas turbine engine and its role in thrust production.</p>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Key Definition</h5>
+                            <p>The <span class="key-term">exhaust section</span> is the final part of a gas turbine engine, located directly behind the turbine section.</p>
+                        </div>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>📍 Location</h4>
+                            <ul>
+                                <li>Directly behind the turbine section</li>
+                                <li>At the rear of the engine</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>🎯 Main Functions</h4>
+                            <ul>
+                                <li>Directs hot gases rearward</li>
+                                <li>Increases exhaust gas velocity</li>
+                                <li>Produces thrust efficiently</li>
+                                <li>Reduces turbulence in gas flow</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="recap-box exam-show">
+                        <h4>⚡ Quick Recap</h4>
+                        <ul>
+                            <li>Exhaust section = final engine section</li>
+                            <li>Converts hot gases into high-velocity flow</li>
+                            <li>Output = propulsive force (thrust)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Main Components -->
+            <section class="section" id="components">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="components-content">
+                    <div class="section-title">
+                        <span class="num">2</span>
+                        <h2>Main Components Overview</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="components-content">
+                    <p class="section-desc">The three major components that make up the exhaust section.</p>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Component</th>
+                                    <th>Function</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="key-term">Exhaust Cone</span></td>
+                                    <td>Collects and smooths gas flow</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="key-term">Tailpipe</span></td>
+                                    <td>Directs gases rearward</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="key-term">Exhaust Nozzle</span></td>
+                                    <td>Accelerates gases to produce thrust</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="highlight-box memory">
+                        <span class="icon">🧠</span>
+                        <div>
+                            <h5>Memory Aid: C-T-N</h5>
+                            <p><strong>C</strong>one → <strong>T</strong>ailpipe → <strong>N</strong>ozzle (Gas flow sequence)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Exhaust Cone -->
+            <section class="section" id="exhaust-cone">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="exhaust-cone-content">
+                    <div class="section-title">
+                        <span class="num">3</span>
+                        <h2>Exhaust Cone</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="exhaust-cone-content">
+                    <p class="section-desc">How the exhaust cone converts turbulent turbine output into smooth, efficient flow.</p>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>🎯 Main Functions</h4>
+                            <ul>
+                                <li>Collects gases leaving the turbine</li>
+                                <li>Converts swirling gases into smooth flow</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>⚙️ How It Works</h4>
+                            <ul>
+                                <li>Slightly decreases gas velocity</li>
+                                <li>Increases gas pressure</li>
+                                <li>Uses a <span class="key-term">divergent passage</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Divergent Flow Principle</h5>
+                            <p>In a divergent (increasing area) passage: <strong>Velocity ↓ &nbsp;|&nbsp; Pressure ↑</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Effect in Divergent Passage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Velocity</td>
+                                    <td>Decreases</td>
+                                </tr>
+                                <tr>
+                                    <td>Pressure</td>
+                                    <td>Increases</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Cone Construction -->
+            <section class="section" id="cone-construction">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="false" aria-controls="cone-construction-content">
+                    <div class="section-title">
+                        <span class="num">4</span>
+                        <h2>Exhaust Cone Construction</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content" id="cone-construction-content">
+                    <p class="section-desc">Detailed breakdown of exhaust cone assembly components.</p>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>🔧 Main Parts</h4>
+                            <ul>
+                                <li><span class="key-term">Outer duct</span> (outer shell)</li>
+                                <li><span class="key-term">Inner cone</span></li>
+                                <li><span class="key-term">Radial struts</span> (support fins)</li>
+                                <li>Tie rods (some designs)</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>📡 Outer Duct Features</h4>
+                            <ul>
+                                <li>Collects exhaust gases</li>
+                                <li>Directs gases to exhaust nozzle</li>
+                                <li>May contain thermocouple bosses</li>
+                                <li>May have tie rod insertion points</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box tip">
+                        <span class="icon">🌡️</span>
+                        <div>
+                            <h5>Thermocouples</h5>
+                            <p>Purpose: Measure <span class="key-term">Exhaust Gas Temperature (EGT)</span></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Radial Struts -->
+            <section class="section" id="radial-struts">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="radial-struts-content">
+                    <div class="section-title">
+                        <span class="num">5</span>
+                        <h2>Radial Struts</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="radial-struts-content">
+                    <p class="section-desc">Critical components that perform two essential functions in exhaust gas management.</p>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>1️⃣ Support Function</h4>
+                            <p>Hold the inner cone in position inside the exhaust duct</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>2️⃣ Flow Straightening</h4>
+                            <p>Reduce swirling airflow from the turbine</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box warning exam-show">
+                        <span class="icon">⚠️</span>
+                        <div>
+                            <h5>Why Flow Straightening Matters</h5>
+                            <p>Without straightening: gases exit at an angle → turbulence increases → efficiency decreases</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Key Concept</h5>
+                            <p>Struts align gases into <span class="key-term">smooth axial flow</span> for efficient thrust production.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 6: Inner Cone -->
+            <section class="section" id="inner-cone">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="false" aria-controls="inner-cone-content">
+                    <div class="section-title">
+                        <span class="num">6</span>
+                        <h2>Inner Cone</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content" id="inner-cone-content">
+                    <p class="section-desc">The inner cone's role in turbulence reduction and cooling.</p>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>🎯 Function</h4>
+                            <ul>
+                                <li>Reduces turbulence behind turbine wheel</li>
+                                <li>Smooths gas flow into exhaust nozzle</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>❄️ Cooling System</h4>
+                            <p>Some inner cones include a <span class="key-term">cooling hole</span> at the rear tip</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box tip">
+                        <span class="icon">🔄</span>
+                        <div>
+                            <h5>Cooling Air Flow Process</h5>
+                            <p>1. Air enters through rear opening → 2. Flows inside cone → 3. Cools turbine wheel area → 4. Returns to main gas flow</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box danger exam-show">
+                        <span class="icon">🔥</span>
+                        <div>
+                            <h5>Why Cooling Is Necessary</h5>
+                            <p>Turbine operates at extremely high temperatures. Cooling prevents <strong>overheating</strong> and <strong>material damage</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 7: Tailpipe -->
+            <section class="section" id="tailpipe">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="false" aria-controls="tailpipe-content">
+                    <div class="section-title">
+                        <span class="num">7</span>
+                        <h2>Tailpipe</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content" id="tailpipe-content">
+                    <p class="section-desc">The tailpipe structure and its flexible design features.</p>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>🎯 Function</h4>
+                            <p>Carries exhaust gases rearward</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>🔧 Construction Feature</h4>
+                            <p>Many tailpipes include <span class="key-term">bellows sections</span></p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Purpose of Bellows</h5>
+                            <ul class="bullet-list" style="margin-top: 0.5rem;">
+                                <li>Allow thermal expansion</li>
+                                <li>Enable easier installation</li>
+                                <li>Reduce stress and warping</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 8: Insulation -->
+            <section class="section" id="insulation">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="false" aria-controls="insulation-content">
+                    <div class="section-title">
+                        <span class="num">8</span>
+                        <h2>Exhaust System Insulation</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content" id="insulation-content">
+                    <p class="section-desc">Protection methods for intense heat radiation from the exhaust section.</p>
+
+                    <div class="highlight-box warning exam-show">
+                        <span class="icon">⚠️</span>
+                        <div>
+                            <h5>Why Insulation Is Required</h5>
+                            <p>Without protection, intense heat radiation could damage nearby aircraft structure.</p>
+                        </div>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>1️⃣ Insulation Blankets</h4>
+                            <p><strong>Materials:</strong></p>
+                            <ul>
+                                <li>Aluminum foil layers</li>
+                                <li>Fiberglass insulation</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>2️⃣ Shrouds</h4>
+                            <p>Additional protective coverings around exhaust components</p>
+                        </div>
+                    </div>
+
+                    <div class="recap-box exam-show">
+                        <h4>⚡ Insulation Purposes</h4>
+                        <ul>
+                            <li>Protect aircraft structure (reduce heat transfer to airframe)</li>
+                            <li>Improve engine performance (reduce heat loss)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 9: Exhaust Nozzles -->
+            <section class="section" id="nozzles">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="nozzles-content">
+                    <div class="section-title">
+                        <span class="num">9</span>
+                        <h2>Exhaust Nozzles</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="nozzles-content">
+                    <p class="section-desc">Nozzle types and their applications for different exhaust velocities.</p>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Main Function</h5>
+                            <p>The exhaust nozzle <strong>accelerates exhaust gases</strong> to produce thrust.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nozzle Type</th>
+                                    <th>Application</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="key-term">Convergent Nozzle</span></td>
+                                    <td>Subsonic exhaust flow</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="key-term">Convergent-Divergent Nozzle</span></td>
+                                    <td>Supersonic exhaust flow</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>◀️ Convergent Nozzle</h4>
+                            <ul>
+                                <li>Nozzle area decreases</li>
+                                <li>Gas velocity increases</li>
+                                <li>Used when exhaust remains <strong>subsonic</strong></li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>◀️▶️ Convergent-Divergent Nozzle</h4>
+                            <ul>
+                                <li>First converges, then diverges</li>
+                                <li>Accelerates gases to <strong>supersonic</strong> speed</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box memory">
+                        <span class="icon">🧠</span>
+                        <div>
+                            <h5>Memory Aid</h5>
+                            <p><strong>Convergent</strong> = Sub-sonic | <strong>Con-Di</strong> = Super-sonic</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 10: Variable Area Nozzle -->
+            <section class="section" id="variable-nozzle">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="variable-nozzle-content">
+                    <div class="section-title">
+                        <span class="num">10</span>
+                        <h2>Fixed vs Variable Area Nozzles</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="variable-nozzle-content">
+                    <p class="section-desc">Understanding when and why variable geometry nozzles are required.</p>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>📐 Fixed Area Nozzle</h4>
+                            <ul>
+                                <li>Simple design</li>
+                                <li>No moving parts</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>🔄 Variable Area Nozzle</h4>
+                            <p>Used mainly with <span class="key-term">afterburner (augmenter)</span> systems</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box warning exam-show">
+                        <span class="icon">⚠️</span>
+                        <div>
+                            <h5>Critical: Correct Nozzle Area</h5>
+                            <ul class="bullet-list" style="margin-top: 0.5rem;">
+                                <li><strong>Too large</strong> → Thrust is wasted</li>
+                                <li><strong>Too small</strong> → Engine may choke or stall</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Why Variable Area Is Needed</h5>
+                            <p>Afterburner ON → Exhaust gas volume increases → Nozzle must open wider<br>
+                            Afterburner OFF → Nozzle closes to smaller area</p>
+                        </div>
+                    </div>
+
+                    <div class="recap-box exam-show">
+                        <h4>📝 Exam Tip</h4>
+                        <ul>
+                            <li>Variable area nozzles are necessary in afterburning engines due to <strong>increased exhaust gas mass flow</strong>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 11: Thrust Reversers -->
+            <section class="section exam-content" id="thrust-reversers">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="thrust-reversers-content">
+                    <div class="section-title">
+                        <span class="num">11</span>
+                        <h2>Thrust Reversers</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="thrust-reversers-content">
+                    <p class="section-desc">Systems that help slow aircraft after landing using redirected engine thrust.</p>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Purpose</h5>
+                            <p>Help slow the aircraft after landing. Modern aircraft are heavier and land at higher speeds — brakes alone may not provide enough stopping force.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="key-term">Mechanical Blockage</span></td>
+                                    <td>Blocks and redirects exhaust gases</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="key-term">Aerodynamic Blockage</span></td>
+                                    <td>Redirects fan airflow</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 style="margin: 1.5rem 0 1rem; color: var(--accent-cyan); font-size: 1rem;">Mechanical Blockage Reverser</h3>
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>⚙️ Operating Principle</h4>
+                            <p>Movable doors or clamshells block exhaust flow and redirect gases forward</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>🔧 Designs & Applications</h4>
+                            <ul>
+                                <li>Clamshell doors</li>
+                                <li>Inverted cone systems</li>
+                                <li>Usually on ducted turbofan engines</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box tip">
+                        <span class="icon">✅</span>
+                        <div>
+                            <h5>Important Feature</h5>
+                            <p>When not in use, doors retract smoothly into nacelle structure.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 1.5rem 0 1rem; color: var(--accent-cyan); font-size: 1rem;">Aerodynamic Blockage Reverser</h3>
+                    <div class="info-card" style="margin-bottom: 1rem;">
+                        <h4>🔧 Main Components</h4>
+                        <ul>
+                            <li><span class="key-term">Translating cowl</span></li>
+                            <li><span class="key-term">Blocker doors</span></li>
+                            <li><span class="key-term">Cascade vanes</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">🔄</span>
+                        <div>
+                            <h5>How It Works</h5>
+                            <p>1. Translating cowl moves rearward → 2. Blocker doors close rearward flow → 3. Fan air redirects through cascade vanes → 4. Air is directed forward</p>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box warning exam-show">
+                        <span class="icon">⚠️</span>
+                        <div>
+                            <h5>Why Fan Air Is Used</h5>
+                            <p>The fan produces approximately <strong>80%</strong> of engine thrust. Redirecting fan air provides effective braking.</p>
+                        </div>
+                    </div>
+
+                    <div class="recap-box exam-show">
+                        <h4>⚡ Quick Recap: Thrust Reversers</h4>
+                        <ul>
+                            <li>Mechanical: Blocks and redirects core exhaust</li>
+                            <li>Aerodynamic: Redirects fan airflow (most thrust)</li>
+                            <li>Result: Forward-directed airflow slows aircraft rapidly</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 12: Thrust Vectoring -->
+            <section class="section exam-content" id="thrust-vectoring">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="thrust-vectoring-content">
+                    <div class="section-title">
+                        <span class="num">12</span>
+                        <h2>Thrust Vectoring</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="thrust-vectoring-content">
+                    <p class="section-desc">Directing engine thrust in different directions for enhanced maneuverability.</p>
+
+                    <div class="highlight-box concept">
+                        <span class="icon">💡</span>
+                        <div>
+                            <h5>Definition</h5>
+                            <p><span class="key-term">Thrust vectoring</span> is the ability to direct engine thrust in different directions.</p>
+                        </div>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>🎯 Benefits</h4>
+                            <ul>
+                                <li>Improved aircraft maneuverability</li>
+                                <li>Short/vertical takeoff capability</li>
+                                <li>Enhanced combat performance</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>⚙️ How It Works</h4>
+                            <p>The exhaust nozzle moves up or down to redirect engine thrust. Some vectoring nozzles can move approximately <strong>20°</strong> up or down.</p>
+                        </div>
+                    </div>
+
+                    <div class="cards-grid">
+                        <div class="info-card">
+                            <h4>✈️ Military Aircraft</h4>
+                            <p>Used for extreme maneuvering</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>🚁 VTOL Aircraft</h4>
+                            <p>Used for vertical lift and transition to horizontal flight</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 13: Key Concepts Summary -->
+            <section class="section exam-content" id="summary">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="summary-content">
+                    <div class="section-title">
+                        <span class="num">✓</span>
+                        <h2>Key Concepts Summary</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="summary-content">
+                    <div class="recap-box exam-show" style="background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 211, 238, 0.1)); border-color: rgba(74, 222, 128, 0.3);">
+                        <h4 style="color: var(--accent-green);">📋 Complete Revision Checklist</h4>
+                        <ul>
+                            <li><strong>Exhaust Section:</strong> Final section — directs and accelerates exhaust gases</li>
+                            <li><strong>Exhaust Cone:</strong> Straightens and smooths gas flow (divergent passage)</li>
+                            <li><strong>Radial Struts:</strong> Support inner cone + reduce gas swirl</li>
+                            <li><strong>Exhaust Nozzle:</strong> Converts gas energy into thrust</li>
+                            <li><strong>Convergent Nozzle:</strong> Subsonic flow</li>
+                            <li><strong>Convergent-Divergent:</strong> Supersonic flow</li>
+                            <li><strong>Variable Area Nozzle:</strong> Required for afterburner systems</li>
+                            <li><strong>Thrust Reversers:</strong> Slow aircraft after landing</li>
+                            <li><strong>Aerodynamic Reverser:</strong> Uses fan airflow (~80% of thrust)</li>
+                            <li><strong>Thrust Vectoring:</strong> Redirects thrust for maneuverability (~20° movement)</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box memory">
+                        <span class="icon">🧠</span>
+                        <div>
+                            <h5>Quick Facts to Remember</h5>
+                            <ul class="bullet-list" style="margin-top: 0.5rem;">
+                                <li>Exhaust gases must flow smoothly rearward</li>
+                                <li>Divergent = velocity ↓, pressure ↑</li>
+                                <li>Bellows allow thermal expansion</li>
+                                <li>Fan produces ~80% of thrust (turbofans)</li>
+                                <li>Vectoring nozzles: ~20° movement</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 14: Self-Check Quiz -->
+            <section class="section exam-content" id="quiz">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="quiz-content">
+                    <div class="section-title">
+                        <span class="num">🧪</span>
+                        <h2>Self-Check Quiz</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="quiz-content">
+                    <p class="section-desc">Test your understanding with these exam-style questions.</p>
+
+                    <div class="quiz-container" id="quizContainer">
+                        <div class="quiz-question" data-question="1">
+                            <h4>1. What is the main function of the exhaust section?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">Compress incoming air</button>
+                                <button class="quiz-option" data-correct="false">Extract energy from gases</button>
+                                <button class="quiz-option" data-correct="true">Direct and accelerate exhaust gases to produce thrust</button>
+                                <button class="quiz-option" data-correct="false">Cool the turbine blades</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-question" data-question="2">
+                            <h4>2. What happens to gas velocity in a divergent passage (exhaust cone)?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">Velocity increases</button>
+                                <button class="quiz-option" data-correct="true">Velocity decreases</button>
+                                <button class="quiz-option" data-correct="false">Velocity remains constant</button>
+                                <button class="quiz-option" data-correct="false">Velocity becomes supersonic</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-question" data-question="3">
+                            <h4>3. What are the two main functions of radial struts?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">Heat gases and increase pressure</button>
+                                <button class="quiz-option" data-correct="true">Support inner cone and straighten gas flow</button>
+                                <button class="quiz-option" data-correct="false">Measure temperature and cool gases</button>
+                                <button class="quiz-option" data-correct="false">Produce thrust and reduce noise</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-question" data-question="4">
+                            <h4>4. Which nozzle type is used for supersonic exhaust flow?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">Convergent nozzle</button>
+                                <button class="quiz-option" data-correct="true">Convergent-divergent nozzle</button>
+                                <button class="quiz-option" data-correct="false">Divergent nozzle only</button>
+                                <button class="quiz-option" data-correct="false">Variable area nozzle</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-question" data-question="5">
+                            <h4>5. Why are variable area nozzles required in afterburning engines?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">To reduce fuel consumption</button>
+                                <button class="quiz-option" data-correct="false">To cool the exhaust gases</button>
+                                <button class="quiz-option" data-correct="true">Due to increased exhaust gas mass flow</button>
+                                <button class="quiz-option" data-correct="false">To enable thrust vectoring</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-question" data-question="6">
+                            <h4>6. Approximately what percentage of thrust does the fan produce in a turbofan?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">50%</button>
+                                <button class="quiz-option" data-correct="false">60%</button>
+                                <button class="quiz-option" data-correct="true">80%</button>
+                                <button class="quiz-option" data-correct="false">95%</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-question" data-question="7">
+                            <h4>7. What components make up an aerodynamic thrust reverser?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">Clamshell doors and inverted cone</button>
+                                <button class="quiz-option" data-correct="true">Translating cowl, blocker doors, and cascade vanes</button>
+                                <button class="quiz-option" data-correct="false">Radial struts and outer duct</button>
+                                <button class="quiz-option" data-correct="false">Bellows and shrouds</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+
+                        <div class="quiz-question" data-question="8">
+                            <h4>8. Approximately how many degrees can thrust vectoring nozzles move?</h4>
+                            <div class="quiz-options">
+                                <button class="quiz-option" data-correct="false">5°</button>
+                                <button class="quiz-option" data-correct="false">10°</button>
+                                <button class="quiz-option" data-correct="true">20°</button>
+                                <button class="quiz-option" data-correct="false">45°</button>
+                            </div>
+                            <div class="quiz-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="quiz-score" id="quizScore" style="display: none;"></div>
+                    <button class="quiz-reset" id="quizReset">🔄 Reset Quiz</button>
+                </div>
+            </section>
+
+            <!-- Section 15: Flashcards -->
+            <section class="section exam-content" id="flashcards">
+                <div class="section-header" role="button" tabindex="0" aria-expanded="true" aria-controls="flashcards-content">
+                    <div class="section-title">
+                        <span class="num">🔁</span>
+                        <h2>Flashcards</h2>
+                    </div>
+                    <span class="section-toggle">▼</span>
+                </div>
+                <div class="section-content show" id="flashcards-content">
+                    <p class="section-desc">Click or press Enter to flip each card. Use these for quick revision.</p>
+
+                    <div class="flashcards-container">
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>What is the purpose of the exhaust cone?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>Collects gases from turbine and converts swirling flow into smooth axial flow using a divergent passage.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>In a divergent passage, what happens to velocity and pressure?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>Velocity decreases<br>Pressure increases</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>What do radial struts do?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>1. Support the inner cone<br>2. Straighten gas flow (reduce swirl)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>Convergent nozzle vs Convergent-Divergent nozzle?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>Convergent = Subsonic flow<br>Con-Di = Supersonic flow</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>Why are variable area nozzles needed with afterburners?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>Increased exhaust gas mass flow requires larger nozzle area when afterburner is ON.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>What are the two types of thrust reversers?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>1. Mechanical blockage (redirects exhaust)<br>2. Aerodynamic blockage (redirects fan air)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>How much thrust does the fan produce in a turbofan?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>Approximately <strong>80%</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>What is thrust vectoring?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>Ability to direct engine thrust in different directions (~20° up/down) for improved maneuverability.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>What are bellows sections in the tailpipe for?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>Allow thermal expansion, easier installation, reduce stress and warping.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to reveal answer">
+                            <div class="flashcard-inner">
+                                <div class="flashcard-front">
+                                    <p>Components of aerodynamic thrust reverser?</p>
+                                    <span class="flashcard-hint">Click to reveal</span>
+                                </div>
+                                <div class="flashcard-back">
+                                    <p>1. Translating cowl<br>2. Blocker doors<br>3. Cascade vanes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation menu">☰</button>
+
+    <script>
+        // DOM Elements
+        const progressBar = document.getElementById('progressBar');
+        const focusModeBtn = document.getElementById('focusModeBtn');
+        const examModeBtn = document.getElementById('examModeBtn');
+        const expandAllBtn = document.getElementById('expandAllBtn');
+        const collapseAllBtn = document.getElementById('collapseAllBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const quizContainer = document.getElementById('quizContainer');
+        const quizReset = document.getElementById('quizReset');
+        const quizScore = document.getElementById('quizScore');
+
+        // Progress Bar
+        function updateProgressBar() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            progressBar.style.width = progress + '%';
+        }
+        window.addEventListener('scroll', updateProgressBar);
+
+        // Section Collapsibles
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => toggleSection(header));
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleSection(header);
+                }
+            });
+        });
+
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const isExpanded = header.getAttribute('aria-expanded') === 'true';
+            
+            header.setAttribute('aria-expanded', !isExpanded);
+            content.classList.toggle('show', !isExpanded);
+        }
+
+        // Expand/Collapse All
+        expandAllBtn.addEventListener('click', () => {
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.setAttribute('aria-expanded', 'true');
+                header.nextElementSibling.classList.add('show');
+            });
+        });
+
+        collapseAllBtn.addEventListener('click', () => {
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.setAttribute('aria-expanded', 'false');
+                header.nextElementSibling.classList.remove('show');
+            });
+        });
+
+        // Focus Mode
+        focusModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('focus-mode');
+            const isActive = document.body.classList.contains('focus-mode');
+            focusModeBtn.classList.toggle('active', isActive);
+            focusModeBtn.setAttribute('aria-pressed', isActive);
+            
+            if (isActive && document.body.classList.contains('exam-mode')) {
+                document.body.classList.remove('exam-mode');
+                examModeBtn.classList.remove('active');
+                examModeBtn.setAttribute('aria-pressed', 'false');
+            }
+        });
+
+        // Exam Mode
+        examModeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('exam-mode');
+            const isActive = document.body.classList.contains('exam-mode');
+            examModeBtn.classList.toggle('active', isActive);
+            examModeBtn.setAttribute('aria-pressed', isActive);
+            
+            if (isActive && document.body.classList.contains('focus-mode')) {
+                document.body.classList.remove('focus-mode');
+                focusModeBtn.classList.remove('active');
+                focusModeBtn.setAttribute('aria-pressed', 'false');
+            }
+        });
+
+        // Sidebar Toggle (Mobile)
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            sidebarOverlay.classList.toggle('show');
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        });
+
+        // Close sidebar when nav link clicked (mobile)
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                }
+            });
+        });
+
+        // Active nav link on scroll
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        function updateActiveNav() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', updateActiveNav);
+
+        // Checklist
+        const checklistItems = document.querySelectorAll('.checklist-item input');
+        const checklistProgress = document.getElementById('checklistProgress');
+
+        function updateChecklistProgress() {
+            const checked = document.querySelectorAll('.checklist-item input:checked').length;
+            const total = checklistItems.length;
+            checklistProgress.textContent = `${checked}/${total} completed`;
+            
+            checklistItems.forEach(item => {
+                item.closest('.checklist-item').classList.toggle('checked', item.checked);
+            });
+
+            // Save to localStorage
+            const state = {};
+            checklistItems.forEach(item => {
+                state[item.dataset.topic] = item.checked;
+            });
+            localStorage.setItem('exhaustSectionChecklist', JSON.stringify(state));
+        }
+
+        // Load checklist state
+        const savedChecklist = localStorage.getItem('exhaustSectionChecklist');
+        if (savedChecklist) {
+            const state = JSON.parse(savedChecklist);
+            checklistItems.forEach(item => {
+                if (state[item.dataset.topic]) {
+                    item.checked = true;
+                }
+            });
+            updateChecklistProgress();
+        }
+
+        checklistItems.forEach(item => {
+            item.addEventListener('change', updateChecklistProgress);
+        });
+
+        // Flashcards
+        document.querySelectorAll('.flashcard').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+            });
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.classList.toggle('flipped');
+                }
+            });
+        });
+
+        // Quiz Logic
+        let quizAnswered = 0;
+        let quizCorrect = 0;
+        const totalQuestions = document.querySelectorAll('.quiz-question').length;
+
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const question = this.closest('.quiz-question');
+                if (question.classList.contains('answered')) return;
+
+                question.classList.add('answered');
+                quizAnswered++;
+
+                const isCorrect = this.dataset.correct === 'true';
+                const feedback = question.querySelector('.quiz-feedback');
+
+                this.classList.add('selected');
+
+                if (isCorrect) {
+                    this.classList.add('correct');
+                    feedback.textContent = '✓ Correct!';
+                    feedback.classList.add('correct');
+                    quizCorrect++;
+                } else {
+                    this.classList.add('incorrect');
+                    feedback.textContent = '✗ Incorrect. See the correct answer highlighted.';
+                    feedback.classList.add('incorrect');
+                    
+                    // Show correct answer
+                    question.querySelectorAll('.quiz-option').forEach(opt => {
+                        if (opt.dataset.correct === 'true') {
+                            opt.classList.add('show-correct');
+                        }
+                    });
+                }
+
+                feedback.classList.add('show');
+
+                // Update score display
+                if (quizAnswered === totalQuestions) {
+                    quizScore.style.display = 'block';
+                    const percentage = Math.round((quizCorrect / totalQuestions) * 100);
+                    quizScore.innerHTML = `<strong>Quiz Complete!</strong><br>Score: ${quizCorrect}/${totalQuestions} (${percentage}%)`;
+                }
+            });
+
+            // Keyboard accessibility
+            option.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    option.click();
+                }
+            });
+        });
+
+        // Quiz Reset
+        quizReset.addEventListener('click', () => {
+            quizAnswered = 0;
+            quizCorrect = 0;
+            
+            document.querySelectorAll('.quiz-question').forEach(question => {
+                question.classList.remove('answered');
+                question.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect', 'show-correct');
+                });
+                const feedback = question.querySelector('.quiz-feedback');
+                feedback.classList.remove('show', 'correct', 'incorrect');
+                feedback.textContent = '';
+            });
+
+            quizScore.style.display = 'none';
+        });
+
+        // Initial state
+        updateProgressBar();
+        updateActiveNav();
+    </script>
+</body>
+</html>
